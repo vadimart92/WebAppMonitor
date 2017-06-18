@@ -1,0 +1,7 @@
+﻿md-toolbar {
+  z-index: 100;
+}
+.body-content {
+  height: 100%;
+  margin-top: -64px;
+}

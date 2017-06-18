@@ -1,4 +1,11 @@
 ﻿@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 body {
   margin: 0;
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+}
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

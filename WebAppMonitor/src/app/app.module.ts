@@ -2,7 +2,9 @@
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule, MdNativeDateModule } from '@angular/material';
+import 'hammerjs';
+import { AgGridModule } from "ag-grid-angular/main";
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
@@ -20,7 +22,9 @@ import { QueryStatsService } from './query-stats/query-stats.service';
     BrowserAnimationsModule,
     AppRoutingModule,
     MaterialModule,
-	  HttpModule
+    MdNativeDateModule,
+    HttpModule,
+    AgGridModule.withComponents([])
   ],
   providers: [
     QueryStatsService
