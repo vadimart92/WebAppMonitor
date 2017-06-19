@@ -1,0 +1,27 @@
+﻿<button md-mini-fab color="primary" class="hide-button" (click)="hideMe()"><md-icon>close</md-icon></button>
+<div class="info-wrap">
+	<div class="info-wrap-column">
+		<h3 class="info-item">Date: <span>{{formatDate(queryData.date)}}</span></h3>
+		<h3 class="info-item">Statements count: <span>{{queryData.info.count}}</span></h3>
+		<h3 class="info-item">Total duration: <span>{{formatTime(queryData.info.totalDuration)}}</span></h3>
+	</div>
+	<div class="info-wrap-column">
+		<h3 class="info-item">AVG duration: <span>{{formatTime(queryData.info.averageDuration)}}</span></h3>
+		<h3 class="info-item">AVG rows count: <span>{{queryData.info.averageRowCount}}</span></h3>
+		<h3 class="info-item">AVG CPU: <span>{{queryData.info.averageCPU}}</span></h3>
+		<h3 class="info-item">AVG logical reads: <span>{{queryData.info.averageLogicalReads}}</span></h3>
+		<h3 class="info-item">AVG writes: <span>{{queryData.info.averageWrites}}</span></h3>
+	</div>
+</div>
+<md-tab-group dynamicHeight="true">
+	<md-tab label="Text">
+		<md-toolbar class="sql-tools">
+			<button class="sql-tool" md-raised-button ngxClipboard [cbContent]="queryData.info.formatedText || queryData.info.queryText" (cbOnSuccess)="onCopySql()">Copy</button>
+			<button class="sql-tool" md-raised-button (click)="formatSql()">Prettify</button>
+		</md-toolbar>
+		<div class="sql-content" >
+			{{queryData.info.formatedText || queryData.info.queryText}}
+		</div>
+	</md-tab>
+	<md-tab label="AVG duration">Content 2</md-tab>
+</md-tab-group>

@@ -1,0 +1,41 @@
+﻿:host {
+	position: fixed;
+	display: block;
+	height: 100%;
+	width: 100%;
+	background-color: white;
+	z-index: 100;
+}
+.hide-button {
+	position: absolute;
+	right: 30px;
+}
+.info-container .info-item {
+	width: 50%;
+	margin: 0;
+}
+.info-container .mat-grid-tile .mat-figure {
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+.info-wrap {
+	width: 100%;
+}
+.info-wrap .info-wrap-column {
+		display: inline-block;
+		margin: 20px;
+		vertical-align: top;
+	}
+.info-wrap .info-wrap-column .info-item {
+	margin: 3px;
+}
+.sql-content {
+	width: 100%;
+	cursor: text;
+	white-space: pre;
+	overflow: auto;
+}
+.sql-tools .sql-tool{
+	margin-left: 10px;
+}
