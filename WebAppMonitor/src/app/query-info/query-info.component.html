@@ -23,13 +23,13 @@
 			{{queryData.info.formatedText || queryData.info.queryText}}
 		</div>
 	</md-tab>
-	<md-tab label="AVG duration">
-		<app-query-chart [chartDataRows]="avgDurationData"></app-query-chart>
+	<md-tab [label]="chartData.chartCaption" *ngFor="let chartData of chartsData">
+		<app-query-chart [chartData]="chartData"></app-query-chart>
 	</md-tab>
-	<md-tab label="Count">
-		<app-query-chart [chartDataRows]="countData"></app-query-chart>
+	<!--<md-tab label="AVG duration">
+		<app-query-chart [chartData]="avgDurationData"></app-query-chart>
 	</md-tab>
-	<md-tab label="TotalDuration">
-		<app-query-chart [chartDataRows]="totalDurationData"></app-query-chart>
-	</md-tab>
+	<md-tab label="Total duration">
+		<app-query-chart [chartData]="totalDurationData"></app-query-chart>
+	</md-tab>-->
 </md-tab-group>

@@ -178,15 +178,11 @@ namespace WebAppMonitor.Controllers
 		}
 
 		[HttpPost("clearCache")]
-		public void ClearCache()
-		{
-			var keys = _memoryCache.Get("Keys") as IEnumerable<string>;
-			if (keys != null)
-				foreach (string key in keys)
-				{
-					_memoryCache.Remove(key);
-				}
+		public void ClearCache() {
+			CaheUtils.ClearCache(_memoryCache);
 		}
+
+		
 
 		private void StoreKey(ICacheEntry entry)
 		{

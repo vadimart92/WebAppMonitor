@@ -3,4 +3,19 @@
 	margin-top: 64px;
 	position: absolute;
 	padding: 20px;
+	width: 100%;
+}
+.import-data-form {
+	margin-top: 20px;
+	width: 50%;
+}
+.import-data-form td {
+	width: 100%;
+	display: block;
+}
+.clear-cache-divider {
+	margin-top: 20px;
+}
+.import-data-full-width {
+	width: 100%;
 }

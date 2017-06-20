@@ -1,11 +1,24 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import * as moment from 'moment';
-import { ChartsModule } from 'ng2-charts/ng2-charts';
-import Chart from 'chart.js'
 import * as _ from 'underscore';
-import { Observable } from 'rxjs/Observable';
 
 import {TimeUtils} from '../utils/utils'
+
+export enum ChartAxisType {
+	Number,
+	Time
+}
+
+export class ChartData {
+	seriesData: any[];
+	yAxisType: ChartAxisType;
+	chartCaption: string; 
+	constructor() {
+		this.seriesData = [];
+		this.yAxisType = ChartAxisType.Number;
+	}
+}
+
 
 @Component({
 	selector: 'app-query-chart',
@@ -17,60 +30,85 @@ import {TimeUtils} from '../utils/utils'
 export class QueryChartComponent implements OnInit {
 	
     private _timeUtils: TimeUtils = new TimeUtils();
-	private _chartDataRows: any[] = [];
+	private _chartData: ChartData;
 
 	@Input()
-    set chartDataRows(rows: any[]) {
-		this._chartDataRows = rows;
-        var newData = _.clone(this.chartData);
-		newData[0].data = rows;
-		this.chartData = newData;
-	}
-
-    get chartDataRows(): any[] { return this._chartDataRows; }
-
-    public chartData: any[] = [
-		{
-			fill: false,
-			data: [],
-			label: 'Stats'
-		}];
-	constructor() {
-		
-	}
-	public chartOptions: any = {
-		responsive: true,
-        maintainAspectRatio: false,
-        fill: false,
-		elements: {
-			line: {
-				tension: 0
-			}
-		},
-		scales: {
-			xAxes: [{
-				type: "time",
-				time: {
-					displayFormats: {
-						day: 'YYYY-MM-DD'
-					},
-					unit: 'day',
-					tooltipFormat: 'll HH:mm'
-				},
-				scaleLabel: {
-					display: true,
-					labelString: 'Date'
-				}
-			},],
-			yAxes: [{
-                ticks: {
-                    callback: (tick, index, ticks) => {
-	                    return this._timeUtils.formatAsTime(tick);
-                    }
-                }
-			}]
+	set chartData(data: ChartData) {
+		if (!data) {
+			return;
 		}
-	};
+		this._chartData = data;
+		var newData = [{
+			fill: false,
+			data: data.seriesData,
+			label: ''
+		}];
+		this.setYAxisType(data.yAxisType);
+		this.chartDataSets = newData;
+	}
+
+	get chartData(): ChartData { return this._chartData; }
+
+	chartDataSets: any[];
+	chartYAxisType: ChartAxisType = ChartAxisType.Number;
+
+	public chartOptions: any;
+	constructor() {
+		this.initChartOptions();
+	}
+	setYAxisType(type: ChartAxisType) {
+		if (type && this.chartYAxisType !== type) {
+			this.chartYAxisType = type;
+			this.initChartOptions();
+		}
+	}
+	getXAxisConfig() {
+		return {
+			type: "time",
+			time: {
+				displayFormats: {
+					day: 'YYYY-MM-DD'
+				},
+				unit: 'day',
+				tooltipFormat: 'll HH:mm'
+			},
+			scaleLabel: {
+				display: true,
+				labelString: 'Date'
+			}
+		};
+	}
+	getYAxisConfig() {
+		if (this.chartYAxisType === ChartAxisType.Time) {
+			return {
+				ticks: {
+					callback: (tick, index, ticks) => {
+						return this._timeUtils.formatAsTime(tick);
+					}
+				}
+			}
+		};
+		return {}
+	}
+	initChartOptions() {
+		let xAxisConfig = this.getXAxisConfig();
+		let yAxisConfig = this.getYAxisConfig();
+		this.chartOptions = {
+			responsive: true,
+			maintainAspectRatio: false,
+			fill: false,
+			elements: {
+				line: {
+					tension: 0
+				}
+			},
+			scales: {
+				xAxes: [xAxisConfig],
+				yAxes: [yAxisConfig]
+			}
+		};
+	}
+
 	public chartColors: Array<any> = [
 		{ // grey
 			backgroundColor: 'rgba(148,159,177,0.2)',

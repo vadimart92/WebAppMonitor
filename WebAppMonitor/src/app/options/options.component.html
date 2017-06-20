@@ -1,1 +1,13 @@
-﻿<button md-raised-button (click)="clearCache()">Clear cache</button>
+﻿<form class="import-data-form" onsubmit="return false">
+	<md-progress-bar *ngIf="importInProgress"
+		class="import-data-progress"
+		color="primary"
+		mode="indeterminate">
+	</md-progress-bar>
+	<td><md-input-container class="import-data-full-width">
+		<input mdInput placeholder="Directory path" [(value)]="fileName" #directoryPath>
+	</md-input-container></td>
+	<button md-raised-button (click)="importData(directoryPath.value)">Import</button>
+	<hr class="clear-cache-divider"/>
+	<button  md-raised-button (click)="clearCache()">Clear cache</button>
+</form>

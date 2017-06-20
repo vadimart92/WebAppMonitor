@@ -6,6 +6,9 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 
 import { TimeUtils } from '../utils/utils'
 import { QueryStatsService } from '../query-stats/query-stats.service'
+import { ChartData, ChartAxisType } from '../query-chart/query-chart.component'
+
+
 
 @Component({
 	selector: 'app-query-info',
@@ -18,10 +21,11 @@ export class QueryInfoComponent implements OnInit {
 	@Input() queryData: any;
     private _timeUtils = new TimeUtils();
     private _queryStatsInfo: any[];
-    public avgDurationData: any[];
-    public countData: any[];
-    public totalDurationData: any[];
-	public selectedTabIndex: number = 1;
+	public avgDurationData: ChartData;
+	public countData: ChartData;
+	public totalDurationData: ChartData;
+	public selectedTabIndex: number = 0;
+	public chartData: any[];
 	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService) {
 		var navRight = this._hotkeysService.add(new Hotkey('right', this.onArrowKey.bind(this, 1)));
 		var navLeft = this._hotkeysService.add(new Hotkey('left', this.onArrowKey.bind(this, -1)));
@@ -39,7 +43,7 @@ export class QueryInfoComponent implements OnInit {
 	}
 	tryChangeTab(direction: number):void {
 		var result = this.selectedTabIndex + direction;
-		if (result > -1) {
+		if (result > -1 && result < this.chartsData.length + 1) {
 			this.selectedTabIndex = result;
 		}
 	}
@@ -56,36 +60,69 @@ export class QueryInfoComponent implements OnInit {
 					"averageCPU": 554.000000,
 					"averageLogicalReads": 279581951,
 					"averageWrites": 10595,
-					"queryText": " INSERT INTO [dbo].[QueueItem]([EntityRecordId], [QueueId], [StatusId]) SELECT TOP 1000 [Contact].[Id] [Id], @QueueId, @StatusId FROM [dbo].[Contact] [Contact] WITH(NOLOCK) WHERE (EXISTS ( SELECT [SubLead].[Id] [Id] FROM [dbo].[Lead] [SubLead] WITH(NOLOCK) WHERE [SubLead].[QualifiedContactId] = [Contact].[Id] AND [SubLead].[BulkEmailId] IN (@P1, @P2, @P3, @P4, @P5)) OR ( SELECT COUNT([SubBulkEmailTarget].[Id]) [Count] FROM [dbo].[BulkEmailTarget] [SubBulkEmailTarget] WITH(NOLOCK) WHERE [SubBulkEmailTarget].[ContactId] = [Contact].[Id] AND [SubBulkEmailTarget].[BulkEmailId] IN (@P6, @P7, @P8, @P9, @P10) AND [SubBulkEmailTarget].[BulkEmailResponseId] IN (@P11, @P12)) >= @P13) AND NOT EXISTS ( SELECT [Id] FROM [dbo].[QueueItem] WHERE [Contact].[Id] = [QueueItem].[EntityRecordId] AND [QueueItem].[QueueId] = @P14)"
+					"queryText": " sql"
 				}
 			}
         }
 		this._statsService.getQueryInfo(this.queryData.info.normQueryTextHistoryId)
             .then((rows) => {
-                this._queryStatsInfo = rows;
-				this.prepareChartData();
+				this.prepareChartData(rows);
 			});
-    }
-	prepareChartData() {
-        var avgDuration = [], count = [], duration = [];
+	}
+
+	chartsConfig = {
+		"count": {
+			label: "Count",
+			yAxisType: ChartAxisType.Number,
+			dataColumn: "count"
+		},
+		"totalDuration": {
+			label: "Total duration",
+			yAxisType: ChartAxisType.Time,
+			dataColumn: "totalDuration"
+		},
+		"avgDuration": {
+			label: "AVG duration",
+			yAxisType: ChartAxisType.Time,
+			dataColumn: "avgDuration"
+		},
+		"avgCPU": {
+			label: "AVG CPU",
+			yAxisType: ChartAxisType.Number,
+			dataColumn: "avgCPU"
+		},
+		"avgRowCount": {
+			label: "AVG row count",
+			yAxisType: ChartAxisType.Number,
+			dataColumn: "avgRowCount"
+		},
+		"avgLogicalReads": {
+			label: "AVG logical reads",
+			yAxisType: ChartAxisType.Number,
+			dataColumn: "avgLogicalReads"
+		}
+	};
+	chartsData: any[] = [];
+	prepareChartData(rows) {
+		this._queryStatsInfo = rows;
+		var chartsData = _.mapObject(this.chartsConfig, (chartConfig) => {
+			var data = new ChartData();
+			data.yAxisType = chartConfig.yAxisType;
+			data.chartCaption = chartConfig.label;
+			return data;
+		});
+		var chartNames = _.keys(this.chartsConfig);
 		_.each(this._queryStatsInfo, (infoRow) => {
 			let date = infoRow.date;
-			avgDuration.push({
-				x: date,
-				y: infoRow.avgDuration
-            });
-            count.push({
-				x: date,
-                y: infoRow.count
+			_.each(chartNames, (chartName) => {
+				var config = this.chartsConfig[chartName];
+				chartsData[chartName].seriesData.push({
+					x: date,
+					y: infoRow[config.dataColumn]
+				});
 			});
-            duration.push({
-				x: date,
-                y: infoRow.totalDuration
-			});
-        });
-		this.avgDurationData = avgDuration;
-		this.countData = count;
-        this.totalDurationData = duration;
+		});
+		this.chartsData = _.values(chartsData);
 	}
 	public hideMe(): void {
 		this.hide.emit(null);

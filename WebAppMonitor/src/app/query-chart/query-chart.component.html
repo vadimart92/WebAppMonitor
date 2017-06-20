@@ -1,6 +1,6 @@
 ﻿<div class="chart-wrap">
-	<canvas baseChart width="400" height="400"
-			[datasets]="chartData"
+	<canvas baseChart width="400" height="400" *ngIf="chartDataSets"
+			[datasets]="chartDataSets"
 			[options]="chartOptions"
 			[colors]="chartColors"
 			[legend]="chartLegend"
