@@ -13,7 +13,7 @@
 		<h3 class="info-item">AVG writes: <span>{{queryData.info.averageWrites}}</span></h3>
 	</div>
 </div>
-<md-tab-group dynamicHeight="true">
+<md-tab-group dynamicHeight="true" [(selectedIndex)]="selectedTabIndex">
 	<md-tab label="Text">
 		<md-toolbar class="sql-tools">
 			<button class="sql-tool" md-raised-button ngxClipboard [cbContent]="queryData.info.formatedText || queryData.info.queryText" (cbOnSuccess)="onCopySql()">Copy</button>
@@ -23,5 +23,13 @@
 			{{queryData.info.formatedText || queryData.info.queryText}}
 		</div>
 	</md-tab>
-	<md-tab label="AVG duration">Content 2</md-tab>
+	<md-tab label="AVG duration">
+		<app-query-chart [chartDataRows]="avgDurationData"></app-query-chart>
+	</md-tab>
+	<md-tab label="Count">
+		<app-query-chart [chartDataRows]="countData"></app-query-chart>
+	</md-tab>
+	<md-tab label="TotalDuration">
+		<app-query-chart [chartDataRows]="totalDurationData"></app-query-chart>
+	</md-tab>
 </md-tab-group>

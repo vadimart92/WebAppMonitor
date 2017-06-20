@@ -1,30 +1,38 @@
 ﻿md-sidenav-container {
-  height: 100%;
-  padding-top: 64px;
-  background-color: initial;
+	height: 100%;
+	padding-top: 64px;
+	background-color: initial;
 }
 md-sidenav {
-  height: 100%;
-  width: 250px;
-  padding: 90px 10px 10px 10px;
-  background-color: #fafafa;
+	height: 100%;
+	width: 250px;
+	padding: 90px 10px 10px 10px;
+	background-color: #fafafa;
 }
 .sidenav-content {
-  padding: 1em 1em 0 1em;
-  height: 98%;
-  display: flex;
-  flex-direction: column;
+	padding: 1em 1em 0 1em;
+	height: 98%;
+	display: flex;
+	flex-direction: column;
 	overflow: hidden;
 }
 app-query-stats {
-  height: 100%;
+	height: 100%;
 }
 md-sidenav {
-  height: 100%;
+	height: 100%;
 }
 :host {
-  height: 100%;
+	height: 100%;
 }
 md-datepicker-content {
-  zoom: .9;
+	zoom: .9;
+}
+:host /deep/ .ag-row.query-stats-row {
+	cursor: pointer;
+}
+
+:host /deep/ .ag-row.query-stats-row .query-stats-sql-cell {
+	cursor: text;
+	user-select: text;
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +15,7 @@ namespace WebAppMonitor
 				.AddJsonOptions(options => {
 					options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
 				});
-			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(@"Data Source=tscore-dev-13\mssql2016; Initial Catalog=work_analisys; Persist Security Info=True; MultipleActiveResultSets=True; Integrated Security=SSPI; Pooling = true; Max Pool Size = 100; Async = true; Connection Timeout=500"));
+			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(@"Data Source=(local)\mssql2016; Initial Catalog=work_analisys; Persist Security Info=True; MultipleActiveResultSets=True; Integrated Security=SSPI; Pooling = true; Max Pool Size = 100; Async = true; Connection Timeout=500"));
 			var memoryCache = new MemoryCache(new MemoryCacheOptions { CompactOnMemoryPressure = true });
 			services.AddSingleton<IMemoryCache>(memoryCache);
 		}

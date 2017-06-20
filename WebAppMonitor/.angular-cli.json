@@ -23,9 +23,9 @@
         "../node_modules/ag-grid/dist/styles/ag-grid.css",
         "../node_modules/ag-grid/dist/styles/theme-material.css"
       ],
-      "scripts": [
-
-      ],
+	"scripts": [
+		"../node_modules/chart.js/dist/Chart.bundle.min.js"
+	],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using gudusoft.gsqlparser;
@@ -19,7 +16,8 @@ namespace WebAppMonitor.Controllers
 	public class GetQueriesByTotalTimeResponse
 	{
 
-		public GetQueriesByTotalTimeResponse() {
+		public GetQueriesByTotalTimeResponse()
+		{
 			Queries = new List<dynamic>();
 		}
 		public List<dynamic> Queries { get; set; }
@@ -49,13 +47,21 @@ namespace WebAppMonitor.Controllers
 		public string Result { get; set; }
 	}
 
+
+	public class QueryStatsInfoResponse
+	{
+
+		public IEnumerable<dynamic> Result { get; set; }
+	}
+
 	[Route("api/[controller]")]
 	public class QueryStatsDataController : Controller
 	{
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly IMemoryCache _memoryCache;
-		
-		public QueryStatsDataController(IDbConnectionProvider connectionProvider, IMemoryCache memoryCache) {
+
+		public QueryStatsDataController(IDbConnectionProvider connectionProvider, IMemoryCache memoryCache)
+		{
 			_connectionProvider = connectionProvider;
 			_memoryCache = memoryCache;
 		}
@@ -63,7 +69,8 @@ namespace WebAppMonitor.Controllers
 		// GET api/requestStatsData/byTotalTime/date
 		[HttpGet("byTotalTime/{date}")]
 		public GetQueriesByTotalTimeResponse GetQueriesByTotalTime(string date, int rowCount = 100,
-			int totalDuration = 300) {
+			int totalDuration = 300)
+		{
 			DateTime parsedDate = DateTime.Parse(date);
 			string cacheKey =
 				$"GetQueriesByTotalTimeResponse_{parsedDate:MM/dd/yyyy}_rows:{rowCount}_total:{totalDuration}";
@@ -72,7 +79,8 @@ namespace WebAppMonitor.Controllers
 				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
 				var result = new GetQueriesByTotalTimeResponse();
 				_connectionProvider.GetConnection((connection) => {
-					var times = connection.Query("GetQueriesByTotalTime", new {
+					var times = connection.Query("GetQueriesByTotalTime", new
+					{
 						date = parsedDate,
 						totalDuration = totalDuration,
 						rowsCount = rowCount
@@ -86,12 +94,14 @@ namespace WebAppMonitor.Controllers
 			});
 
 		}
-		public async Task<DailyReportInfo> DailyReport(int rowsCountPerDay = 10) {
+		public async Task<DailyReportInfo> DailyReport(int rowsCountPerDay = 10)
+		{
 			return await _memoryCache.GetOrCreateAsync($"DailyReportInfo_{rowsCountPerDay}", entry => {
 				StoreKey(entry);
 				var m = new DailyReportInfo();
 				_connectionProvider.GetConnection((connection) => {
-					m.Queries = connection.Query("GetQueriesByTotalTimeByDates", new {
+					m.Queries = connection.Query("GetQueriesByTotalTimeByDates", new
+					{
 						rowsCountPerDay = rowsCountPerDay
 					}, commandType: CommandType.StoredProcedure);
 				});
@@ -100,18 +110,22 @@ namespace WebAppMonitor.Controllers
 
 		}
 		[HttpPost("formatSQl")]
-		public FormatSqlResponse FormatSQl([FromBody]FormatSqlRequest request) {
+		public FormatSqlResponse FormatSQl([FromBody]FormatSqlRequest request)
+		{
 			string formattedText = _memoryCache.GetOrCreate("SQL_" + request.QueryId, entry => {
 				StoreKey(entry);
 				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
 				string text = string.Empty;
 				_connectionProvider.GetConnection(c => {
-					text = c.QuerySingle<string>("SELECT NormalizedQuery FROM NormQueryTextHistory WHERE Id = @id", new {
+					text = c.QuerySingle<string>("SELECT NormalizedQuery FROM NormQueryTextHistory WHERE Id = @id", new
+					{
 						id = request.QueryId
 					});
 				});
-				try {
-					var parser = new TGSqlParser(EDbVendor.dbvmssql) {
+				try
+				{
+					var parser = new TGSqlParser(EDbVendor.dbvmssql)
+					{
 						sqltext = text
 					};
 					parser.parse();
@@ -119,17 +133,21 @@ namespace WebAppMonitor.Controllers
 					option.outputFmt = GOutputFmt.ofSql;
 					string result = FormatterFactory.pp(parser, option);
 					return result;
-				} catch (Exception) {
+				}
+				catch (Exception)
+				{
 					return "Error while formatting sql" + text;
 				}
 			});
-			return new FormatSqlResponse {
+			return new FormatSqlResponse
+			{
 				Result = formattedText
 			};
 		}
 
 		[HttpGet("info")]
-		public async Task<QueryStatsInfo> GetQueryStatsInfo() {
+		public async Task<QueryStatsInfo> GetQueryStatsInfo()
+		{
 			return await _memoryCache.GetOrCreateAsync("datesWithData", entry => {
 				StoreKey(entry);
 				var result = new QueryStatsInfo();
@@ -141,16 +159,37 @@ namespace WebAppMonitor.Controllers
 			}).ConfigureAwait(false);
 		}
 
+		[HttpGet("queryInfo/{textId}")]
+		public async Task<QueryStatsInfoResponse> GetSingleQueryStatsInfo(Guid textId)
+		{
+			return await _memoryCache.GetOrCreateAsync($"queryStatsInfo{textId}", entry => {
+				StoreKey(entry);
+				var result = new QueryStatsInfoResponse();
+				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+				_connectionProvider.GetConnection((c) => {
+					result.Result = c.Query(@"
+						SELECT *
+						FROM QueryStatInfo
+						WHERE NormQueryTextHistoryId = @textId
+						", new { textId = textId });
+				});
+				return Task.FromResult(result);
+			}).ConfigureAwait(false);
+		}
+
 		[HttpPost("clearCache")]
-		public void ClearCache() {
+		public void ClearCache()
+		{
 			var keys = _memoryCache.Get("Keys") as IEnumerable<string>;
 			if (keys != null)
-				foreach (string key in keys) {
+				foreach (string key in keys)
+				{
 					_memoryCache.Remove(key);
 				}
 		}
 
-		private void StoreKey(ICacheEntry entry) {
+		private void StoreKey(ICacheEntry entry)
+		{
 			_memoryCache.GetOrCreate("Keys", e => new List<string>()).Add(entry.Key.ToString());
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿import * as _ from 'underscore';
 import * as moment from 'moment';
+import 'moment-duration-format';
 
 export class TimeUtils {
 	compareTime(timeA:string, timeB:string, inverted:boolean) {

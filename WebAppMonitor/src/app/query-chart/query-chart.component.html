@@ -1,0 +1,9 @@
+﻿<div class="chart-wrap">
+	<canvas baseChart width="400" height="400"
+			[datasets]="chartData"
+			[options]="chartOptions"
+			[colors]="chartColors"
+			[legend]="chartLegend"
+			[chartType]="chartType"
+			(chartHover)="chartHovered($event)"></canvas>
+</div>
