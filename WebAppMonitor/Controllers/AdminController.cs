@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -22,6 +19,7 @@ namespace WebAppMonitor.Controllers
 	{
 
 		public DateTime LastQueryInHistory { get; set; }
+		public long TotalRecords { get; set; }
 
 	}
 
@@ -57,6 +55,7 @@ namespace WebAppMonitor.Controllers
 		    var result = new GetStatsInfoResult();
 			_connectionProvider.GetConnection((connection) => {
 				result.LastQueryInHistory =  connection.ExecuteScalar<DateTime>("SELECT TOP 1 end_time_utc FROM QueryHistory ORDER BY end_time_utc DESC");
+				result.TotalRecords =  connection.ExecuteScalar<long>("SELECT Count(*) FROM QueryHistory");
 			});
 	        return result;
 		}

@@ -6,7 +6,10 @@
 		  <input mdInput [mdDatepicker]="picker" placeholder="Date" [mdDatepickerFilter]="getIsAvalilableDate.bind(this)"  [(value)]="currentDate" (focusedChange)="picker.open(); ngModel">
 		  <button mdSuffix [mdDatepickerToggle]="picker"></button>
 	  </md-input-container>
-    <md-datepicker #picker (selectedChanged)="onSelectedDateChanged($event)"></md-datepicker>
+	  <md-datepicker #picker (selectedChanged)="onSelectedDateChanged($event)"></md-datepicker>
+	  <div class="columns-settings">
+		  <md-checkbox *ngFor="let columnDef of columnDefs" (change)="onColumnVisibleChanged(columnDef);" [(ngModel)]="!columnDef.hide" class="columns-settings-item">{{columnDef.headerDesc || columnDef.headerName}}</md-checkbox>
+	  </div>
   </md-sidenav>
 	<div class="sidenav-content">
 		<app-query-info *ngIf="activeQuery" (hide)="deselectRows()" [queryData]="activeQuery"></app-query-info>
@@ -14,7 +17,7 @@
 			<md-input-container class="filter-item filter-wrap">
 				<input mdInput #searchBox placeholder="Query filter" (keyup)="search(searchBox.value)">
 			</md-input-container>
-			<button class="filter-item" md-button (click)="search(null);searchBox.value=null;"><md-icon>clear</md-icon></button>
+			<button class="filter-item-clear" md-mini-fab (click)="search(null);searchBox.value=null;"><md-icon>clear</md-icon></button>
 		</div>
 		<ag-grid-angular style="width: 100%; height: 99%;"
 		                 class="ag-material query-stats-grid"

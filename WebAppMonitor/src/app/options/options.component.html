@@ -1,6 +1,7 @@
 ﻿<form class="import-data-form" onsubmit="return false">
 	<div *ngIf="lastQueryInHistory">
-		<h3>Last query in history: {{moment(lastQueryInHistory).format("YYYY-MM-DD hh:mm")}}</h3>
+		<h4>Last query in history: {{moment(lastQueryInHistory).format("YYYY-MM-DD hh:mm")}}</h4>
+		<h4>Total records: {{totalRecords}}</h4>
 	</div>
 	<md-progress-bar *ngIf="importInProgress"
 	                 class="import-data-progress"
