@@ -2,7 +2,7 @@
 	<button md-button routerLink="/">Web app monitor</button>
 	<button md-button routerLink="/queryStats">Query stats</button>
 	<button md-button routerLink="/options">Options</button>
-	<button md-button routerLink="/queryInfo" *ngIf="localhost">QueryInfo</button>
+	<button md-button routerLink="/queryInfo" *ngIf="isDebug">QueryInfo</button>
 </md-toolbar>
 <div class="body-content">
   <router-outlet></router-outlet>

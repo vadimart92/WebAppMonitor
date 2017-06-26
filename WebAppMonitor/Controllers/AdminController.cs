@@ -18,6 +18,13 @@ namespace WebAppMonitor.Controllers
 		public string FileName { get; set; }
 
 	}
+	public class GetStatsInfoResult
+	{
+
+		public DateTime LastQueryInHistory { get; set; }
+
+	}
+
 
 
 	[Route("api/[controller]")]
@@ -43,6 +50,15 @@ namespace WebAppMonitor.Controllers
 			});
 	        CaheUtils.ClearCache(_memoryCache);
 	        return Ok();
+		}
+
+	    [HttpGet("getStatsInfo")]
+        public GetStatsInfoResult ImportDailyData() {
+		    var result = new GetStatsInfoResult();
+			_connectionProvider.GetConnection((connection) => {
+				result.LastQueryInHistory =  connection.ExecuteScalar<DateTime>("SELECT TOP 1 end_time_utc FROM QueryHistory ORDER BY end_time_utc DESC");
+			});
+	        return result;
 		}
 
     }

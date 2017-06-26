@@ -9,7 +9,10 @@ namespace WebAppMonitor
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
+#if !DEBUG
+				.UseUrls(@"http://tscore-dev-13:5000/")
+#endif
+				.UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseApplicationInsights()

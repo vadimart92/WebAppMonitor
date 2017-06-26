@@ -94,13 +94,13 @@ export class QueryStatsComponent implements OnInit {
 			})
 			.then(_ => this.loadGridData());
 	}
-	getColumns() : any[] {
+	getColumns(): any[] {
 		return [
-			{ headerName: "Count", field: "count", sortingOrder: ['desc', 'asc'], width: 70, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total duration", field: "totalDurationStr", sortingOrder: ['desc', 'asc'], width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration") },
+			{ headerName: "Count", field: "count", sortingOrder: ['desc', 'asc'], filter: 'number', width: 70, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "Total duration", field: "totalDurationStr", sortingOrder: ['desc', 'asc'], width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration"),  },
 			{ headerName: "AVG duration", field: "averageDurationStr", sortingOrder: ['desc', 'asc'], width: 110, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "averageDuration") },
-			{ headerName: "AVG rows", field: "averageRowCount", sortingOrder: ['desc', 'asc'], width: 90, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG CPU", field: "averageCPU", sortingOrder: ['desc', 'asc'], width: 100, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG rows", field: "averageRowCount", sortingOrder: ['desc', 'asc'], filter: 'number', width: 90, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG CPU", field: "averageCPU", sortingOrder: ['desc', 'asc'], filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
 			{ headerName: "Text", field: "queryText",cellClass: 'query-stats-sql-cell'}
 		];
 	}

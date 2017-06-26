@@ -10,9 +10,12 @@
   </md-sidenav>
 	<div class="sidenav-content">
 		<app-query-info *ngIf="activeQuery" (hide)="deselectRows()" [queryData]="activeQuery"></app-query-info>
-		<md-input-container>
-			<input mdInput #searchBox placeholder="Query filter" (keyup)="search(searchBox.value)">
-		</md-input-container>
+		<div class="filter-wrap">
+			<md-input-container class="filter-item filter-wrap">
+				<input mdInput #searchBox placeholder="Query filter" (keyup)="search(searchBox.value)">
+			</md-input-container>
+			<button class="filter-item" md-button (click)="search(null);searchBox.value=null;"><md-icon>clear</md-icon></button>
+		</div>
 		<ag-grid-angular style="width: 100%; height: 99%;"
 		                 class="ag-material query-stats-grid"
 		                 [rowData]="queryStats"

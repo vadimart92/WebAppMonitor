@@ -1,13 +1,16 @@
 ﻿<form class="import-data-form" onsubmit="return false">
+	<div *ngIf="lastQueryInHistory">
+		<h3>Last query in history: {{moment(lastQueryInHistory).format("YYYY-MM-DD hh:mm")}}</h3>
+	</div>
 	<md-progress-bar *ngIf="importInProgress"
-		class="import-data-progress"
-		color="primary"
-		mode="indeterminate">
+	                 class="import-data-progress"
+	                 color="primary"
+	                 mode="indeterminate">
 	</md-progress-bar>
 	<td><md-input-container class="import-data-full-width">
 		<input mdInput placeholder="Directory path" [(value)]="fileName" #directoryPath>
 	</md-input-container></td>
 	<button md-raised-button (click)="importData(directoryPath.value)">Import</button>
 	<hr class="clear-cache-divider"/>
-	<button  md-raised-button (click)="clearCache()">Clear cache</button>
+	<button md-raised-button (click)="clearCache()">Clear cache</button>
 </form>

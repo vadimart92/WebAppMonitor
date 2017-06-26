@@ -19,6 +19,7 @@ import { QueryInfoComponent } from './query-info/query-info.component';
 import { RowsLoadingDialogComponent } from './rows-loading-dialog/rows-loading-dialog.component';
 import { OptionsComponent } from './options/options.component';
 import { QueryChartComponent } from './query-chart/query-chart.component';
+import { AdminService } from './admin.service';
 
 @NgModule({
 	declarations: [
@@ -43,7 +44,7 @@ import { QueryChartComponent } from './query-chart/query-chart.component';
 	],
 	entryComponents: [RowsLoadingDialogComponent],
 	providers: [
-		QueryStatsService
+		QueryStatsService, AdminService
 	],
 	bootstrap: [AppComponent]
 })

@@ -20,6 +20,9 @@
 		<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.1" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\WebAppMonitor.Data\WebAppMonitor.Data.csproj" />
+	</ItemGroup>
+	<ItemGroup>
 	  <Reference Include="gudusoft.gsqlparser">
 	    <HintPath>Lib\gudusoft.gsqlparser.dll</HintPath>
 	  </Reference>
@@ -27,9 +30,9 @@
 	    <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Data.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
-	<Target Name="Build Angular" BeforeTargets="Build" Condition="$(Configuration) == 'Release'">
+	<Target Name="Build Angular" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
 		<Message Text="* * * * * * Building Angular App * * * * * *" Importance="high" />
-		<Exec Command="ng build -prod" />
+		<Exec Command="ng build -prod --aot=false" />
 	</Target>
 	<Target Name="StartNg" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Debug'">
 		<Message Text="*** Starting NG dev" Importance="high" />

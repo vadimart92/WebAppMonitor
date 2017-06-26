@@ -1,4 +1,5 @@
 ﻿import { Component } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Component({
 	selector: 'app-root',
@@ -6,8 +7,8 @@
 	styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-	localhost: boolean = false;
+	isDebug: boolean = false;
 	constructor() {
-		this.localhost = (window.location.host === "localhost:4200");
+		this.isDebug = !environment.production;
 	}
 }

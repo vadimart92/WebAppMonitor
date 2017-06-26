@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" %~dp0..\WebAppMonitor.sln /target:publish

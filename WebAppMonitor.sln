@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor", "WebAppMoni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools", "DevTools\DevTools.csproj", "{F209A3B9-A579-41E5-927E-0226454FED10}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedEventsXmlParser", "ExtendedEventsXmlParser\ExtendedEventsXmlParser.csproj", "{86443543-C034-4592-B977-4751228B3388}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data", "WebAppMonitor.Data\WebAppMonitor.Data.csproj", "{FB40853D-6433-4ED5-8319-C469EDF5ADEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86443543-C034-4592-B977-4751228B3388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86443543-C034-4592-B977-4751228B3388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86443543-C034-4592-B977-4751228B3388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86443543-C034-4592-B977-4751228B3388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
