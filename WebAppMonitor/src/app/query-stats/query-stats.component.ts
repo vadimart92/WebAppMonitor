@@ -16,6 +16,8 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 import { RowsLoadingDialogComponent } from '../rows-loading-dialog/rows-loading-dialog.component';
 import { QueryStatsService } from './query-stats.service'
 import { TimeUtils } from '../utils/utils'
+import { ApiDataService, StatsQueryOptions } from "../data.service"
+import { QueryStatInfo } from "../entities/query-stats-info"
 
 @Component({
 	selector: 'app-query-stats',
@@ -27,10 +29,11 @@ import { TimeUtils } from '../utils/utils'
 export class QueryStatsComponent implements OnInit {
 	gridOptions: GridOptions;
 	columnDefs: any[];
-	queryStats: any[];
+	queryStats: QueryStatInfo[];
 	daysWithData: Date[];
 	currentDate: Date;
 	activeQuery: any = null;
+	columnsSettings: any;
 	private _searchTerms = new Subject<string>();
 	private _timeUtils = new TimeUtils();
 	private _dialogRef: MdDialogRef<RowsLoadingDialogComponent>;
@@ -38,7 +41,7 @@ export class QueryStatsComponent implements OnInit {
 	sideNavOpened: boolean = true;
 	@ViewChild(MdDatepicker) dp: MdDatepicker<Date>;
 
-	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService) {
+	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
 		this.currentDate = new Date();
 		this.daysWithData = [];
 		this.initGridOptions();
@@ -65,8 +68,17 @@ export class QueryStatsComponent implements OnInit {
 			},
 			onSelectionChanged: this.onGridSelectionChanged.bind(this),
 			getRowClass: () => "query-stats-row",
-			suppressRowClickSelection: true
+			suppressRowClickSelection: true,
+			onSortChanged: this.onGridSortChanged.bind(this)
 		};
+	}
+	onColumnVisibleChanged(columnConfig) {
+		this.gridOptions.columnApi.setColumnVisible(columnConfig.colId, columnConfig.hide);
+		columnConfig.hide = !columnConfig.hide;
+		this.gridOptions.api.sizeColumnsToFit();
+	}
+	onGridSortChanged() {
+		this.loadGridData();
 	}
 	timeComparator(dataPropName, valueA, valueB, nodeA, nodeB, isInverted): Number {
 		return nodeA.data[dataPropName] - nodeB.data[dataPropName];
@@ -96,12 +108,15 @@ export class QueryStatsComponent implements OnInit {
 	}
 	getColumns(): any[] {
 		return [
-			{ headerName: "Count", field: "count", sortingOrder: ['desc', 'asc'], filter: 'number', width: 70, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total duration", field: "totalDurationStr", sortingOrder: ['desc', 'asc'], width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration"),  },
-			{ headerName: "AVG duration", field: "averageDurationStr", sortingOrder: ['desc', 'asc'], width: 110, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "averageDuration") },
-			{ headerName: "AVG rows", field: "averageRowCount", sortingOrder: ['desc', 'asc'], filter: 'number', width: 90, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG CPU", field: "averageCPU", sortingOrder: ['desc', 'asc'], filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Text", field: "queryText",cellClass: 'query-stats-sql-cell'}
+			{ headerName: "Count", colId: "count", field: "count", sortingOrder: ['desc', 'asc'], filter: 'number', width: 70, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "Total duration", field: "totalDurationStr", colId: "totalDuration", sortingOrder: ['desc', 'asc'], sort: "desc" , width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration") },
+			{ headerName: "AVG duration", field: "avgDurationStr", colId: "avgDuration", sortingOrder: ['desc', 'asc'], width: 110, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "avgDuration") },
+			{ headerName: "AVG rows", colId: "avgRowCount", field: "avgRowCount", sortingOrder: ['desc', 'asc'], filter: 'number', width: 90, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG CPU", colId: "avgCPU", field: "avgCPU", sortingOrder: ['desc', 'asc'], filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG reads", colId: "avgLogicalReads", field: "avgLogicalReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG writes", colId: "avgWrites", field: "avgWrites", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "AVG ado reads", headerDesc: "AVG ado.net reads", colId: "avgAdoReads", field: "avgAdoReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
+			{ headerName: "Text", colId: "queryText", field: "queryText",cellClass: 'query-stats-sql-cell'}
 		];
 	}
 	toggleLoadMask() {
@@ -114,14 +129,19 @@ export class QueryStatsComponent implements OnInit {
 			this._dialogRef = null;
 		}
 	}
+	getGridOptions(): StatsQueryOptions {
+		var sortModel = this.gridOptions.api.getSortModel();
+		var orderBy = sortModel.map(sm => `${sm.colId} ${sm.sort}`);
+		return <StatsQueryOptions>{
+			orderBy: orderBy,
+			take: 100,
+			date: this.currentDate
+		}
+	}
 	loadGridData() {
+		this.queryStats = [];
 		this.toggleLoadMask();
-		this._statsService.getStats(this.currentDate).then(data => {
-			var stats = data.queries;
-			_.each(stats, (statRow:any) => {
-				 statRow.totalDurationStr = this._timeUtils.formatAsTime(statRow.totalDuration);
-				 statRow.averageDurationStr = this._timeUtils.formatAsTime(statRow.averageDuration);
-			});
+		this._dataService.getStats(this.getGridOptions()).then(stats => {
 			this.toggleLoadMask();
 			if (!stats.length) {
 				this.gridOptions.api.showNoRowsOverlay();
@@ -151,7 +171,6 @@ export class QueryStatsComponent implements OnInit {
 		params.api.sizeColumnsToFit();
 	}
 	onGridSelectionChanged() {
-		//if (1 === 1) return;
 		var selectedRows = this.gridOptions.api.getSelectedRows();
 		if (selectedRows.length === 1) {
 			this.activeQuery = {

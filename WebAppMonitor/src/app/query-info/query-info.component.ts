@@ -7,7 +7,7 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 import { TimeUtils } from '../utils/utils'
 import { QueryStatsService } from '../query-stats/query-stats.service'
 import { ChartData, ChartAxisType } from '../query-chart/query-chart.component'
-
+import { QueryStatInfo } from "../entities/query-stats-info"
 
 
 @Component({
@@ -47,6 +47,9 @@ export class QueryInfoComponent implements OnInit {
 			this.selectedTabIndex = result;
 		}
 	}
+	getCurrentInfo():QueryStatInfo {
+		return this.queryData.info as QueryStatInfo;
+	}
 	ngOnInit() {
 		if (!this.queryData) {
 			this.queryData = {
@@ -63,8 +66,8 @@ export class QueryInfoComponent implements OnInit {
 					"queryText": " sql"
 				}
 			}
-        }
-		this._statsService.getQueryInfo(this.queryData.info.normQueryTextHistoryId)
+		}
+		this._statsService.getQueryInfo(this.getCurrentInfo())
             .then((rows) => {
 				this.prepareChartData(rows);
 			});
@@ -74,32 +77,37 @@ export class QueryInfoComponent implements OnInit {
 		"count": {
 			label: "Count",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "count"
+			dataColumn: "Count"
 		},
 		"totalDuration": {
 			label: "Total duration",
 			yAxisType: ChartAxisType.Time,
-			dataColumn: "totalDuration"
+			dataColumn: "TotalDuration"
 		},
 		"avgDuration": {
 			label: "AVG duration",
 			yAxisType: ChartAxisType.Time,
-			dataColumn: "avgDuration"
+			dataColumn: "AvgDuration"
 		},
 		"avgCPU": {
 			label: "AVG CPU",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgCPU"
+			dataColumn: "AvgCPU"
 		},
 		"avgRowCount": {
 			label: "AVG row count",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgRowCount"
+			dataColumn: "AvgRowCount"
 		},
 		"avgLogicalReads": {
 			label: "AVG logical reads",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgLogicalReads"
+			dataColumn: "AvgLogicalReads"
+		},
+		"avgAdoReads": {
+			label: "AVG ado.net reads",
+			yAxisType: ChartAxisType.Number,
+			dataColumn: "AvgAdoReads"
 		}
 	};
 	chartsData: any[] = [];
@@ -113,7 +121,7 @@ export class QueryInfoComponent implements OnInit {
 		});
 		var chartNames = _.keys(this.chartsConfig);
 		_.each(this._queryStatsInfo, (infoRow) => {
-			let date = infoRow.date;
+			let date = infoRow.Date;
 			_.each(chartNames, (chartName) => {
 				var config = this.chartsConfig[chartName];
 				chartsData[chartName].seriesData.push({
@@ -139,7 +147,7 @@ export class QueryInfoComponent implements OnInit {
 		});
 	}
 	public formatSql() {
-		this._statsService.formatSql(this.queryData.info.normQueryTextHistoryId)
+		this._statsService.formatSql(this.getCurrentInfo())
 			.then(text => {
 				this.queryData.info.formatedText = text;
 			});

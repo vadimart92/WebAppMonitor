@@ -10,6 +10,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Breeze.Server.AspNetCore.NetFramework" Version="0.1.4" />
+    <PackageReference Include="Breeze.Server.Persistence.EF6" Version="0.1.4" />
     <PackageReference Include="Dapper" Version="1.50.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
@@ -23,6 +25,12 @@
 	  <ProjectReference Include="..\WebAppMonitor.Data\WebAppMonitor.Data.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Reference Include="Breeze.AspNetCore.NetFramework">
+	    <HintPath>..\packages\Breeze.Server.AspNetCore.NetFramework.0.1.4\lib\Breeze.AspNetCore.NetFramework.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Breeze.Persistence.EF6">
+	    <HintPath>..\packages\Breeze.Server.Persistence.EF6.0.1.4\lib\Breeze.Persistence.EF6.dll</HintPath>
+	  </Reference>
 	  <Reference Include="gudusoft.gsqlparser">
 	    <HintPath>Lib\gudusoft.gsqlparser.dll</HintPath>
 	  </Reference>

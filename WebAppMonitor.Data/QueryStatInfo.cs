@@ -1,13 +1,11 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace WebAppMonitor.Data
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    [Table("QueryStatInfo")]
-    public partial class QueryStatInfo
+	[Table("QueryStatInfo")]
+    public class QueryStatInfo
     {
         [Column(TypeName = "date")]
         public DateTime? Date { get; set; }
@@ -25,6 +23,8 @@ namespace WebAppMonitor.Data
         public decimal? AvgCPU { get; set; }
 
         public decimal? AvgWrites { get; set; }
+
+		public decimal? AvgAdoReads { get; set; }
 
         public string QueryText { get; set; }
 

@@ -144,7 +144,6 @@ namespace WebAppMonitor.Controllers
 				Result = formattedText
 			};
 		}
-
 		[HttpGet("info")]
 		public async Task<QueryStatsInfo> GetQueryStatsInfo()
 		{
@@ -158,7 +157,6 @@ namespace WebAppMonitor.Controllers
 				return Task.FromResult(result);
 			}).ConfigureAwait(false);
 		}
-
 		[HttpGet("queryInfo/{textId}")]
 		public async Task<QueryStatsInfoResponse> GetSingleQueryStatsInfo(Guid textId)
 		{
@@ -170,13 +168,12 @@ namespace WebAppMonitor.Controllers
 					result.Result = c.Query(@"
 						SELECT *
 						FROM QueryStatInfo
-						WHERE NormQueryTextHistoryId = @textId
+						WHERE NormalizedQueryTextId = @textId
 						", new { textId = textId });
 				});
 				return Task.FromResult(result);
 			}).ConfigureAwait(false);
 		}
-
 		[HttpPost("clearCache")]
 		public void ClearCache() {
 			CaheUtils.ClearCache(_memoryCache);

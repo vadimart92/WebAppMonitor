@@ -12,6 +12,7 @@ import { AdminService } from '../admin.service';
 })
 export class OptionsComponent implements OnInit {
 	lastQueryInHistory: Date;
+	totalRecords: number;
 	constructor(public snackBar: MdSnackBar, private _http: Http, private router: Router, private _adminService: AdminService) {
 		router.events.subscribe((val) => {
 			if (val instanceof NavigationEnd) {
@@ -37,7 +38,8 @@ export class OptionsComponent implements OnInit {
 	}
 	refreshStatsInfo() {
 		this._adminService.getStatsInfo().then((info) => {
-			this.lastQueryInHistory = info.lastQueryInHistory;
+			this.lastQueryInHistory = info.LastQueryInHistory;
+			this.totalRecords = info.TotalRecords;
 		});
 	}
 	importData(fileName: string) {

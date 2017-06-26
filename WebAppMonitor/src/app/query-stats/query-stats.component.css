@@ -36,9 +36,23 @@ md-datepicker-content {
 	cursor: text;
 	user-select: text;
 }
-.filter-wrap .filter-item {
-	display: inline-block;
+.filter-wrap .filter-item-clear {
+	position: absolute;
+	top: 15px;
+	right: 0;
+	background-color: transparent;
+	box-shadow: none;
+}
+.filter-wrap .filter-item-clear:hover {
+	box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
 }
 .filter-wrap .filter-item.filter-wrap {
-	width: 92%;
+	width: 100%;
+}
+.columns-settings .columns-settings-item {
+	display: block;
+	margin-top: 5px;
+}
+.columns-settings .columns-settings-item:hover {
+	background-color: rgba(254, 224, 110, 0.27);
 }

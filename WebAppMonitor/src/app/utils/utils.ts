@@ -2,6 +2,14 @@
 import * as moment from 'moment';
 import 'moment-duration-format';
 
+export function formatAsTime(seconds: Number): string {
+	return moment.duration(seconds, "seconds").format("h:mm:ss", { trim: false });
+}
+
+export function formatAsDate(date: Date): string {
+	return moment(date).format("YYYY-MM-DD");
+}
+
 export class TimeUtils {
 	compareTime(timeA:string, timeB:string, inverted:boolean) {
 		var a = this.toSeconds(timeA);
@@ -23,9 +31,9 @@ export class TimeUtils {
 			.reduce((a, b) => a + b);
 	}
 	public formatAsTime(seconds: Number): string {
-		return moment.duration(seconds, "seconds").format("h:mm:ss", { trim: false });
+		return formatAsTime(seconds);
 	}
 	public formatAsDate(date: Date): string {
-		return moment(date).format("YYYY-MM-DD");
+		return formatAsDate(date);
 	}
 }
