@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -32,6 +33,8 @@ namespace WebAppMonitor
 			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(cs));
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(cs));
+			services.AddSingleton<IDataImporter, DataImporter>();
+			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
@@ -49,6 +52,10 @@ namespace WebAppMonitor
 					context.Request.Path = "/index.html";
 					await next();
 				}
+			});
+			app.UseHangfireServer();
+			app.UseHangfireDashboard(options: new DashboardOptions() {
+				Authorization = new []{new HangfireAuthFilter()}
 			});
 			app.UseMvcWithDefaultRoute();
 			app.UseDefaultFiles();

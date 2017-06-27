@@ -1,8 +1,16 @@
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Data.Entity.ModelConfiguration;
 
 namespace WebAppMonitor.Data
 {
+	internal sealed class Configuration : DbMigrationsConfiguration<QueryStatsContext>
+	{
+		public Configuration() {
+			AutomaticMigrationsEnabled = false;
+		}
+	}
+
 	public class QueryStatsContext : DbContext
 	{
 		public QueryStatsContext(string  connectionString)
@@ -15,9 +23,11 @@ namespace WebAppMonitor.Data
 
 		public virtual DbSet<Date> Dates { get; set; }
 		public virtual DbSet<QueryStatInfo> QueryStatInfo { get; set; }
+		public virtual DbSet<Setting> Settings { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder) {
 			modelBuilder.Configurations.AddFromAssembly(typeof(QueryStatsContext).Assembly);
+			modelBuilder.Entity<Setting>().HasKey(s => s.Id);
 		}
 
 		public class QueryStatInfoMap: EntityTypeConfiguration<QueryStatInfo>

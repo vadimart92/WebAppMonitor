@@ -49,6 +49,9 @@ md-datepicker-content {
 .filter-wrap .filter-item.filter-wrap {
 	width: 100%;
 }
+.columns-settings {
+	margin-top: 10px;
+}
 .columns-settings .columns-settings-item {
 	display: block;
 	margin-top: 5px;

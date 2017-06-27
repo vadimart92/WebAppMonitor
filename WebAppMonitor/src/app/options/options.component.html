@@ -9,9 +9,16 @@
 	                 mode="indeterminate">
 	</md-progress-bar>
 	<td><md-input-container class="import-data-full-width">
-		<input mdInput placeholder="Directory path" [(value)]="fileName" #directoryPath>
+		<input mdInput placeholder="Directory template" [(value)]="importSettings.EventsDataDirectoryTemplate">
 	</md-input-container></td>
-	<button md-raised-button (click)="importData(directoryPath.value)">Import</button>
+	<td><md-input-container class="import-data-full-width">
+			<input mdInput placeholder="File template" [(value)]="importSettings.StatementsFileTemplate">
+	</md-input-container></td>
+	<button md-raised-button (click)="importData(importSettings)">Import</button>
+	<md-button-toggle (change)="toggleImportJob()" [checked]="!importJobActive">
+		{{importJobActive? "Deactivate" : "Activate"}} import job
+	</md-button-toggle>
 	<hr class="clear-cache-divider"/>
 	<button md-raised-button (click)="clearCache()">Clear cache</button>
+	<button md-raised-button (click)="openHangfire()">Open hangfire</button>
 </form>

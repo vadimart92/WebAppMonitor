@@ -23,6 +23,8 @@ export class OptionsComponent implements OnInit {
 	moment = moment;
 	importInProgress: boolean = false;
 	fileName: string;
+	importJobActive: boolean = false;
+	importSettings: any = null;
 	ngOnInit() {
 		var date = moment().format("YYYY-MM-DD");
 		this.fileName = "\\\\tscore-dev-13\\WorkAnalisys\\xevents\\Export_" + date + "\\" + date + "\\ts_sqlprofiler_05_sec*.xel";
@@ -40,12 +42,14 @@ export class OptionsComponent implements OnInit {
 		this._adminService.getStatsInfo().then((info) => {
 			this.lastQueryInHistory = info.LastQueryInHistory;
 			this.totalRecords = info.TotalRecords;
+			this.importJobActive = info.ImportJobActive;
+			this.importSettings = info.ImportSettings;
 		});
 	}
 	importData(fileName: string) {
 		this.snackBar.dismiss();
 		this.importInProgress = true;
-		this._http.post("/api/Admin/importDailyData", { fileName: fileName})
+		this._http.post("/api/Admin/importDailyData", { ImportSettings: null})
 			.subscribe(() => {
 				this.importInProgress = false;
 				this.snackBar.open("Done", null, {
@@ -59,6 +63,17 @@ export class OptionsComponent implements OnInit {
 				});
 				this.refreshStatsInfo();
 			});
-		
+	}
+	toggleImportJob() {
+		this._http.post("/api/Admin/toggleImportJob", null)
+			.subscribe(() => {
+				this.refreshStatsInfo();
+				this.snackBar.open("Done", null, {
+					duration: 1000
+				});
+			});
+	}
+	openHangfire() {
+		window.open("/hangfire", '_blank');
 	}
 }

@@ -6,5 +6,9 @@
   "/breeze": {
     "target": "http://localhost:5000",
     "secure": false
+  },
+  "/hangfire": {
+    "target": "http://localhost:5000",
+    "secure": false
   }
 }

@@ -39,6 +39,8 @@ export class QueryStatsComponent implements OnInit {
 	private _dialogRef: MdDialogRef<RowsLoadingDialogComponent>;
 	private _dialogTimeout: number;
 	sideNavOpened: boolean = true;
+	private _queryFilter: string = null;
+	private filterTextOnServer: boolean = false;
 	@ViewChild(MdDatepicker) dp: MdDatepicker<Date>;
 
 	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
@@ -93,7 +95,13 @@ export class QueryStatsComponent implements OnInit {
 				return Observable.of<string>();
 			})
 			.subscribe((term) => {
-				this.gridOptions.api.setQuickFilter(term);
+				if (this.filterTextOnServer) {
+					this._queryFilter = term.toString();
+					this.loadGridData();
+					return;
+				}
+				let api = this.gridOptions.api;
+				api.setQuickFilter(term);
 			});
 	}
 	loadData() {
@@ -132,11 +140,19 @@ export class QueryStatsComponent implements OnInit {
 	getGridOptions(): StatsQueryOptions {
 		var sortModel = this.gridOptions.api.getSortModel();
 		var orderBy = sortModel.map(sm => `${sm.colId} ${sm.sort}`);
-		return <StatsQueryOptions>{
+		let options = <StatsQueryOptions>{
 			orderBy: orderBy,
 			take: 100,
 			date: this.currentDate
+		};
+		if (this.filterTextOnServer && this._queryFilter) {
+			options.where = {
+				"queryText": {
+					"contains": this._queryFilter
+				}
+			}
 		}
+		return options;
 	}
 	loadGridData() {
 		this.queryStats = [];
