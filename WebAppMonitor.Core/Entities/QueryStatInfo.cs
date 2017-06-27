@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAppMonitor.Data
+namespace WebAppMonitor.Core.Entities
 {
 	[Table("QueryStatInfo")]
     public class QueryStatInfo

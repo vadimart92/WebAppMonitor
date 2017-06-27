@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAppMonitor.Data
+namespace WebAppMonitor.Core.Entities
 {
 	public class Date
 	{

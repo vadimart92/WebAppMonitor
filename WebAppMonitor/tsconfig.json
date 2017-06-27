@@ -14,11 +14,18 @@
 		],
 		"types": [
 			"underscore",
+			"jasmine",
 			"@types/moment-duration-format"
 		],
 		"lib": [
 			"es2016",
 			"dom"
+		],
+		"exclude": [
+			"node_modules/",
+			"wwwroot",
+			"test.ts",
+			"**/*.spec.ts"
 		]
 	}
 }

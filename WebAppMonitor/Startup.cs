@@ -2,11 +2,11 @@
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebAppMonitor.Common;
+using WebAppMonitor.Core;
 using WebAppMonitor.Data;
 
 namespace WebAppMonitor
@@ -35,6 +35,7 @@ namespace WebAppMonitor
 			services.AddScoped(provider => new QueryStatsContext(cs));
 			services.AddSingleton<IDataImporter, DataImporter>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
+			services.AddScoped<ISettingsRepository, SettingsRepository>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

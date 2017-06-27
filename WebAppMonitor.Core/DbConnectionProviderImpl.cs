@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-namespace WebAppMonitor.Common
+namespace WebAppMonitor.Core
 {
 	public class DbConnectionProviderImpl : IDbConnectionProvider
 	{

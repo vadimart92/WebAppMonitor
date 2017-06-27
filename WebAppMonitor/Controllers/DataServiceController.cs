@@ -2,6 +2,7 @@
 using Breeze.AspNetCore;
 using Breeze.Persistence.EF6;
 using Microsoft.AspNetCore.Mvc;
+using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Data;
 
 namespace WebAppMonitor.Controllers

@@ -1,4 +1,4 @@
-﻿namespace WebAppMonitor.Data
+﻿namespace WebAppMonitor.Core.Entities
 {
 	public class Setting
 	{

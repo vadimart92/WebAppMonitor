@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedEventsXmlParser", "ExtendedEventsXmlParser\ExtendedEventsXmlParser.csproj", "{86443543-C034-4592-B977-4751228B3388}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data", "WebAppMonitor.Data\WebAppMonitor.Data.csproj", "{FB40853D-6433-4ED5-8319-C469EDF5ADEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Core", "WebAppMonitor.Core\WebAppMonitor.Core.csproj", "{4995CF07-BF93-4A1A-9059-3E281D4408F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

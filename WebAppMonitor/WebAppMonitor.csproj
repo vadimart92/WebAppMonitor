@@ -24,6 +24,7 @@
 		<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.1" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj" />
 	  <ProjectReference Include="..\WebAppMonitor.Data\WebAppMonitor.Data.csproj" />
 	</ItemGroup>
 	<ItemGroup>

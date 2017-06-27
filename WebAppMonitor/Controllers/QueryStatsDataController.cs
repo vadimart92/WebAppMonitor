@@ -8,7 +8,7 @@ using gudusoft.gsqlparser.pp.para;
 using gudusoft.gsqlparser.pp.stmtformatter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using WebAppMonitor.Common;
+using WebAppMonitor.Core;
 
 namespace WebAppMonitor.Controllers
 {
