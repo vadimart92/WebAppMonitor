@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using WebAppMonitor.Common;
 using WebAppMonitor.Core;
 using WebAppMonitor.Data;
+using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor
 {
@@ -36,6 +37,7 @@ namespace WebAppMonitor
 			services.AddSingleton<IDataImporter, DataImporter>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddScoped<ISettingsRepository, SettingsRepository>();
+			services.AddScoped<IExtendedEventParser, ExtendedEventParser>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

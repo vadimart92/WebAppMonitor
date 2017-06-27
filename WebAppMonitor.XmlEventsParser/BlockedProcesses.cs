@@ -106,13 +106,13 @@ public partial class eventData
 public partial class eventDataValue
 {
 
-	private Blockedprocessreport blockedprocessreportField;
+	private eventDataValueBlockedprocessreport blockedprocessreportField;
 
 	private string[] textField;
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlElementAttribute("blocked-process-report")]
-	public Blockedprocessreport blockedprocessreport {
+	public eventDataValueBlockedprocessreport blockedprocessreport {
 		get {
 			return this.blockedprocessreportField;
 		}
@@ -135,18 +135,18 @@ public partial class eventDataValue
 
 /// <remarks/>
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class Blockedprocessreport
+public partial class eventDataValueBlockedprocessreport
 {
 
-	private Blockedprocess blockedprocessField;
+	private eventDataValueBlockedprocessreportBlockedprocess blockedprocessField;
 
-	private Blockingprocess blockingprocessField;
+	private eventDataValueBlockedprocessreportBlockingprocess blockingprocessField;
 
 	private uint monitorLoopField;
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlElementAttribute("blocked-process")]
-	public Blockedprocess blockedprocess {
+	public eventDataValueBlockedprocessreportBlockedprocess blockedprocess {
 		get {
 			return this.blockedprocessField;
 		}
@@ -157,7 +157,7 @@ public partial class Blockedprocessreport
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlElementAttribute("blocking-process")]
-	public Blockingprocess blockingprocess {
+	public eventDataValueBlockedprocessreportBlockingprocess blockingprocess {
 		get {
 			return this.blockingprocessField;
 		}
@@ -180,13 +180,13 @@ public partial class Blockedprocessreport
 
 /// <remarks/>
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class Blockedprocess
+public partial class eventDataValueBlockedprocessreportBlockedprocess
 {
 
-	private Process processField;
+	private eventDataValueBlockedprocessreportBlockedprocessProcess processField;
 
 	/// <remarks/>
-	public Process process {
+	public eventDataValueBlockedprocessreportBlockedprocessProcess process {
 		get {
 			return this.processField;
 		}
@@ -198,112 +198,10 @@ public partial class Blockedprocess
 
 /// <remarks/>
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class ProcessFrame
+public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 {
 
-	private byte lineField;
-
-	private byte stmtstartField;
-
-	private bool stmtstartFieldSpecified;
-
-	private byte stmtendField;
-
-	private bool stmtendFieldSpecified;
-
-	private string sqlhandleField;
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public byte line {
-		get {
-			return this.lineField;
-		}
-		set {
-			this.lineField = value;
-		}
-	}
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public byte stmtstart {
-		get {
-			return this.stmtstartField;
-		}
-		set {
-			this.stmtstartField = value;
-		}
-	}
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlIgnoreAttribute()]
-	public bool stmtstartSpecified {
-		get {
-			return this.stmtstartFieldSpecified;
-		}
-		set {
-			this.stmtstartFieldSpecified = value;
-		}
-	}
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public byte stmtend {
-		get {
-			return this.stmtendField;
-		}
-		set {
-			this.stmtendField = value;
-		}
-	}
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlIgnoreAttribute()]
-	public bool stmtendSpecified {
-		get {
-			return this.stmtendFieldSpecified;
-		}
-		set {
-			this.stmtendFieldSpecified = value;
-		}
-	}
-
-	/// <remarks/>
-	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public string sqlhandle {
-		get {
-			return this.sqlhandleField;
-		}
-		set {
-			this.sqlhandleField = value;
-		}
-	}
-}
-
-/// <remarks/>
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class Blockingprocess
-{
-
-	private Process processField;
-
-	/// <remarks/>
-	public Process process {
-		get {
-			return this.processField;
-		}
-		set {
-			this.processField = value;
-		}
-	}
-}
-
-/// <remarks/>
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class Process
-{
-
-	private ProcessFrame[] executionStackField;
+	private eventDataValueBlockedprocessreportBlockedprocessProcessFrame[] executionStackField;
 
 	private string inputbufField;
 
@@ -371,7 +269,7 @@ public partial class Process
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlArrayItemAttribute("frame", IsNullable = false)]
-	public ProcessFrame[] executionStack {
+	public eventDataValueBlockedprocessreportBlockedprocessProcessFrame[] executionStack {
 		get {
 			return this.executionStackField;
 		}
@@ -731,3 +629,370 @@ public partial class Process
 		}
 	}
 }
+
+/// <remarks/>
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+public partial class eventDataValueBlockedprocessreportBlockedprocessProcessFrame
+{
+
+	private byte lineField;
+
+	private byte stmtstartField;
+
+	private bool stmtstartFieldSpecified;
+
+	private byte stmtendField;
+
+	private bool stmtendFieldSpecified;
+
+	private string sqlhandleField;
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte line {
+		get {
+			return this.lineField;
+		}
+		set {
+			this.lineField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte stmtstart {
+		get {
+			return this.stmtstartField;
+		}
+		set {
+			this.stmtstartField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlIgnoreAttribute()]
+	public bool stmtstartSpecified {
+		get {
+			return this.stmtstartFieldSpecified;
+		}
+		set {
+			this.stmtstartFieldSpecified = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte stmtend {
+		get {
+			return this.stmtendField;
+		}
+		set {
+			this.stmtendField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlIgnoreAttribute()]
+	public bool stmtendSpecified {
+		get {
+			return this.stmtendFieldSpecified;
+		}
+		set {
+			this.stmtendFieldSpecified = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public string sqlhandle {
+		get {
+			return this.sqlhandleField;
+		}
+		set {
+			this.sqlhandleField = value;
+		}
+	}
+}
+
+/// <remarks/>
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+public partial class eventDataValueBlockedprocessreportBlockingprocess
+{
+
+	private BlockingProcess processField;
+
+	/// <remarks/>
+	public BlockingProcess process {
+		get {
+			return this.processField;
+		}
+		set {
+			this.processField = value;
+		}
+	}
+}
+
+/// <remarks/>
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+public partial class BlockingProcess
+{
+
+	private object executionStackField;
+
+	private string inputbufField;
+
+	private string statusField;
+
+	private ushort spidField;
+
+	private byte sbidField;
+
+	private byte ecidField;
+
+	private byte priorityField;
+
+	private byte trancountField;
+
+	private System.DateTime lastbatchstartedField;
+
+	private System.DateTime lastbatchcompletedField;
+
+	private System.DateTime lastattentionField;
+
+	private string clientappField;
+
+	private string hostnameField;
+
+	private ushort hostpidField;
+
+	private string isolationlevelField;
+
+	private ulong xactidField;
+
+	private byte currentdbField;
+
+	private uint lockTimeoutField;
+
+	private uint clientoption1Field;
+
+	private uint clientoption2Field;
+
+	/// <remarks/>
+	public object executionStack {
+		get {
+			return this.executionStackField;
+		}
+		set {
+			this.executionStackField = value;
+		}
+	}
+
+	/// <remarks/>
+	public string inputbuf {
+		get {
+			return this.inputbufField;
+		}
+		set {
+			this.inputbufField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public string status {
+		get {
+			return this.statusField;
+		}
+		set {
+			this.statusField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public ushort spid {
+		get {
+			return this.spidField;
+		}
+		set {
+			this.spidField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte sbid {
+		get {
+			return this.sbidField;
+		}
+		set {
+			this.sbidField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte ecid {
+		get {
+			return this.ecidField;
+		}
+		set {
+			this.ecidField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte priority {
+		get {
+			return this.priorityField;
+		}
+		set {
+			this.priorityField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte trancount {
+		get {
+			return this.trancountField;
+		}
+		set {
+			this.trancountField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public System.DateTime lastbatchstarted {
+		get {
+			return this.lastbatchstartedField;
+		}
+		set {
+			this.lastbatchstartedField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public System.DateTime lastbatchcompleted {
+		get {
+			return this.lastbatchcompletedField;
+		}
+		set {
+			this.lastbatchcompletedField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public System.DateTime lastattention {
+		get {
+			return this.lastattentionField;
+		}
+		set {
+			this.lastattentionField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public string clientapp {
+		get {
+			return this.clientappField;
+		}
+		set {
+			this.clientappField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public string hostname {
+		get {
+			return this.hostnameField;
+		}
+		set {
+			this.hostnameField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public ushort hostpid {
+		get {
+			return this.hostpidField;
+		}
+		set {
+			this.hostpidField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public string isolationlevel {
+		get {
+			return this.isolationlevelField;
+		}
+		set {
+			this.isolationlevelField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public ulong xactid {
+		get {
+			return this.xactidField;
+		}
+		set {
+			this.xactidField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public byte currentdb {
+		get {
+			return this.currentdbField;
+		}
+		set {
+			this.currentdbField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public uint lockTimeout {
+		get {
+			return this.lockTimeoutField;
+		}
+		set {
+			this.lockTimeoutField = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public uint clientoption1 {
+		get {
+			return this.clientoption1Field;
+		}
+		set {
+			this.clientoption1Field = value;
+		}
+	}
+
+	/// <remarks/>
+	[System.Xml.Serialization.XmlAttributeAttribute()]
+	public uint clientoption2 {
+		get {
+			return this.clientoption2Field;
+		}
+		set {
+			this.clientoption2Field = value;
+		}
+	}
+}
+

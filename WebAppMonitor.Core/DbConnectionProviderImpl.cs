@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+using Dapper;
 
 namespace WebAppMonitor.Core
 {
 	public class DbConnectionProviderImpl : IDbConnectionProvider
 	{
 
-		private string _cs;
+		private readonly string _cs;
 
 		public DbConnectionProviderImpl(string cs) {
 			_cs = cs;
@@ -19,5 +21,10 @@ namespace WebAppMonitor.Core
 			}
 		}
 
+		public IDataReader GetReader(CommandDefinition command) {
+			using (var connection = new SqlConnection(_cs)) {
+				return connection.ExecuteReader(command, CommandBehavior.CloseConnection);
+			}
+		}
 	}
 }

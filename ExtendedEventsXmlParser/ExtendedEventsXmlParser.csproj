@@ -41,8 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockedProcesses.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="ReportDeserializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj">
+      <Project>{4995cf07-bf93-4a1a-9059-3e281d4408f8}</Project>
+      <Name>WebAppMonitor.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

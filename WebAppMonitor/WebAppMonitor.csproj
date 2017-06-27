@@ -26,6 +26,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj" />
 	  <ProjectReference Include="..\WebAppMonitor.Data\WebAppMonitor.Data.csproj" />
+	  <ProjectReference Include="..\WebAppMonitor.XmlEventsParser\WebAppMonitor.XmlEventsParser.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="Breeze.AspNetCore.NetFramework">
