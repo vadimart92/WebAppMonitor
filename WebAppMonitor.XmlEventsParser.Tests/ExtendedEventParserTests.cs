@@ -40,7 +40,7 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 			var result = events.ToList();
 			var emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
 			var emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
-			var emptyDuration = result.Any(r => r.Duration == 0;
+			var emptyDuration = result.Any(r => r.Duration == 0);
 			Assert.IsFalse(emptyBlockers);
 			Assert.IsFalse(emptyBlocked);
 			Assert.IsFalse(emptyDuration);

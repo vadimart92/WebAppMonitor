@@ -38,6 +38,8 @@ namespace WebAppMonitor
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddScoped<ISettingsRepository, SettingsRepository>();
 			services.AddScoped<IExtendedEventParser, ExtendedEventParser>();
+			services.AddScoped<IExtendedEventDataSaver, ExtendedEventDataSaver>();
+			services.AddScoped<IExtendedEventLoader, ExtendedEventLoader>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

@@ -231,6 +231,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtendedEventDataSaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStatsContext.cs" />
     <Compile Include="SettingsRepository.cs" />
