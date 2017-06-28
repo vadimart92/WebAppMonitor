@@ -15,8 +15,9 @@ namespace WebAppMonitor.XmlEventsParser
 
 		public IEnumerable<QueryLockInfo> ReadEvents(string file) {
 			var query = @"SELECT CAST(event_data AS XML) XML FROM sys.fn_xe_file_target_read_file(@fileName, NULL, NULL, NULL)";
+			var parser = new ReportParser();
 			foreach (var row in _simpleDataProvider.Enumerate<string>(query, new { fileName = file })) {
-				var info = ReportDeserializer.Parse(row);
+				var info = parser.Parse(row);
 				var durationStr = GetDataValue(info, "duration");
 				ulong duration;
 				ulong.TryParse(durationStr, out duration);

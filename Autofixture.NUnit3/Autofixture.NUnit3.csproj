@@ -77,6 +77,7 @@
     <Compile Include="SubstituteRelay.cs" />
     <Compile Include="SubstituteRequest.cs" />
     <Compile Include="SubstituteRequestHandler.cs" />
+    <Compile Include="AutoNSubstituteDataAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
