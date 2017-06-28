@@ -6,13 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="3.50.2" />
-    <PackageReference Include="AutoFixture.AutoNSubstitute" Version="3.50.2" />
-    <PackageReference Include="AutoFixture.NUnit3" Version="3.50.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="NSubstitute" Version="2.0.3" />
     <PackageReference Include="NUnit" Version="3.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Autofixture.NUnit3\Autofixture.NUnit3.csproj" />
     <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj" />
     <ProjectReference Include="..\WebAppMonitor.XmlEventsParser\WebAppMonitor.XmlEventsParser.csproj" />
   </ItemGroup>
@@ -20,6 +21,9 @@
   <ItemGroup>
     <None Update="collect_long_locks.xel">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

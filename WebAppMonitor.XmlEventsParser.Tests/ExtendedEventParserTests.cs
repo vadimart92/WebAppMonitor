@@ -1,22 +1,47 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Autofixture.NUnit3;
+using Newtonsoft.Json;
+using NSubstitute;
 using NUnit.Framework;
-using Ploeh.AutoFixture.AutoNSubstitute;
-using Ploeh.AutoFixture.NUnit3;
 using WebAppMonitor.Core;
 
-namespace WebAppMonitor.XmlEventsParser.Tests
-{
-    [TestFixture]
-    public class ExtendedEventParserTests
-    {
-        [Test, AutoData]
-        public void ReadEvents(int x) {
-	        //[Substitute]
-	        ISimpleDataProvider dataProvider = null;
+namespace WebAppMonitor.XmlEventsParser.Tests {
+	[TestFixture]
+	public class ExtendedEventParserTests {
+		private static string GetFilePath(string filePath) {
+			return Path.Combine(TestContext.CurrentContext.TestDirectory, filePath);
+		}
 
+		private IEnumerable<string> ReadXmlLines() {
+			using (var reader = new JsonTextReader(new StreamReader(GetFilePath("data.json")))) {
+				if (!reader.Read()) {
+					yield break;
+				}
+				while (reader.Read()) {
+					if (reader.TokenType != JsonToken.StartObject) {
+						yield break;
+					}
+					while (reader.TokenType != JsonToken.PropertyName) {
+						reader.Read();
+					}
+					yield return reader.ReadAsString();
+					reader.Read();
+				}
+			}
+		}
+
+		[Test, AutoNSubstituteData]
+		public void ReadEvents(ISimpleDataProvider dataProvider) {
+			dataProvider.Enumerate<string>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines());
 			var p = new ExtendedEventParser(dataProvider);
-	        var filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "collect_long_locks.xel");
-	        var events = p.ReadEvents(filePath);
-        }
-    }
+			var events = p.ReadEvents("someFile");
+			var result = events.ToList();
+			var emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
+			var emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
+			Assert.IsFalse(emptyBlockers);
+			Assert.IsFalse(emptyBlocked);
+		}
+	}
 }
