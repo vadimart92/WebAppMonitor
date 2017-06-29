@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ExtendedEventsUtils", "ExtendedEventsUtils\ExtendedEventsUtils.sqlproj", "{76B44DC0-312C-41E3-9A01-50A64329FD25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data.Tests", "WebAppMonitor.Data.Tests\WebAppMonitor.Data.Tests.csproj", "{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAC2652A-E9BA-4858-9636-162F9502859B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,5 +88,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{1D420A80-7444-41CB-B866-F4A085C47689} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 	EndGlobalSection
 EndGlobal
