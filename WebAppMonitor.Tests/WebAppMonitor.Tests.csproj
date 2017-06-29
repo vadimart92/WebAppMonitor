@@ -2,18 +2,22 @@
 
   <PropertyGroup>    
     <TargetFramework>net47</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="3.50.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="1.1.2" />
     <PackageReference Include="NSubstitute" Version="2.0.3" />
     <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Autofixture.NUnit3\Autofixture.NUnit3.csproj" />
+    <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj" />
     <ProjectReference Include="..\WebAppMonitor\WebAppMonitor.csproj" />
   </ItemGroup>
 

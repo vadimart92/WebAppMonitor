@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -10,12 +11,8 @@ using WebAppMonitor.Data.Entities;
 using Z.Dapper.Plus;
 using Z.EntityFramework.Plus;
 
-namespace WebAppMonitor.Data
-{
-
-	public class ExtendedEventDataSaver: IExtendedEventDataSaver
-	{
-
+namespace WebAppMonitor.Data {
+	public class ExtendedEventDataSaver : IExtendedEventDataSaver {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private Dictionary<byte[], Guid> _normQueryMap;
 		private readonly List<NormQueryTextHistory> _pendingQueries = new List<NormQueryTextHistory>();
@@ -23,7 +20,7 @@ namespace WebAppMonitor.Data
 		private readonly SHA512 _hasher = SHA512.Create();
 		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
 		private readonly QueryStatsContext _queryStatsContext;
-		
+
 		public ExtendedEventDataSaver(IDbConnectionProvider connectionProvider, QueryStatsContext queryStatsContext) {
 			_connectionProvider = connectionProvider;
 			_queryStatsContext = queryStatsContext;
@@ -32,18 +29,14 @@ namespace WebAppMonitor.Data
 		}
 
 		private void InitDapperPlus() {
-			DapperPlusManager.Entity<NormQueryTextHistory>()
-				.Table("NormQueryTextHistory")
-				.Identity(x => x.Id);
-			DapperPlusManager.Entity<LongLocksInfo>()
-				.Table("LongLocksInfo")
-				.Identity(x => x.Id);
+			DapperPlusManager.Entity<NormQueryTextHistory>().Table("NormQueryTextHistory").Key(x => x.Id);
+			DapperPlusManager.Entity<LongLocksInfo>().Table("LongLocksInfo").Key(x => x.Id);
 		}
 
 		private Dictionary<byte[], Guid> NormQueryMap => _normQueryMap ?? InitNormQueryMap();
 
 		private Dictionary<byte[], Guid> InitNormQueryMap() {
-			var  result = new Dictionary<byte[], Guid>();
+			var result = new Dictionary<byte[], Guid>(ByteArrayComparer.Instance);
 			_connectionProvider.GetConnection(connection => {
 				var histories = connection.Query<NormQueryTextHistory>(@"SELECT Id, QueryHash FROM NormQueryTextHistory");
 				foreach (NormQueryTextHistory queryTextHistory in histories) {
@@ -62,12 +55,14 @@ namespace WebAppMonitor.Data
 			var hash = GetQueryHash(text);
 			if (!NormQueryMap.ContainsKey(hash)) {
 				var historyItem = new NormQueryTextHistory {
-					Id = new Guid(),
+					Id = Guid.NewGuid(),
 					QueryHash = hash,
 					NormalizedQuery = text
 				};
 				PushQueryItem(historyItem);
 				NormQueryMap[hash] = historyItem.Id;
+			}
+			else {
 			}
 			return NormQueryMap[hash];
 		}
@@ -79,20 +74,15 @@ namespace WebAppMonitor.Data
 			}
 		}
 
-		private void SavePendingQueryTextItems() {
-			_connectionProvider.GetConnection(connection => {
-				connection.BulkInsert(_pendingQueries);
-			});
-			_pendingQueries.Clear();
-		}
 
 		private List<Date> _dates;
+
 		private int GetDayId(DateTime dateTime) {
 			if (_dates == null) {
 				_dates = _queryStatsContext.Dates.ToList();
 			}
 			DateTime currentDate = dateTime.Date;
-			Date foundDate = _dates.First(d => d.DateValue == currentDate);
+			Date foundDate = _dates.FirstOrDefault(d => d.DateValue == currentDate);
 			if (foundDate != null) {
 				return foundDate.Id;
 			}
@@ -109,15 +99,23 @@ namespace WebAppMonitor.Data
 			Guid blockedTextId = RegisterQueryText(lockInfo.Blocked.Text);
 			Guid blockerTextId = RegisterQueryText(lockInfo.Blocker.Text);
 			Guid lockingMode = _lockModeRepository.GetId(lockInfo.LockMode);
+			int dayId = GetDayId(lockInfo.TimeStamp);
 			_pendingLocksInfo.Add(new LongLocksInfo {
 				Id = Guid.NewGuid(),
 				BlockedQueryId = blockedTextId,
 				BlockerQueryId = blockerTextId,
 				LockingModeId = lockingMode,
 				Date = lockInfo.TimeStamp,
-				DateId = GetDayId(lockInfo.TimeStamp),
+				DateId = dayId,
 				Duration = Convert.ToInt64(lockInfo.Duration)
 			});
+		}
+
+		private void SavePendingQueryTextItems() {
+			_connectionProvider.GetConnection(connection => {
+				connection.BulkInsert(_pendingQueries);
+			});
+			_pendingQueries.Clear();
 		}
 
 		public void Flush() {

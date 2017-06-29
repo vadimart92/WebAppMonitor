@@ -50,7 +50,7 @@ namespace WebAppMonitor.XmlEventsParser
 			return new QueryLockInfo {
 				TimeStamp = info.timestamp,
 				Duration = duration,
-				LockMode = GetDataValue(info, "lock_mode"),
+				LockMode = GetDataItem(info, "lock_mode")?.text,
 				Blocked = new Proess {
 					Text = blockedText.ExtractLongLocksSqlText()
 				},

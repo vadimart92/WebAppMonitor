@@ -10,7 +10,7 @@ namespace WebAppMonitor.Data
 	internal class SimpleLookupManager<TLookup> where TLookup: BaseLookup, new()
 	{
 
-		private readonly Dictionary<string, Guid> _itemsMapDictionary = new Dictionary<string, Guid>();
+		private Dictionary<string, Guid> _itemsMapDictionary ;
 
 		private Dictionary<string, Guid> ItemsMapDictionary => _itemsMapDictionary ?? InitItemsMap();
 
@@ -18,7 +18,7 @@ namespace WebAppMonitor.Data
 		private readonly string _lookupName = typeof(TLookup).Name;
 
 		private Dictionary<string, Guid> InitItemsMap() {
-			_itemsMapDictionary.Clear();
+			_itemsMapDictionary = new Dictionary<string, Guid>();
 			_connectionProvider.GetConnection(connection => {
 				string sql = $@"SELECT Id, Code FROM {_lookupName}";
 				foreach (BaseLookup baseLookup in connection.Query<BaseLookup>(sql)) {

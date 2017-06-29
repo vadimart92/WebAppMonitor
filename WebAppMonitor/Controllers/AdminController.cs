@@ -35,7 +35,7 @@ namespace WebAppMonitor.Controllers {
 			_dataImporter = dataImporter;
 		}
 
-		[HttpGet]
+		[HttpGet("importExtendedEvents")]
 		public IActionResult ImportExtendedEvents(string file) {
 			_dataImporter.ImportExtendedEvents(file);
 			return Ok();
@@ -77,7 +77,7 @@ namespace WebAppMonitor.Controllers {
 		}
 
 		[HttpGet("getStatsInfo")]
-		public GetStatsInfoResult ImportDailyData() {
+		public GetStatsInfoResult GetStatsInfo() {
 			var result = new GetStatsInfoResult();
 			_connectionProvider.GetConnection((connection) => {
 				result.LastQueryInHistory =

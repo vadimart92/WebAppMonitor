@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,28 +13,23 @@ using WebAppMonitor.Core;
 using WebAppMonitor.Data;
 using WebAppMonitor.XmlEventsParser;
 
-namespace WebAppMonitor
-{
-	public class Startup
-	{
+namespace WebAppMonitor {
+	public class Startup {
 		public static IConfigurationRoot Configuration { get; set; }
-		public Startup(IHostingEnvironment env)
-		{
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddEnvironmentVariables()
-				.AddJsonFile("appsettings.json", reloadOnChange:true, optional:false)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true);
+
+		public Startup(IHostingEnvironment env) {
+			var builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddEnvironmentVariables()
+				.AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
 			Configuration = builder.Build();
 			env.ConfigureNLog("nlog.config");
 		}
+
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddMvc()
-				.AddJsonOptions(options =>
-				{
-					options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-				});
+			services.AddMvc().AddJsonOptions(options => {
+				options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+			});
 
 			string cs = Configuration.GetConnectionString("db");
 			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(cs));
@@ -58,8 +54,7 @@ namespace WebAppMonitor
 
 			app.Use(async (context, next) => {
 				await next();
-				if (context.Response.StatusCode == 404 &&
-				    !Path.HasExtension(context.Request.Path.Value) &&
+				if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) &&
 				    !context.Request.Path.Value.StartsWith("/api/")) {
 					context.Request.Path = "/index.html";
 					await next();
@@ -67,7 +62,7 @@ namespace WebAppMonitor
 			});
 			app.UseHangfireServer();
 			app.UseHangfireDashboard(options: new DashboardOptions() {
-				Authorization = new []{new HangfireAuthFilter()}
+				Authorization = new[] {new HangfireAuthFilter()}
 			});
 			app.UseMvcWithDefaultRoute();
 			app.UseDefaultFiles();

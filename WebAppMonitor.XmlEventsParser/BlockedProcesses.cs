@@ -142,7 +142,7 @@ public partial class eventDataValueBlockedprocessreport
 
 	private eventDataValueBlockedprocessreportBlockingprocess blockingprocessField;
 
-	private ulong monitorLoopField;
+	private long monitorLoopField;
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlElementAttribute("blocked-process")]
@@ -168,7 +168,7 @@ public partial class eventDataValueBlockedprocessreport
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong monitorLoop {
+	public long monitorLoop {
 		get {
 			return this.monitorLoopField;
 		}
@@ -207,15 +207,15 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	private string idField;
 
-	private ulong taskpriorityField;
+	private long taskpriorityField;
 
-	private ulong logusedField;
+	private long logusedField;
 
 	private string waitresourceField;
 
-	private ulong waittimeField;
+	private long waittimeField;
 
-	private ulong ownerIdField;
+	private long ownerIdField;
 
 	private string transactionnameField;
 
@@ -225,21 +225,21 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	private string lockModeField;
 
-	private ulong scheduleridField;
+	private long scheduleridField;
 
-	private ulong kpidField;
+	private long kpidField;
 
 	private string statusField;
 
-	private ulong spidField;
+	private long spidField;
 
-	private ulong sbidField;
+	private long sbidField;
 
-	private ulong ecidField;
+	private long ecidField;
 
-	private ulong priorityField;
+	private long priorityField;
 
-	private ulong trancountField;
+	private long trancountField;
 
 	private System.DateTime lastbatchstartedField;
 
@@ -251,21 +251,21 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	private string hostnameField;
 
-	private ulong hostpidField;
+	private long hostpidField;
 
 	private string loginnameField;
 
 	private string isolationlevelField;
 
-	private ulong xactidField;
+	private long xactidField;
 
-	private ulong currentdbField;
+	private long currentdbField;
 
-	private ulong lockTimeoutField;
+	private long lockTimeoutField;
 
-	private ulong clientoption1Field;
+	private long clientoption1Field;
 
-	private ulong clientoption2Field;
+	private long clientoption2Field;
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlArrayItemAttribute("frame", IsNullable = false)]
@@ -301,7 +301,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong taskpriority {
+	public long taskpriority {
 		get {
 			return this.taskpriorityField;
 		}
@@ -312,7 +312,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong logused {
+	public long logused {
 		get {
 			return this.logusedField;
 		}
@@ -334,7 +334,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong waittime {
+	public long waittime {
 		get {
 			return this.waittimeField;
 		}
@@ -345,7 +345,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong ownerId {
+	public long ownerId {
 		get {
 			return this.ownerIdField;
 		}
@@ -400,7 +400,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong schedulerid {
+	public long schedulerid {
 		get {
 			return this.scheduleridField;
 		}
@@ -411,7 +411,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong kpid {
+	public long kpid {
 		get {
 			return this.kpidField;
 		}
@@ -433,7 +433,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong spid {
+	public long spid {
 		get {
 			return this.spidField;
 		}
@@ -444,7 +444,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong sbid {
+	public long sbid {
 		get {
 			return this.sbidField;
 		}
@@ -455,7 +455,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong ecid {
+	public long ecid {
 		get {
 			return this.ecidField;
 		}
@@ -466,7 +466,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong priority {
+	public long priority {
 		get {
 			return this.priorityField;
 		}
@@ -477,7 +477,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong trancount {
+	public long trancount {
 		get {
 			return this.trancountField;
 		}
@@ -543,7 +543,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong hostpid {
+	public long hostpid {
 		get {
 			return this.hostpidField;
 		}
@@ -576,7 +576,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong xactid {
+	public long xactid {
 		get {
 			return this.xactidField;
 		}
@@ -587,7 +587,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong currentdb {
+	public long currentdb {
 		get {
 			return this.currentdbField;
 		}
@@ -598,7 +598,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong lockTimeout {
+	public long lockTimeout {
 		get {
 			return this.lockTimeoutField;
 		}
@@ -609,7 +609,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong clientoption1 {
+	public long clientoption1 {
 		get {
 			return this.clientoption1Field;
 		}
@@ -620,7 +620,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong clientoption2 {
+	public long clientoption2 {
 		get {
 			return this.clientoption2Field;
 		}
@@ -635,13 +635,13 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcess
 public partial class eventDataValueBlockedprocessreportBlockedprocessProcessFrame
 {
 
-	private ulong lineField;
+	private long lineField;
 
-	private ulong stmtstartField;
+	private long stmtstartField;
 
 	private bool stmtstartFieldSpecified;
 
-	private ulong stmtendField;
+	private long stmtendField;
 
 	private bool stmtendFieldSpecified;
 
@@ -649,7 +649,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcessFram
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong line {
+	public long line {
 		get {
 			return this.lineField;
 		}
@@ -660,7 +660,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcessFram
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong stmtstart {
+	public long stmtstart {
 		get {
 			return this.stmtstartField;
 		}
@@ -682,7 +682,7 @@ public partial class eventDataValueBlockedprocessreportBlockedprocessProcessFram
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong stmtend {
+	public long stmtend {
 		get {
 			return this.stmtendField;
 		}
@@ -743,15 +743,15 @@ public partial class BlockingProcess
 
 	private string statusField;
 
-	private ulong spidField;
+	private long spidField;
 
-	private ulong sbidField;
+	private long sbidField;
 
-	private ulong ecidField;
+	private long ecidField;
 
-	private ulong priorityField;
+	private long priorityField;
 
-	private ulong trancountField;
+	private long trancountField;
 
 	private System.DateTime lastbatchstartedField;
 
@@ -763,19 +763,19 @@ public partial class BlockingProcess
 
 	private string hostnameField;
 
-	private ulong hostpidField;
+	private long hostpidField;
 
 	private string isolationlevelField;
 
-	private ulong xactidField;
+	private long xactidField;
 
-	private ulong currentdbField;
+	private long currentdbField;
 
-	private ulong lockTimeoutField;
+	private long lockTimeoutField;
 
-	private ulong clientoption1Field;
+	private long clientoption1Field;
 
-	private ulong clientoption2Field;
+	private long clientoption2Field;
 
 	/// <remarks/>
 	public object executionStack {
@@ -810,7 +810,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong spid {
+	public long spid {
 		get {
 			return this.spidField;
 		}
@@ -821,7 +821,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong sbid {
+	public long sbid {
 		get {
 			return this.sbidField;
 		}
@@ -832,7 +832,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong ecid {
+	public long ecid {
 		get {
 			return this.ecidField;
 		}
@@ -843,7 +843,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong priority {
+	public long priority {
 		get {
 			return this.priorityField;
 		}
@@ -854,7 +854,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong trancount {
+	public long trancount {
 		get {
 			return this.trancountField;
 		}
@@ -920,7 +920,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong hostpid {
+	public long hostpid {
 		get {
 			return this.hostpidField;
 		}
@@ -942,7 +942,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong xactid {
+	public long xactid {
 		get {
 			return this.xactidField;
 		}
@@ -953,7 +953,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong currentdb {
+	public long currentdb {
 		get {
 			return this.currentdbField;
 		}
@@ -964,7 +964,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong lockTimeout {
+	public long lockTimeout {
 		get {
 			return this.lockTimeoutField;
 		}
@@ -975,7 +975,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong clientoption1 {
+	public long clientoption1 {
 		get {
 			return this.clientoption1Field;
 		}
@@ -986,7 +986,7 @@ public partial class BlockingProcess
 
 	/// <remarks/>
 	[System.Xml.Serialization.XmlAttributeAttribute()]
-	public ulong clientoption2 {
+	public long clientoption2 {
 		get {
 			return this.clientoption2Field;
 		}

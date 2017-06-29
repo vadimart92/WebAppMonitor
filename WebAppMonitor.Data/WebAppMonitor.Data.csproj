@@ -242,6 +242,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByteArrayComparer.cs" />
     <Compile Include="Entities\BaseLookup.cs" />
     <Compile Include="Entities\LockingMode.cs" />
     <Compile Include="Entities\LongLocksInfo.cs" />
