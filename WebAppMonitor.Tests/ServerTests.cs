@@ -10,31 +10,27 @@ using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace WebAppMonitor.Tests
-{
+namespace WebAppMonitor.Tests {
 	[TestFixture]
-	public class ServerTests
-	{
+	public class ServerTests {
 		private readonly TestServer _server;
-		private HttpClient _client;
+		private readonly HttpClient _client;
 
 		public ServerTests() {
 			Environment.CurrentDirectory = TestContext.CurrentContext.TestDirectory;
-			var config = new ConfigurationBuilder()
-				.AddInMemoryCollection(new Dictionary<string,string> {{ "Environment", "Development" } })
-				.Build();
+			var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string> {
+				{"Environment", "Development"}
+			}).Build();
 			_server = new TestServer(new WebHostBuilder().UseConfiguration(config).UseStartup<Startup>());
 			_client = _server.CreateClient();
 		}
-		
+
 		[Test]
-		public async Task ImportExtendedEvents()
-		{
+		public async Task ImportExtendedEvents() {
 			var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "collect_long_locks.xel");
 			string requestUri = $"/api/Admin/importExtendedEvents?file={Uri.EscapeDataString(file)}";
 			var response = await _client.GetAsync(requestUri);
 			response.EnsureSuccessStatusCode();
-			var responseString = await response.Content.ReadAsStringAsync();
 		}
 	}
 }
