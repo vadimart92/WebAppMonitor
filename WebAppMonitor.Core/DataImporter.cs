@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -8,18 +9,6 @@ using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core.Entities;
 
 namespace WebAppMonitor.Core {
-
-	public class DataImportSettings {
-		public string EventsDataDirectoryTemplate { get; set; }
-		public string StatementsFileTemplate { get; set; }
-
-		public string TodayEventsDataDirectory => EventsDataDirectoryTemplate?.Replace("{date}",
-			DateTime.Now.ToString("yyyy-MM-dd"));
-
-		public string LongLocksFileTemplate { get; set; }
-	}
-
-
 	public class DataImporter : IDataImporter {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly ISettingsRepository _settingsRepository;
@@ -32,24 +21,8 @@ namespace WebAppMonitor.Core {
 			_extendedEventLoader = extendedEventLoader;
 		}
 
-		public void ImportDailyData() {
-			DataImportSettings settings = GetSettings();
-			string directoryName = Path.GetDirectoryName(settings.TodayEventsDataDirectory);
-			if (!Directory.Exists(directoryName)) {
-				throw new Exception($"directory {directoryName} not found.");
-			}
-			directoryName = @"\\tscore-dev-13\WorkAnalisys\xevents\Export_2017-06-28\";
-			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName).Select(p => new DirectoryInfo(p))
-				.OrderBy(d => d.CreationTime)) {
-				_connectionProvider.GetConnection(connection => {
-					//BackupDb(connection);
-					//ImportLongQueriesData(connection, directory, settings);
-					ImportLongLocksData(directory, settings);
-				});
-			}
-		}
 
-		private static void BackupDb(SqlConnection connection) {
+		private static void BackupDb(DbConnection connection) {
 			var db = connection.Database;
 			connection.Execute(
 				$@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{
@@ -62,12 +35,28 @@ namespace WebAppMonitor.Core {
 			_extendedEventLoader.LoadLongLocksData(file);
 		}
 
-		private static void ImportLongQueriesData(SqlConnection connection, DirectoryInfo directory,
+		private static void ImportLongQueriesData(DbConnection connection, DirectoryInfo directory,
 			DataImportSettings settings) {
 			connection.Execute("ImportDailyData", new {
 				fileName = Path.Combine(directory.FullName, settings.StatementsFileTemplate)
 			}, commandType: CommandType.StoredProcedure, commandTimeout: 3600);
 			connection.Execute("SaveDailyData", commandType: CommandType.StoredProcedure, commandTimeout: 3600);
+		}
+
+		public void ImportDailyData() {
+			DataImportSettings settings = GetSettings();
+			string directoryName = Path.GetDirectoryName(settings.TodayEventsDataDirectory);
+			if (!Directory.Exists(directoryName)) {
+				throw new Exception($"directory {directoryName} not found.");
+			}
+			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName).Select(p => new DirectoryInfo(p))
+				.OrderBy(d => d.CreationTime)) {
+				_connectionProvider.GetConnection(connection => {
+					BackupDb(connection);
+					ImportLongQueriesData(connection, directory, settings);
+				});
+				ImportLongLocksData(directory, settings);
+			}
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {
@@ -86,6 +75,10 @@ namespace WebAppMonitor.Core {
 				LongLocksFileTemplate = locksFileSetting.Value
 			};
 			return settings;
+		}
+
+		public void ImportExtendedEvents(string filePath) {
+			_extendedEventLoader.LoadLongLocksData(filePath);
 		}
 	}
 }

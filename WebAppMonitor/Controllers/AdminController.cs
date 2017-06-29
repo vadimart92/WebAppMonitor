@@ -35,6 +35,13 @@ namespace WebAppMonitor.Controllers {
 			_dataImporter = dataImporter;
 		}
 
+		[HttpGet]
+		public IActionResult ImportExtendedEvents(string file) {
+			_dataImporter.ImportExtendedEvents(file);
+			return Ok();
+		}
+
+
 		[HttpPost("importDailyData")]
 		public IActionResult ImportDailyData([FromBody] ImportDailyDataRequest value) {
 			if (value.ImportSettings != null) {

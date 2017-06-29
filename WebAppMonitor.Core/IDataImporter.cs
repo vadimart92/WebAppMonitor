@@ -4,5 +4,6 @@ namespace WebAppMonitor.Core
 		void ImportDailyData();
 		void ChangeSettings(DataImportSettings newSettings);
 		DataImportSettings GetSettings();
+		void ImportExtendedEvents(string filePath);
 	}
 }

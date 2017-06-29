@@ -21,7 +21,9 @@ namespace WebAppMonitor
 		{
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", reloadOnChange:true, optional:false);
+				.AddEnvironmentVariables()
+				.AddJsonFile("appsettings.json", reloadOnChange:true, optional:false)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional:true);
 
 			Configuration = builder.Build();
 			env.ConfigureNLog("nlog.config");
