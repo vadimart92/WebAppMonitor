@@ -55,15 +55,16 @@ export class QueryInfoComponent implements OnInit {
 			this.queryData = {
 				date: new Date(),
 				info: {
-					"normQueryTextHistoryId": "a8c059cd-88f1-4a25-a6e5-5334c1fc79ef",
+					"normalizedQueryTextId": "a8c059cd-88f1-4a25-a6e5-5334c1fc79ef",
 					"count": 1,
 					"totalDuration": 584.00,
-					"averageDuration": 584.000000,
-					"averageRowCount": 31212,
-					"averageCPU": 554.000000,
-					"averageLogicalReads": 279581951,
-					"averageWrites": 10595,
-					"queryText": " sql"
+					"avgDuration": 584.000000,
+					"avgRowCount": 31212,
+					"avgCPU": 554.000000,
+					"avgLogicalReads": 279581951,
+					"avgWrites": 10595,
+					"queryText": " sql",
+					"avgAdoReads": 10
 				}
 			}
 		}
