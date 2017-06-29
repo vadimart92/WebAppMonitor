@@ -1,1 +1,1 @@
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" %~dp0..\WebAppMonitor.sln /target:publish
+dotnet msbuild /t:Publish /p:Configuration=Release /p:OutputPath=\\tscore-dev-13\WorkAnalisys\WebApp

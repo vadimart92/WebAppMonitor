@@ -22,9 +22,8 @@ namespace WebAppMonitor.Core
 		}
 
 		public IDataReader GetReader(CommandDefinition command) {
-			using (var connection = new SqlConnection(_cs)) {
-				return connection.ExecuteReader(command, CommandBehavior.CloseConnection);
-			}
+			var connection = new SqlConnection(_cs);
+			return connection.ExecuteReader(command, CommandBehavior.CloseConnection);
 		}
 	}
 }

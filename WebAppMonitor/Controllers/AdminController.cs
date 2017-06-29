@@ -44,7 +44,7 @@ namespace WebAppMonitor.Controllers {
 				_dataImporter.ImportDailyData();
 			}
 			catch (Exception e) {
-				BadRequest(e.Message);
+				return BadRequest(e.Message);
 			}
 			CaheUtils.ClearCache(_memoryCache);
 			return Ok();

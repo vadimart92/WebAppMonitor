@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using WebAppMonitor.Common;
 using WebAppMonitor.Core;
 using WebAppMonitor.Data;
@@ -15,13 +17,14 @@ namespace WebAppMonitor
 	public class Startup
 	{
 		public static IConfigurationRoot Configuration { get; set; }
-		public Startup()
+		public Startup(IHostingEnvironment env)
 		{
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json", reloadOnChange:true, optional:false);
 
 			Configuration = builder.Build();
+			env.ConfigureNLog("nlog.config");
 		}
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddMvc()
@@ -39,11 +42,13 @@ namespace WebAppMonitor
 			services.AddScoped<ISettingsRepository, SettingsRepository>();
 			services.AddScoped<IExtendedEventParser, ExtendedEventParser>();
 			services.AddScoped<IExtendedEventDataSaver, ExtendedEventDataSaver>();
+			services.AddScoped<ISimpleDataProvider, SimpleDataProvider>();
 			services.AddScoped<IExtendedEventLoader, ExtendedEventLoader>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
-			loggerFactory.AddConsole();
+			loggerFactory.AddConsole().AddNLog();
+			app.AddNLogWeb();
 
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();

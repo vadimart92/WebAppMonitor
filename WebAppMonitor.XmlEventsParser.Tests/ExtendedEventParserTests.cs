@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autofixture.NUnit3;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
@@ -33,14 +34,14 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 		}
 
 		[Test, AutoNSubstituteData]
-		public void ReadEvents(ISimpleDataProvider dataProvider) {
+		public void ReadEvents(ISimpleDataProvider dataProvider, ILogger<ExtendedEventParser> logger) {
 			dataProvider.Enumerate<string>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines());
-			var p = new ExtendedEventParser(dataProvider);
+			var p = new ExtendedEventParser(dataProvider, logger);
 			var events = p.ReadEvents("someFile");
 			var result = events.ToList();
-			var emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
-			var emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
-			var emptyDuration = result.Any(r => r.Duration == 0);
+			bool emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
+			bool emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
+			bool emptyDuration = result.Any(r => r.Duration == 0);
 			Assert.IsFalse(emptyBlockers);
 			Assert.IsFalse(emptyBlocked);
 			Assert.IsFalse(emptyDuration);

@@ -11,7 +11,7 @@ namespace WebAppMonitor.Data {
 		}
 
 		private Setting GetSettingFromDb(string settingCode, string defValue) {
-			Setting setting = _dbContext.Settings.First(s => s.Code == settingCode);
+			Setting setting = _dbContext.Settings.FirstOrDefault(s => s.Code == settingCode);
 			if (setting == null) {
 				setting = new Setting {
 					Code = settingCode,

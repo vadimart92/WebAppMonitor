@@ -4,14 +4,10 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using Dapper;
+using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core.Entities;
 
 namespace WebAppMonitor.Core {
-	public interface IDataImporter {
-		void ImportDailyData();
-		void ChangeSettings(DataImportSettings newSettings);
-		DataImportSettings GetSettings();
-	}
 
 	public class DataImportSettings {
 		public string EventsDataDirectoryTemplate { get; set; }
@@ -42,11 +38,12 @@ namespace WebAppMonitor.Core {
 			if (!Directory.Exists(directoryName)) {
 				throw new Exception($"directory {directoryName} not found.");
 			}
+			directoryName = @"\\tscore-dev-13\WorkAnalisys\xevents\Export_2017-06-28\";
 			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName).Select(p => new DirectoryInfo(p))
 				.OrderBy(d => d.CreationTime)) {
 				_connectionProvider.GetConnection(connection => {
-					BackupDb(connection);
-					ImportLongQueriesData(connection, directory, settings);
+					//BackupDb(connection);
+					//ImportLongQueriesData(connection, directory, settings);
 					ImportLongLocksData(directory, settings);
 				});
 			}

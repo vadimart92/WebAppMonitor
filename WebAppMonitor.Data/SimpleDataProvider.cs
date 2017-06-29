@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using Dapper;
 using WebAppMonitor.Core;
 
@@ -12,7 +13,7 @@ namespace WebAppMonitor.Data
 		}
 
 		public IEnumerable<T> Enumerate<T>(string query, object parameters = null) {
-			using (var reader = _connectionProvider.GetReader(new CommandDefinition(query, parameters))) {
+			using (IDataReader reader = _connectionProvider.GetReader(new CommandDefinition(query, parameters))) {
 				var parser = reader.GetRowParser<T>();
 				while (reader.Read()) {
 					yield return parser.Invoke(reader);
