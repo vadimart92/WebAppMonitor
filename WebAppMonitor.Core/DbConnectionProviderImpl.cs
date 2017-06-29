@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using Dapper;
 
@@ -14,7 +15,7 @@ namespace WebAppMonitor.Core
 			_cs = cs;
 		}
 
-		public void GetConnection(Action<SqlConnection> action) {
+		public void GetConnection(Action<DbConnection> action) {
 			using (var connection = new SqlConnection(_cs)) {
 				connection.Open();
 				action(connection);

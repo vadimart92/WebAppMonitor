@@ -1,4 +1,6 @@
-﻿namespace WebAppMonitor.Core
+﻿using WebAppMonitor.Core.Entities;
+
+namespace WebAppMonitor.Core
 {
     public class ExtendedEventLoader: IExtendedEventLoader {
 	    private readonly IExtendedEventParser _parser;
@@ -9,7 +11,7 @@
 	    }
 
 	    public void LoadLongLocksData(string file) {
-		    foreach (var queryLockInfo in _parser.ReadEvents(file)) {
+		    foreach (QueryLockInfo queryLockInfo in _parser.ReadEvents(file)) {
 			    _dataSaver.RegisterLock(queryLockInfo);
 		    }
 			_dataSaver.Flush();

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.Common;
 using Dapper;
 
 namespace WebAppMonitor.Core
@@ -8,7 +8,7 @@ namespace WebAppMonitor.Core
   public interface IDbConnectionProvider
   {
 
-    void GetConnection(Action<SqlConnection> action);
+    void GetConnection(Action<DbConnection> action);
 	IDataReader GetReader(CommandDefinition command);
   }
 }
