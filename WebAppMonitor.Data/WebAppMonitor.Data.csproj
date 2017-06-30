@@ -244,9 +244,11 @@
   <ItemGroup>
     <Compile Include="ByteArrayComparer.cs" />
     <Compile Include="Entities\BaseLookup.cs" />
+    <Compile Include="Entities\NormQueryTextSource.cs" />
     <Compile Include="Entities\LockingMode.cs" />
     <Compile Include="Entities\LongLocksInfo.cs" />
     <Compile Include="Entities\NormQueryTextHistory.cs" />
+    <Compile Include="Entities\QuerySource.cs" />
     <Compile Include="ExtendedEventDataSaver.cs" />
     <Compile Include="Properties\InternalVisible.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -41,8 +41,8 @@ namespace WebAppMonitor.XmlEventsParser
 		private static QueryLockInfo GetQueryLockInfo(ReportParser parser, QueryLockInfoRow row) {
 			var info = parser.Parse(row.XML);
 			string durationStr = GetDataValue(info, "duration");
-			ulong duration;
-			ulong.TryParse(durationStr, out duration);
+			long duration;
+			long.TryParse(durationStr, out duration);
 			eventDataValueBlockedprocessreport processesInfo =
 				GetDataItem(info, "blocked_process").value.blockedprocessreport;
 			string blockedText = processesInfo.blockedprocess.process.inputbuf;
@@ -56,7 +56,8 @@ namespace WebAppMonitor.XmlEventsParser
 				},
 				Blocker = new Proess {
 					Text = blockerText.ExtractLongLocksSqlText()
-				}
+				},
+				SourceXml = row.XML
 			};
 		}
 

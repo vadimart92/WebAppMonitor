@@ -6,6 +6,7 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 
 import { TimeUtils } from '../utils/utils'
 import { QueryStatsService } from '../query-stats/query-stats.service'
+import { ApiDataService, StatsQueryOptions } from '../data.service'
 import { ChartData, ChartAxisType } from '../query-chart/query-chart.component'
 import { QueryStatInfo } from "../entities/query-stats-info"
 
@@ -26,7 +27,7 @@ export class QueryInfoComponent implements OnInit {
 	public totalDurationData: ChartData;
 	public selectedTabIndex: number = 0;
 	public chartData: any[];
-	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService) {
+	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
 		var navRight = this._hotkeysService.add(new Hotkey('right', this.onArrowKey.bind(this, 1)));
 		var navLeft = this._hotkeysService.add(new Hotkey('left', this.onArrowKey.bind(this, -1)));
 		var closeHotKey = this._hotkeysService.add(new Hotkey('esc', (event: KeyboardEvent): boolean => {
@@ -68,47 +69,50 @@ export class QueryInfoComponent implements OnInit {
 				}
 			}
 		}
-		this._statsService.getQueryInfo(this.getCurrentInfo())
-            .then((rows) => {
-				this.prepareChartData(rows);
-			});
+		var info = this.getCurrentInfo();
+		this._dataService.getStats(<StatsQueryOptions>{
+			orderBy: ["date"],
+			queryTextId: info.normalizedQueryTextId
+		}).then(rows => {
+			this.prepareChartData(rows);
+		});
 	}
 
 	chartsConfig = {
 		"count": {
 			label: "Count",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "Count"
+			dataColumn: "count"
 		},
 		"totalDuration": {
 			label: "Total duration",
 			yAxisType: ChartAxisType.Time,
-			dataColumn: "TotalDuration"
+			dataColumn: "totalDuration"
 		},
 		"avgDuration": {
 			label: "AVG duration",
 			yAxisType: ChartAxisType.Time,
-			dataColumn: "AvgDuration"
+			dataColumn: "avgDuration"
 		},
 		"avgCPU": {
 			label: "AVG CPU",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "AvgCPU"
+			dataColumn: "avgCPU"
 		},
 		"avgRowCount": {
 			label: "AVG row count",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "AvgRowCount"
+			dataColumn: "avgRowCount"
 		},
 		"avgLogicalReads": {
 			label: "AVG logical reads",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "AvgLogicalReads"
+			dataColumn: "avgLogicalReads"
 		},
 		"avgAdoReads": {
 			label: "AVG ado.net reads",
 			yAxisType: ChartAxisType.Number,
-			dataColumn: "AvgAdoReads"
+			dataColumn: "avgAdoReads"
 		}
 	};
 	chartsData: any[] = [];
@@ -121,13 +125,20 @@ export class QueryInfoComponent implements OnInit {
 			return data;
 		});
 		var chartNames = _.keys(this.chartsConfig);
+		let seriesDataEmpty = true;
 		_.each(this._queryStatsInfo, (infoRow) => {
-			let date = infoRow.Date;
+			let date = infoRow.date;
 			_.each(chartNames, (chartName) => {
 				var config = this.chartsConfig[chartName];
+				let yValue = infoRow[config.dataColumn];
+				if (seriesDataEmpty && !yValue) {
+					return;
+				} else {
+					seriesDataEmpty = false;
+				}
 				chartsData[chartName].seriesData.push({
 					x: date,
-					y: infoRow[config.dataColumn]
+					y: yValue
 				});
 			});
 		});

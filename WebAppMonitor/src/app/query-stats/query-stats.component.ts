@@ -41,6 +41,7 @@ export class QueryStatsComponent implements OnInit {
 	sideNavOpened: boolean = true;
 	private _queryFilter: string = null;
 	private filterTextOnServer: boolean = false;
+	private _useColumnsProjections: boolean = false;
 	@ViewChild(MdDatepicker) dp: MdDatepicker<Date>;
 
 	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
@@ -143,8 +144,17 @@ export class QueryStatsComponent implements OnInit {
 		let options = <StatsQueryOptions>{
 			orderBy: orderBy,
 			take: 100,
-			date: this.currentDate
+			date: this.currentDate,
+			columns: []
 		};
+		if (this._useColumnsProjections) {
+			_.each(this.columnDefs, column => {
+				if (column.hide) {
+					return;
+				}
+				options.columns.push(column.colId);
+			});
+		}
 		if (this.filterTextOnServer && this._queryFilter) {
 			options.where = {
 				"queryText": {

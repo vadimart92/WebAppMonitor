@@ -13,33 +13,40 @@ namespace WebAppMonitor.Core {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly ISettingsRepository _settingsRepository;
 		private readonly IExtendedEventLoader _extendedEventLoader;
+		private readonly ILogger<DataImporter> _logger;
 
 		public DataImporter(IDbConnectionProvider connectionProvider, ISettingsRepository settingsRepository,
-			IExtendedEventLoader extendedEventLoader) {
+			IExtendedEventLoader extendedEventLoader, ILogger<DataImporter> logger) {
 			_connectionProvider = connectionProvider;
 			_settingsRepository = settingsRepository;
 			_extendedEventLoader = extendedEventLoader;
+			_logger = logger;
 		}
 
 
-		private static void BackupDb(DbConnection connection) {
+		private void BackupDb(DbConnection connection) {
 			var db = connection.Database;
 			connection.Execute(
 				$@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{
 						db
 					}-Full Database backup', COMPRESSION, NOFORMAT, NOINIT, SKIP, NOREWIND, NOUNLOAD, STATS = 1");
+			_logger.LogInformation("Db backup created.");
 		}
 
 		private void ImportLongLocksData(DirectoryInfo directory, DataImportSettings settings) {
-			var file = Path.Combine(directory.FullName, settings.LongLocksFileTemplate);
+			string file = Path.Combine(directory.FullName, settings.LongLocksFileTemplate);
+			_logger.LogInformation("Import of long locks from {0} started.", file);
 			_extendedEventLoader.LoadLongLocksData(file);
+			_logger.LogInformation("Import of long locks completed.");
 		}
 
-		private static void ImportLongQueriesData(DbConnection connection, DirectoryInfo directory,
+		private void ImportLongQueriesData(DbConnection connection, DirectoryInfo directory,
 			DataImportSettings settings) {
+			_logger.LogInformation("Executing ImportDailyData for {0}.", directory.FullName);
 			connection.Execute("ImportDailyData", new {
 				fileName = Path.Combine(directory.FullName, settings.StatementsFileTemplate)
 			}, commandType: CommandType.StoredProcedure, commandTimeout: 3600);
+			_logger.LogInformation("Executing SaveDailyData.");
 			connection.Execute("SaveDailyData", commandType: CommandType.StoredProcedure, commandTimeout: 3600);
 		}
 
@@ -49,6 +56,7 @@ namespace WebAppMonitor.Core {
 			if (!Directory.Exists(directoryName)) {
 				throw new Exception($"directory {directoryName} not found.");
 			}
+			_logger.LogInformation("Import daily data started.");
 			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName).Select(p => new DirectoryInfo(p))
 				.OrderBy(d => d.CreationTime)) {
 				_connectionProvider.GetConnection(connection => {
@@ -57,6 +65,7 @@ namespace WebAppMonitor.Core {
 				});
 				ImportLongLocksData(directory, settings);
 			}
+			_logger.LogInformation("Import daily data completed.");
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {

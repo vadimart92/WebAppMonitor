@@ -13,7 +13,7 @@ namespace WebAppMonitor.Core
 	    public void LoadLongLocksData(string file) {
 		    foreach (QueryLockInfo queryLockInfo in _parser.ReadEvents(file)) {
 			    _dataSaver.RegisterLock(queryLockInfo);
-		    }
+			}
 			_dataSaver.Flush();
 		}
 	}

@@ -4,7 +4,6 @@ namespace WebAppMonitor.Data.Entities
 {
 	public class LongLocksInfo
 	{
-
 		public Guid Id { get; set; }
 		public Guid BlockedQueryId { get; set; }
 		public Guid BlockerQueryId { get; set; }

@@ -32,7 +32,7 @@ namespace WebAppMonitor.Data
 			_connectionProvider = connectionProvider;
 			DapperPlusManager.Entity<TLookup>()
 				.Table(_lookupName)
-				.Identity(x => x.Id);
+				.Key(x => x.Id);
 		}
 
 		public Guid GetId(string code) {

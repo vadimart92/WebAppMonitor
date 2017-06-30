@@ -31,6 +31,7 @@ export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, ro
 	return () => routerInitializer.appInitializer().then(() => {
 		return entityManager.fetchMetadata().then((metadata: Object) => {
 			breezeBridgeAngularModule["metadata"] = metadata;
+			apiDataService.onMetadataInitialized();
 			return metadata;
 		});
 	});

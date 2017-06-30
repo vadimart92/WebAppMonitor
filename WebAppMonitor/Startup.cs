@@ -20,7 +20,7 @@ namespace WebAppMonitor {
 		public Startup(IHostingEnvironment env) {
 			var builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddEnvironmentVariables()
 				.AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false);
 
 			Configuration = builder.Build();
 			env.ConfigureNLog("nlog.config");
@@ -37,15 +37,15 @@ namespace WebAppMonitor {
 			services.AddScoped(provider => new QueryStatsContext(cs));
 			services.AddSingleton<IDataImporter, DataImporter>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
-			services.AddScoped<ISettingsRepository, SettingsRepository>();
-			services.AddScoped<IExtendedEventParser, ExtendedEventParser>();
-			services.AddScoped<IExtendedEventDataSaver, ExtendedEventDataSaver>();
-			services.AddScoped<ISimpleDataProvider, SimpleDataProvider>();
-			services.AddScoped<IExtendedEventLoader, ExtendedEventLoader>();
+			services.AddSingleton<ISettingsRepository, SettingsRepository>();
+			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
+			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
+			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
+			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
-			loggerFactory.AddConsole().AddNLog();
+			loggerFactory.AddNLog();
 			app.AddNLogWeb();
 
 			if (env.IsDevelopment()) {

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>True</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>False</Prefer32Bit>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +23,9 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
+	  <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
 	  <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.2" />
   </ItemGroup>
 	<ItemGroup>
 		<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.1" />
@@ -54,6 +54,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.Tests.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

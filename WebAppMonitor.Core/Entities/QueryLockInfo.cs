@@ -7,10 +7,11 @@ namespace WebAppMonitor.Core.Entities
     {
 	    public string LockMode { get; set; }
 	    public DateTime TimeStamp { get; set; }
-	    public ulong Duration { get; set; }
+	    public long Duration { get; set; }
 		public Proess Blocker { get; set; }
-	    public Proess Blocked { get; set; }
-    }
+	    public Proess Blocked { get; set; }	
+		public  string SourceXml { get; set; }
+	}
 
 	public class Proess {
 		public string Text { get; set; }

@@ -19,6 +19,7 @@ namespace WebAppMonitor.Data {
 		private readonly List<LongLocksInfo> _pendingLocksInfo = new List<LongLocksInfo>();
 		private readonly SHA512 _hasher = SHA512.Create();
 		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
+		private readonly SimpleLookupManager<QuerySource> _querySourceRepository;
 		private readonly QueryStatsContext _queryStatsContext;
 
 		public ExtendedEventDataSaver(IDbConnectionProvider connectionProvider, QueryStatsContext queryStatsContext) {
@@ -26,11 +27,16 @@ namespace WebAppMonitor.Data {
 			_queryStatsContext = queryStatsContext;
 			InitDapperPlus();
 			_lockModeRepository = new SimpleLookupManager<LockingMode>(connectionProvider);
+			_querySourceRepository = new SimpleLookupManager<QuerySource>(connectionProvider);
 		}
 
 		private void InitDapperPlus() {
 			DapperPlusManager.Entity<NormQueryTextHistory>().Table("NormQueryTextHistory").Key(x => x.Id);
 			DapperPlusManager.Entity<LongLocksInfo>().Table("LongLocksInfo").Key(x => x.Id);
+			DapperPlusManager.Entity<NormQueryTextSource>().Table("NormQueryTextSource").Key(x => new {
+				x.NormQueryTextId,
+				x.QuerySourceId
+			});
 		}
 
 		private Dictionary<byte[], Guid> NormQueryMap => _normQueryMap ?? InitNormQueryMap();
@@ -48,23 +54,23 @@ namespace WebAppMonitor.Data {
 		}
 
 		internal byte[] GetQueryHash(string query) {
-			return _hasher.ComputeHash(Encoding.UTF8.GetBytes(query));
+			var bytes = query != null ? Encoding.UTF8.GetBytes(query) : new byte[0];
+			return _hasher.ComputeHash(bytes);
 		}
 
 		private Guid RegisterQueryText(string text) {
 			var hash = GetQueryHash(text);
-			if (!NormQueryMap.ContainsKey(hash)) {
-				var historyItem = new NormQueryTextHistory {
-					Id = Guid.NewGuid(),
-					QueryHash = hash,
-					NormalizedQuery = text
-				};
-				PushQueryItem(historyItem);
-				NormQueryMap[hash] = historyItem.Id;
+			if (NormQueryMap.ContainsKey(hash)) {
+				return NormQueryMap[hash];
 			}
-			else {
-			}
-			return NormQueryMap[hash];
+			var historyItem = new NormQueryTextHistory {
+				Id = Guid.NewGuid(),
+				QueryHash = hash,
+				NormalizedQuery = text
+			};
+			PushQueryItem(historyItem);
+			NormQueryMap[hash] = historyItem.Id;
+			return historyItem.Id;
 		}
 
 		private void PushQueryItem(NormQueryTextHistory historyItem) {
@@ -96,6 +102,9 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void RegisterLock(QueryLockInfo lockInfo) {
+			if (lockInfo.TimeStamp < LastQueryDate) {
+				return;
+			}
 			Guid blockedTextId = RegisterQueryText(lockInfo.Blocked.Text);
 			Guid blockerTextId = RegisterQueryText(lockInfo.Blocker.Text);
 			Guid lockingMode = _lockModeRepository.GetId(lockInfo.LockMode);
@@ -107,13 +116,34 @@ namespace WebAppMonitor.Data {
 				LockingModeId = lockingMode,
 				Date = lockInfo.TimeStamp,
 				DateId = dayId,
-				Duration = Convert.ToInt64(lockInfo.Duration)
+				Duration = lockInfo.Duration
 			});
 		}
 
+		private DateTime? _lastQueryDate;
+		private DateTime LastQueryDate => _lastQueryDate ?? (DateTime) (_lastQueryDate = GetLastQueryDate());
+
+		private DateTime GetLastQueryDate() {
+			DateTime result = DateTime.MinValue;
+			_connectionProvider.GetConnection(connection => {
+				result = connection.ExecuteScalar<DateTime>("SELECT MAX(Date) FROM LongLocksInfo");
+			});
+			return result;
+		}
+
+		private Guid? _longLocksQuerySourceId;
+		private Guid LongLocksQuerySourceId => _longLocksQuerySourceId ??
+			(Guid)(_longLocksQuerySourceId = _querySourceRepository.GetId("LongLocks"));
+
 		private void SavePendingQueryTextItems() {
+			Guid longLocksQuerySourceId = LongLocksQuerySourceId;
+			var textSources = _pendingQueries.Select(q => new NormQueryTextSource {
+				QuerySourceId = longLocksQuerySourceId,
+				NormQueryTextId = q.Id
+			}).ToList();
 			_connectionProvider.GetConnection(connection => {
 				connection.BulkInsert(_pendingQueries);
+				connection.BulkInsert(textSources);
 			});
 			_pendingQueries.Clear();
 		}
@@ -124,6 +154,7 @@ namespace WebAppMonitor.Data {
 				connection.BulkInsert(_pendingLocksInfo);
 			});
 			_pendingLocksInfo.Clear();
+			_lastQueryDate = null;
 		}
 	}
 }
