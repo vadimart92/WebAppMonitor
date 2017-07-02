@@ -13,7 +13,7 @@
 	  </div>
   </md-sidenav>
 	<div class="sidenav-content">
-		<app-query-info *ngIf="activeQuery" (hide)="deselectRows()" [queryData]="activeQuery"></app-query-info>
+		<app-query-info *ngIf="activeQuery" (hide)="deselectRows()" [queryData]="activeQuery" [visibleColumns]="visibleColumns"></app-query-info>
 		<div class="filter-wrap">
 			<md-input-container class="filter-item filter-wrap">
 				<input mdInput #searchBox placeholder="Query filter" (keyup)="search(searchBox.value)">

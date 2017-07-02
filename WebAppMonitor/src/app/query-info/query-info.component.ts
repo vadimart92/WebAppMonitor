@@ -1,4 +1,4 @@
-﻿import { Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
+﻿import { Component, Output, Input, EventEmitter, OnInit} from '@angular/core';
 import { MdSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -7,9 +7,13 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 import { TimeUtils } from '../utils/utils'
 import { QueryStatsService } from '../query-stats/query-stats.service'
 import { ApiDataService, StatsQueryOptions } from '../data.service'
-import { ChartData, ChartAxisType } from '../query-chart/query-chart.component'
-import { QueryStatInfo } from "../entities/query-stats-info"
+import { ChartAxisType, ChartData } from "../common/charting"
+import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
 
+export class QueryData {
+	info: QueryStatInfo = null;
+	date: Date = null;
+}
 
 @Component({
 	selector: 'app-query-info',
@@ -19,14 +23,17 @@ import { QueryStatInfo } from "../entities/query-stats-info"
 export class QueryInfoComponent implements OnInit {
 
 	@Output() hide = new EventEmitter();
-	@Input() queryData: any;
-    private _timeUtils = new TimeUtils();
-    private _queryStatsInfo: any[];
+	@Input() queryData: QueryData;
+	@Input() visibleColumns: string[] = [];
+    private timeUtils = new TimeUtils();
+    private queryStatsInfo: any[];
 	public avgDurationData: ChartData;
 	public countData: ChartData;
 	public totalDurationData: ChartData;
 	public selectedTabIndex: number = 0;
 	public chartData: any[];
+	private  chartsConfig: Object;
+	private displayConfigProvider = new QueryStatInfoDisplayConfig();
 	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
 		var navRight = this._hotkeysService.add(new Hotkey('right', this.onArrowKey.bind(this, 1)));
 		var navLeft = this._hotkeysService.add(new Hotkey('left', this.onArrowKey.bind(this, -1)));
@@ -37,6 +44,7 @@ export class QueryInfoComponent implements OnInit {
 			this.hideMe();
 			return false;
 		}));
+		this.chartsConfig = this.displayConfigProvider.getChartsConfig();
 	}
 	onArrowKey(direction: number, event: KeyboardEvent): boolean {
 		this.tryChangeTab(direction);
@@ -49,11 +57,11 @@ export class QueryInfoComponent implements OnInit {
 		}
 	}
 	getCurrentInfo():QueryStatInfo {
-		return this.queryData.info as QueryStatInfo;
+		return this.queryData.info;
 	}
 	ngOnInit() {
 		if (!this.queryData) {
-			this.queryData = {
+			this.queryData = <QueryData>{
 				date: new Date(),
 				info: {
 					"normalizedQueryTextId": "a8c059cd-88f1-4a25-a6e5-5334c1fc79ef",
@@ -77,56 +85,19 @@ export class QueryInfoComponent implements OnInit {
 			this.prepareChartData(rows);
 		});
 	}
-
-	chartsConfig = {
-		"count": {
-			label: "Count",
-			yAxisType: ChartAxisType.Number,
-			dataColumn: "count"
-		},
-		"totalDuration": {
-			label: "Total duration",
-			yAxisType: ChartAxisType.Time,
-			dataColumn: "totalDuration"
-		},
-		"avgDuration": {
-			label: "AVG duration",
-			yAxisType: ChartAxisType.Time,
-			dataColumn: "avgDuration"
-		},
-		"avgCPU": {
-			label: "AVG CPU",
-			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgCPU"
-		},
-		"avgRowCount": {
-			label: "AVG row count",
-			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgRowCount"
-		},
-		"avgLogicalReads": {
-			label: "AVG logical reads",
-			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgLogicalReads"
-		},
-		"avgAdoReads": {
-			label: "AVG ado.net reads",
-			yAxisType: ChartAxisType.Number,
-			dataColumn: "avgAdoReads"
-		}
-	};
 	chartsData: any[] = [];
 	prepareChartData(rows) {
-		this._queryStatsInfo = rows;
+		this.queryStatsInfo = rows;
 		var chartsData = _.mapObject(this.chartsConfig, (chartConfig) => {
 			var data = new ChartData();
 			data.yAxisType = chartConfig.yAxisType;
 			data.chartCaption = chartConfig.label;
+			data.column = chartConfig.dataColumn;
 			return data;
 		});
 		var chartNames = _.keys(this.chartsConfig);
 		let seriesDataEmpty = true;
-		_.each(this._queryStatsInfo, (infoRow) => {
+		_.each(this.queryStatsInfo, (infoRow) => {
 			let date = infoRow.date;
 			_.each(chartNames, (chartName) => {
 				var config = this.chartsConfig[chartName];
@@ -148,14 +119,14 @@ export class QueryInfoComponent implements OnInit {
 		this.hide.emit(null);
 	}
 	public formatTime(seconds: number): string {
-		return this._timeUtils.formatAsTime(seconds);
+		return this.timeUtils.formatAsTime(seconds);
 	}
 	public formatDate(date: Date): string {
-		return this._timeUtils.formatAsDate(date);
+		return this.timeUtils.formatAsDate(date);
 	}
 	public onCopySql() {
 		this._snackBar.open("Done", null, {
-			duration: 1000,
+			duration: 1000
 		});
 	}
 	public formatSql() {
@@ -165,3 +136,5 @@ export class QueryInfoComponent implements OnInit {
 			});
 	}
 }
+
+

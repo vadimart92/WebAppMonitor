@@ -20,7 +20,7 @@ namespace WebAppMonitor {
 		public Startup(IHostingEnvironment env) {
 			var builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddEnvironmentVariables()
 				.AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false);
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
 			Configuration = builder.Build();
 			env.ConfigureNLog("nlog.config");
@@ -32,7 +32,8 @@ namespace WebAppMonitor {
 			});
 
 			string cs = Configuration.GetConnectionString("db");
-			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(cs));
+			var connectionProvider = new DbConnectionProviderImpl(cs);
+			services.AddSingleton<IDbConnectionProvider>(connectionProvider);
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(cs));
 			services.AddSingleton<IDataImporter, DataImporter>();

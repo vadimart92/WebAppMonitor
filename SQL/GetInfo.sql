@@ -1,4 +1,11 @@
-﻿DROP VIEW IF EXISTS QueryStatInfo_Old;
+﻿IF (OBJECT_ID('QueryStatInfo', 'V') IS NOT NULL) 
+	DROP VIEW QueryStatInfo;
+DROP VIEW IF EXISTS QueryStatInfo_Old;
+DROP VIEW IF EXISTS VwQueryStatInfo;
+DROP VIEW  IF EXISTS StatementStats;
+DROP VIEW IF EXISTS LockersStats;
+DROP VIEW IF EXISTS LockedStats;
+GO
 SET QUOTED_IDENTIFIER, ANSI_NULLS ON
 GO
 CREATE VIEW dbo.QueryStatInfo_Old
@@ -21,10 +28,6 @@ INNER JOIN Dates d 	ON qh.DateId = d.Id
 INNER JOIN NormQueryTextHistory nqth ON qth.NormQueryTextHistoryId = nqth.Id
 GROUP BY qth.NormQueryTextHistoryId, nqth.NormalizedQuery, d.Date
 GO
-
-DROP VIEW IF EXISTS VwQueryStatInfo;
-DROP VIEW  IF EXISTS StatementStats;
-GO
 CREATE VIEW StatementStats WITH SCHEMABINDING AS 
 SELECT
 	qh.DateId
@@ -45,13 +48,6 @@ CREATE UNIQUE CLUSTERED INDEX Ix_Cl
 
 CREATE COLUMNSTORE INDEX Ix_AllColumns ON StatementStats (DateId, NormalizedQueryTextId, [Count], TotalDuration, TotalRowCount, TotalLogicalReads, TotalCPU, TotalWrites)
 GO
-
-IF (OBJECT_ID('QueryStatInfo', 'V')) IS NOT NULL BEGIN
-  DROP VIEW QueryStatInfo;  
-END
-GO	
-DROP VIEW IF EXISTS LockersStats;
-GO
 CREATE VIEW LockersStats WITH SCHEMABINDING
 AS 
 SELECT li.DateId
@@ -63,7 +59,20 @@ GROUP BY li.DateId, li.BlockerQueryId
 GO
 CREATE UNIQUE CLUSTERED INDEX IX_Cl ON LockersStats (DateId, NormalizedQueryTextId);
 CREATE COLUMNSTORE INDEX Ix_AllColumns ON LockersStats (DateId, NormalizedQueryTextId, [Count], TotalDuration);
-GO	
+GO
+
+CREATE VIEW LockedStats WITH SCHEMABINDING
+AS 
+SELECT li.DateId
+	  ,li.BlockedQueryId NormalizedQueryTextId
+	  ,COUNT_BIG(*) [Count]
+	  ,SUM(ISNULL(Duration/1000000, 0)) TotalDuration
+FROM dbo.LongLocksInfo li
+GROUP BY li.DateId, li.BlockedQueryId
+GO
+CREATE UNIQUE CLUSTERED INDEX IX_Cl ON LockedStats (DateId, NormalizedQueryTextId);
+CREATE COLUMNSTORE INDEX Ix_AllColumns ON LockedStats (DateId, NormalizedQueryTextId, [Count], TotalDuration);
+GO
 
 CREATE VIEW VwQueryStatInfo
 AS
@@ -79,24 +88,27 @@ SELECT
    ,CAST(0 AS DECIMAL(18, 2)) AS AvgAdoReads
    ,nqth.NormalizedQuery QueryText
    ,nqth.Id NormalizedQueryTextId
-   ,CAST(ROUND(ls.[count], 2) AS DECIMAL(18, 2)) [LockerCount]
-   ,CAST(ROUND(ls.TotalDuration, 2) AS DECIMAL(18, 2)) LockerTotalDuration
-   ,CAST(ROUND(ls.TotalDuration / NULLIF(ls.[count], 0), 2) AS DECIMAL(18, 2)) LockerAvgDuration
+   ,CAST(ROUND(lrs.[count], 2) AS DECIMAL(18, 2)) LockerCount
+   ,CAST(ROUND(lrs.TotalDuration, 2) AS DECIMAL(18, 2)) LockerTotalDuration
+   ,CAST(ROUND(lrs.TotalDuration / NULLIF(lrs.[count], 0), 2) AS DECIMAL(18, 2)) LockerAvgDuration
+   ,CAST(ROUND(lds.[count], 2) AS DECIMAL(18, 2)) LockedCount
+   ,CAST(ROUND(lds.TotalDuration, 2) AS DECIMAL(18, 2)) LockedTotalDuration
+   ,CAST(ROUND(lds.TotalDuration / NULLIF(lds.[count], 0), 2) AS DECIMAL(18, 2)) LockedAvgDuration
 FROM dbo.NormQueryTextHistory nqth
 CROSS JOIN dbo.Dates d
-LEFT JOIN dbo.StatementStats s
-	ON nqth.Id = s.NormalizedQueryTextId
-	AND s.DateId = d.Id
-LEFT JOIN dbo.LockersStats ls
-	ON nqth.Id = ls.NormalizedQueryTextId
-	AND ls.DateId = d.Id
+LEFT JOIN dbo.StatementStats s ON nqth.Id = s.NormalizedQueryTextId AND s.DateId = d.Id
+LEFT JOIN dbo.LockersStats lrs 	ON nqth.Id = lrs.NormalizedQueryTextId AND lrs.DateId = d.Id
+LEFT JOIN dbo.LockersStats lds 	ON nqth.Id = lds.NormalizedQueryTextId AND lds.DateId = d.Id
 
 GO
 
 DROP PROCEDURE  IF EXISTS ActualizeQueryStatInfo;
+GO
+
 CREATE PROCEDURE ActualizeQueryStatInfo AS BEGIN
 
 DROP TABLE IF EXISTS QueryStatInfo;
+
 SELECT *
 INTO QueryStatInfo
 FROM VwQueryStatInfo;
@@ -107,3 +119,5 @@ CREATE COLUMNSTORE INDEX Ix_1 ON QueryStatInfo (Date, TotalDuration, AvgDuration
 LockerCount, LockerTotalDuration, LockerAvgDuration);
 
 END
+
+--EXEC ActualizeQueryStatInfo
