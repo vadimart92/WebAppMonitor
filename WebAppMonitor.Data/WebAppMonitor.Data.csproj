@@ -57,9 +57,6 @@
     <Reference Include="FastMember, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FastMember.1.1.0\lib\net40\FastMember.dll</HintPath>
     </Reference>
-    <Reference Include="Joti.Bulk, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Joti.Bulk.0.6\lib\Joti.Bulk.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AspNetCore.Authorization, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNetCore.Authorization.1.1.2\lib\net451\Microsoft.AspNetCore.Authorization.dll</HintPath>
     </Reference>
@@ -269,6 +266,7 @@
     <Compile Include="Properties\InternalVisible.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStatsContext.cs" />
+    <Compile Include="QueryTextSaver.cs" />
     <Compile Include="SettingsRepository.cs" />
     <Compile Include="SimpleDataProvider.cs" />
     <Compile Include="SimpleLookupManager.cs" />

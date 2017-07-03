@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofixture.NUnit3;
 using NUnit.Framework;
 using WebAppMonitor.Core;
@@ -20,7 +17,6 @@ namespace WebAppMonitor.Data.Tests
 				new NormQueryTextHistory{Id = Guid.NewGuid(), QueryHash = new byte[]{1,2,3}, NormalizedQuery = "asd"}
 			};
 			sut.BinaryBulkInsert(connectionProvider);
-
 		}
 	}
 }

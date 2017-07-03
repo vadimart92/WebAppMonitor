@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using FastMember;
-using Joti.Data.Helper;
 using WebAppMonitor.Core;
 
 namespace WebAppMonitor.Data
@@ -15,28 +14,23 @@ namespace WebAppMonitor.Data
 			if (IsItemsEmpty(items)) {
 				return;
 			}
-			string tableName = OrmUtils.GetTableName<T>();
-			Joti.Connection.Bulk.BulkDbConnectionExtensions.BulkInsert(connection, items, tableName);
+			Insert(connection, items);
 		}
 
-		public static void BinaryBulkInsert<T>(this IEnumerable<T> items, IDbConnectionProvider connectionProvider)
-			where T : class {
-			if (IsItemsEmpty(items)) {
-				return;
-			}
+		private static void Insert<T>(DbConnection connection, IEnumerable<T> items) where T : class {
 			string tableName = OrmUtils.GetTableName<T>();
-			var dataTable = items.ToDataTable(tableName, true);
-			var binaryColumns = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-				.Where(pi => pi.PropertyType == typeof(byte[])).ToList();
-			foreach (PropertyInfo column in binaryColumns) {
-				dataTable.AddColumn(column.Name, typeof(byte[]));
+			using (var sqlBulkCopy = new SqlBulkCopy(connection.ConnectionString,
+				SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers 
+				| SqlBulkCopyOptions.UseInternalTransaction)) {
+				sqlBulkCopy.DestinationTableName = tableName;
+				sqlBulkCopy.EnableStreaming = true;
+				foreach (var columnName in OrmUtils.GetColumnNames<T>()) {
+					sqlBulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping(columnName, columnName));
+				}
+				using (var reader = ObjectReader.Create(items)) {
+					sqlBulkCopy.WriteToServer(reader);
+				}
 			}
-			using (var reader = ObjectReader.Create(items)) {
-				dataTable.Load(reader);
-			}
-			connectionProvider.GetConnection(connection => {
-				Joti.Connection.Bulk.BulkDbConnectionExtensions.BulkInsert(connection, dataTable);
-			});
 		}
 
 		public static void BulkInsert<T>(this IEnumerable<T> items, IDbConnectionProvider connectionProvider) 
@@ -44,9 +38,8 @@ namespace WebAppMonitor.Data
 			if (IsItemsEmpty(items)) {
 				return;
 			}
-			string tableName = OrmUtils.GetTableName<T>();
 			connectionProvider.GetConnection(connection => {
-				Joti.Connection.Bulk.BulkDbConnectionExtensions.BulkInsert(connection, items, tableName);
+				Insert(connection, items);
 			});
 		}
 

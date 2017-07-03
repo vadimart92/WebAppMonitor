@@ -22,6 +22,8 @@ export class QueryStatInfo  {
 		this.lockedAvgDuration = json.lockedAvgDuration;
 		this.queryText = json.queryText;
 		this.normalizedQueryTextId = json.normalizedQueryTextId;
+		this.deadLocksCount = json.deadLocksCount;
+
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
 		this.lockerTotalDurationStr = formatAsTime(this.lockerTotalDuration);
@@ -46,6 +48,7 @@ export class QueryStatInfo  {
 	lockedCount: number;
 	lockedTotalDuration: number;
 	lockedAvgDuration: number;
+	deadLocksCount: number;
 
 	totalDurationStr: string;
 	avgDurationStr: string;
@@ -55,6 +58,56 @@ export class QueryStatInfo  {
 	lockedAvgDurationStr: string;
 
 	formatedText: string;
+}
+
+export class QueryStatInfoDisplayConfig {
+	private columns: any[] = null;
+	private groupsMap: Object = null;
+	getColumnsConfig(): ColumnsConfig {
+		if (!this.columns) {
+			var groupList = new ColumnGroup("statements", [
+					new NumberColumnConfig("count", "Count").with.sort("desc").width(70).freeze().build(),
+					new TimeColumnConfig("totalDuration", "Total duration").with.width(120).freeze().build(),
+					new TimeColumnConfig("avgDuration", "AVG duration").with.width(110).freeze().build(),
+					new NumberColumnConfig("avgRowCount", "AVG rows").with.width(90).freeze().build(),
+					new NumberColumnConfig("avgCPU", "AVG CPU").with.width(100).freeze().build(),
+					new NumberColumnConfig("avgLogicalReads", "AVG reads").with.width(100).freeze().build(),
+					new NumberColumnConfig("avgWrites", "AVG writes").with.width(100).freeze().build(),
+				])
+				.next("locks", [
+					new NumberColumnConfig("deadLocksCount", "Deadlocks count").with.width(100).freeze().build(),
+					new NumberColumnConfig("lockerCount", "Locker count").with.headerDesc("Locking other count").width(100).freeze().build(),
+					new TimeColumnConfig("lockerTotalDuration", "Total as locker").with.headerDesc("Locking other total").width(120).freeze().build(),
+					new TimeColumnConfig("lockerAvgDuration", "AVG as locker").with.headerDesc("AVG locking other").width(120).freeze().build(),
+					new NumberColumnConfig("lockedCount", "Locked count").with.headerDesc("Locked by other count").width(100).freeze().build(),
+					new TimeColumnConfig("lockedTotalDuration", "Total locked").with.headerDesc("Locked by other total").width(120).freeze().build(),
+					new TimeColumnConfig("lockedAvgDuration", "AVG locked").with.headerDesc("AVG locked by other").width(120).freeze().build()
+				])
+				.next("text", [
+					new ColumnConfig("queryText", "Text")
+				]);
+
+			//new NumberColumnConfig("avgAdoReads", "AVG ado reads").with.headerDesc("AVG ado.net reads").width(100).freeze().build(),
+			this.groupsMap = groupList.toGroups();
+			this.groupsMap["statements"].modifyItems(c => c.hide = false);
+			this.groupsMap["text"].modifyItems(c => c.hide = false);
+			this.columns = groupList.toArray();
+		}
+		return <ColumnsConfig>{
+			columns: this.columns as ColumnConfig[],
+			groupsMap: this.groupsMap
+		};
+	}
+	getChartsConfig(): Object {
+		let columns = this.getColumnsConfig().columns;
+		let result = {};
+		_.each(columns, (column) => {
+			if (column.displayChart()) {
+				result[column.colId] = column.getChartMetaData();
+			}
+		});
+		return result;
+	}
 }
 
 class ColumnConfigModifier {
@@ -147,7 +200,6 @@ class NumberColumnConfig extends ColumnConfig {
 	}
 }
 
-
 class TimeColumnConfig extends ColumnConfig {
 	init(colId: string) {
 		super.init(colId + "Str");
@@ -166,7 +218,6 @@ class TimeColumnConfig extends ColumnConfig {
 		return true;
 	}
 }
-
 
 class ColumnGroup {
 	constructor(private groupName: string, private columns: ColumnConfig[], private previousGroup: ColumnGroup = null) {
@@ -198,52 +249,4 @@ class ColumnGroup {
 class ColumnsConfig {
 	columns: ColumnConfig[];
 	groupsMap: Object;
-}
-export class QueryStatInfoDisplayConfig {
-	private columns: any[] = null;
-	private groupsMap: Object = null;
-	getColumnsConfig(): ColumnsConfig {
-		if (!this.columns) {
-			var groupList = new ColumnGroup("statements", [
-					new NumberColumnConfig("count", "Count").with.sort("desc").width(70).freeze().build(),
-					new TimeColumnConfig("totalDuration", "Total duration").with.width(120).freeze().build(),
-					new TimeColumnConfig("avgDuration", "AVG duration").with.width(110).freeze().build(),
-					new NumberColumnConfig("avgRowCount", "AVG rows").with.width(90).freeze().build(),
-					new NumberColumnConfig("avgCPU", "AVG CPU").with.width(100).freeze().build(),
-					new NumberColumnConfig("avgLogicalReads", "AVG reads").with.width(100).freeze().build(),
-					new NumberColumnConfig("avgWrites", "AVG writes").with.width(100).freeze().build(),
-				])
-				.next("locks", [
-					new NumberColumnConfig("lockerCount", "Locker count").with.headerDesc("Locking other count").width(100).freeze().build(),
-					new TimeColumnConfig("lockerTotalDuration", "Total as locker").with.headerDesc("Locking other total").width(120).freeze().build(),
-					new TimeColumnConfig("lockerAvgDuration", "AVG as locker").with.headerDesc("AVG locking other").width(120).freeze().build(),
-					new NumberColumnConfig("lockedCount", "Locked count").with.headerDesc("Locked by other count").width(100).freeze().build(),
-					new TimeColumnConfig("lockedTotalDuration", "Total locked").with.headerDesc("Locked by other total").width(120).freeze().build(),
-					new TimeColumnConfig("lockedAvgDuration", "AVG locked").with.headerDesc("AVG locked by other").width(120).freeze().build(),
-				])
-				.next("text", [
-					new ColumnConfig("queryText", "Text")
-				]);
-
-			//new NumberColumnConfig("avgAdoReads", "AVG ado reads").with.headerDesc("AVG ado.net reads").width(100).freeze().build(),
-			this.groupsMap = groupList.toGroups();
-			this.groupsMap["statements"].modifyItems(c => c.hide = false);
-			this.groupsMap["text"].modifyItems(c => c.hide = false);
-			this.columns = groupList.toArray();
-		}
-		return <ColumnsConfig>{
-			columns: this.columns as ColumnConfig[],
-			groupsMap: this.groupsMap
-		};
-	}
-	getChartsConfig(): Object {
-		let columns = this.getColumnsConfig().columns;
-		let result = {};
-		_.each(columns, (column) => {
-			if (column.displayChart()) {
-				result[column.colId] = column.getChartMetaData();
-			}
-		});
-		return result;
-	}
 }

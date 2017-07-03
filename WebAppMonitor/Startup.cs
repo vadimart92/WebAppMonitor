@@ -44,6 +44,7 @@ namespace WebAppMonitor {
 			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
 			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
 			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
+			services.AddSingleton<IQueryTextSaver, QueryTextSaver>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

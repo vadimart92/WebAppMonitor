@@ -94,6 +94,7 @@ SELECT
    ,CAST(ROUND(lds.[count], 2) AS DECIMAL(18, 2)) LockedCount
    ,CAST(ROUND(lds.TotalDuration, 2) AS DECIMAL(18, 2)) LockedTotalDuration
    ,CAST(ROUND(lds.TotalDuration / NULLIF(lds.[count], 0), 2) AS DECIMAL(18, 2)) LockedAvgDuration
+   ,(SELECT COUNT_BIG(*) FROM DeadLocksInfo dli WHERE dli.DateId = d.Id AND (dli.QueryAId = nqth.Id OR dli.QuerybId = nqth.Id)) DeadLocksCount
 FROM dbo.NormQueryTextHistory nqth
 CROSS JOIN dbo.Dates d
 LEFT JOIN dbo.StatementStats s ON nqth.Id = s.NormalizedQueryTextId AND s.DateId = d.Id
@@ -116,7 +117,7 @@ FROM VwQueryStatInfo;
 CREATE CLUSTERED INDEX ix_cl ON QueryStatInfo (Date, NormalizedQueryTextId);
 CREATE COLUMNSTORE INDEX Ix_1 ON QueryStatInfo (Date, TotalDuration, AvgDuration, count, AvgRowCount
 , AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId,
-LockerCount, LockerTotalDuration, LockerAvgDuration);
+LockerCount, LockerTotalDuration, LockerAvgDuration, DeadLocksCount);
 
 
 DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)

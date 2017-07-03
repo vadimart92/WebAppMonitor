@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace WebAppMonitor.Core
 {
 	public class ResettableLazy<T>
 	{
+		[DebuggerDisplay("{_valueFactory}")]
 		public T Value => _container.Value;
 		public bool IsValueCreated => _container.IsValueCreated;
 		public void Reset() => _container = new Lazy<T>(_valueFactory);
