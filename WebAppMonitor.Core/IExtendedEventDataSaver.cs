@@ -6,5 +6,7 @@ namespace WebAppMonitor.Core
     public interface IExtendedEventDataSaver {
 	    void RegisterLock(QueryLockInfo lockInfo);
 	    void Flush();
+	    void RegisterDeadLock(QueryDeadLockInfo queryLockInfo);
+
     }
 }

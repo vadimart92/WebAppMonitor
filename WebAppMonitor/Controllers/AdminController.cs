@@ -35,9 +35,14 @@ namespace WebAppMonitor.Controllers {
 			_dataImporter = dataImporter;
 		}
 
-		[HttpGet("importExtendedEvents")]
+		[HttpGet("importLongLocks")]
 		public IActionResult ImportExtendedEvents(string file) {
-			_dataImporter.ImportExtendedEvents(file);
+			_dataImporter.ImportLongLocks(file);
+			return Ok();
+		}
+		[HttpGet("importDeadLocks")]
+		public IActionResult ImportDeadLocks(string file) {
+			_dataImporter.ImportDeadlocks(file);
 			return Ok();
 		}
 

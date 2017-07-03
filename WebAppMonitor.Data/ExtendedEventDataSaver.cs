@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Dapper;
-using Joti.Connection.Bulk;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Data.Entities;
@@ -15,7 +13,9 @@ namespace WebAppMonitor.Data {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private Dictionary<byte[], Guid> _normQueryMap;
 		private readonly List<NormQueryTextHistory> _pendingQueries = new List<NormQueryTextHistory>();
+		private readonly List<NormQueryTextSource> _pendingQuerySources = new List<NormQueryTextSource>();
 		private readonly List<LongLocksInfo> _pendingLocksInfo = new List<LongLocksInfo>();
+		private readonly List<DeadLocksInfo> _pendingDeadLocksInfo = new List<DeadLocksInfo>();
 		private readonly SHA512 _hasher = SHA512.Create();
 		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
 		private readonly SimpleLookupManager<QuerySource> _querySourceRepository;
@@ -47,7 +47,7 @@ namespace WebAppMonitor.Data {
 			return _hasher.ComputeHash(bytes);
 		}
 
-		private Guid RegisterQueryText(string text) {
+		private Guid RegisterQueryText(string text, ResettableLazy<Guid> querySourceId) {
 			var hash = GetQueryHash(text);
 			if (NormQueryMap.ContainsKey(hash)) {
 				return NormQueryMap[hash];
@@ -57,13 +57,17 @@ namespace WebAppMonitor.Data {
 				QueryHash = hash,
 				NormalizedQuery = text
 			};
-			PushQueryItem(historyItem);
+			PushQueryItem(historyItem, querySourceId.Value);
 			NormQueryMap[hash] = historyItem.Id;
 			return historyItem.Id;
 		}
 
-		private void PushQueryItem(NormQueryTextHistory historyItem) {
+		private void PushQueryItem(NormQueryTextHistory historyItem, Guid querySourceId) {
 			_pendingQueries.Add(historyItem);
+			_pendingQuerySources.Add(new NormQueryTextSource {
+				QuerySourceId = querySourceId,
+				NormQueryTextId = historyItem.Id
+			});
 			if (_pendingQueries.Count > 500) {
 				SavePendingQueryTextItems();
 			}
@@ -91,59 +95,71 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void RegisterLock(QueryLockInfo lockInfo) {
-			if (lockInfo.TimeStamp < LastQueryDate) {
+			if (lockInfo.TimeStamp < LastQueryDate.Value) {
 				return;
 			}
-			Guid blockedTextId = RegisterQueryText(lockInfo.Blocked.Text);
-			Guid blockerTextId = RegisterQueryText(lockInfo.Blocker.Text);
+			Guid blockedTextId = RegisterQueryText(lockInfo.Blocked.Text, LongLocksQuerySourceId);
+			Guid blockerTextId = RegisterQueryText(lockInfo.Blocker.Text, LongLocksQuerySourceId);
 			Guid lockingMode = _lockModeRepository.GetId(lockInfo.LockMode);
-			int dayId = GetDayId(lockInfo.TimeStamp);
-			_pendingLocksInfo.Add(new LongLocksInfo {
-				Id = Guid.NewGuid(),
-				BlockedQueryId = blockedTextId,
-				BlockerQueryId = blockerTextId,
-				LockingModeId = lockingMode,
-				Date = lockInfo.TimeStamp,
-				DateId = dayId,
-				Duration = lockInfo.Duration
-			});
+			var locksInfo = InitLockInfo<LongLocksInfo>(lockInfo.TimeStamp);
+			locksInfo.BlockedQueryId = blockedTextId;
+			locksInfo.BlockerQueryId = blockerTextId;
+			locksInfo.LockingModeId = lockingMode;
+			locksInfo.Duration = lockInfo.Duration;
+			_pendingLocksInfo.Add(locksInfo);
 		}
+		
+		private ResettableLazy<DateTime> LastQueryDate => new ResettableLazy<DateTime>(GetLastQueryDate<LongLocksInfo>);
+		private ResettableLazy<DateTime> LastDeadLockDate => new ResettableLazy<DateTime>(GetLastQueryDate<DeadLocksInfo>);
+		private ResettableLazy<Guid> LongLocksQuerySourceId => new ResettableLazy<Guid>(() => _querySourceRepository.GetId("LongLocks"));
+		private ResettableLazy<Guid> DeadLocksQuerySourceId => new ResettableLazy<Guid>(() => _querySourceRepository.GetId("DeadLocks"));
 
-		private DateTime? _lastQueryDate;
-		private DateTime LastQueryDate => _lastQueryDate ?? (DateTime) (_lastQueryDate = GetLastQueryDate());
-
-		private DateTime GetLastQueryDate() {
+		private DateTime GetLastQueryDate<T>() where T : class {
+			string tableName = OrmUtils.GetTableName<T>();
 			DateTime result = DateTime.MinValue;
 			_connectionProvider.GetConnection(connection => {
-				result = connection.ExecuteScalar<DateTime>("SELECT MAX(Date) FROM LongLocksInfo");
+				result = connection.ExecuteScalar<DateTime>($"SELECT MAX(Date) FROM [{tableName}]");
 			});
 			return result;
 		}
-
-		private Guid? _longLocksQuerySourceId;
-		private Guid LongLocksQuerySourceId => _longLocksQuerySourceId ??
-			(Guid)(_longLocksQuerySourceId = _querySourceRepository.GetId("LongLocks"));
+		
+		
 
 		private void SavePendingQueryTextItems() {
-			Guid longLocksQuerySourceId = LongLocksQuerySourceId;
-			var textSources = _pendingQueries.Select(q => new NormQueryTextSource {
-				QuerySourceId = longLocksQuerySourceId,
-				NormQueryTextId = q.Id
-			}).ToList();
-			_connectionProvider.GetConnection(connection => {
-				connection.BulkInsert(_pendingQueries);
-				connection.BulkInsert(textSources);
-			});
+			_pendingQueries.BinaryBulkInsert(_connectionProvider);
+			_pendingQuerySources.BulkInsert(_connectionProvider);
 			_pendingQueries.Clear();
+			_pendingQuerySources.Clear();
 		}
 
 		public void Flush() {
 			SavePendingQueryTextItems();
-			_connectionProvider.GetConnection(connection => {
-				connection.BulkInsert(_pendingLocksInfo);
-			});
+			_pendingLocksInfo.BulkInsert(_connectionProvider);
+			_pendingDeadLocksInfo.BulkInsert(_connectionProvider);
 			_pendingLocksInfo.Clear();
-			_lastQueryDate = null;
+			LastQueryDate.Reset();
+			LastQueryDate.Reset();
 		}
+
+		private T InitLockInfo<T>(DateTime timeStamp) where T : BaseLockInfo, new() {
+			return new T {
+				Id = Guid.NewGuid(),
+				Date = timeStamp,
+				DateId = GetDayId(timeStamp)
+			};
+		}
+
+		public void RegisterDeadLock(QueryDeadLockInfo lockInfo) {
+			if (lockInfo.TimeStamp < LastDeadLockDate.Value) {
+				return;
+			}
+			Guid blockedTextId = RegisterQueryText(lockInfo.QueryA, DeadLocksQuerySourceId);
+			Guid blockerTextId = RegisterQueryText(lockInfo.QueryB, DeadLocksQuerySourceId);
+			var deadLocksInfo = InitLockInfo<DeadLocksInfo>(lockInfo.TimeStamp);
+			deadLocksInfo.QueryAId = blockedTextId;
+			deadLocksInfo.QueryBId = blockerTextId;
+			_pendingDeadLocksInfo.Add(deadLocksInfo);
+		}
+
 	}
 }

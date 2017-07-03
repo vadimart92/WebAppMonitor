@@ -11,10 +11,18 @@ namespace WebAppMonitor.Core
 	    }
 
 	    public void LoadLongLocksData(string file) {
-		    foreach (QueryLockInfo queryLockInfo in _parser.ReadEvents(file)) {
+		    foreach (QueryLockInfo queryLockInfo in _parser.ReadLongLockEvents(file)) {
 			    _dataSaver.RegisterLock(queryLockInfo);
 			}
 			_dataSaver.Flush();
 		}
-	}
+
+	    public void LoadDeadLocksData(string file) {
+			foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
+			    _dataSaver.RegisterDeadLock(queryLockInfo);
+		    }
+		    _dataSaver.Flush();
+		}
+
+    }
 }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebAppMonitor.Core
+﻿namespace WebAppMonitor.Core
 {
     public interface IExtendedEventLoader {
 	    void LoadLongLocksData(string file);
+	    void LoadDeadLocksData(string file);
     }
 }

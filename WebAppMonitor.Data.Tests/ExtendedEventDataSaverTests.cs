@@ -37,8 +37,7 @@ namespace WebAppMonitor.Data.Tests
 		[Test, Category("PreCommit"), Ignore("not completed")]
 		public void RegisterLock(IDbConnectionProvider connectionProvider, QueryStatsContext queryStatsContext) {
 			var sut = new ExtendedEventDataSaver(connectionProvider, queryStatsContext);
-			sut.RegisterLock(new QueryLockInfo() {
-			});
+			sut.RegisterLock(new QueryLockInfo());
 			sut.Flush();
 		}
     }
