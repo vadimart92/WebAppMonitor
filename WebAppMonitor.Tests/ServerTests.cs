@@ -47,5 +47,18 @@ namespace WebAppMonitor.Tests
 				response.EnsureSuccessStatusCode();
 			}
 		}
+
+		[Test]
+		public async Task DailyImport() {
+			var dates = new List<DateTime> {
+				new DateTime(2017,7, 1),
+				new DateTime(2017,7, 2),
+				new DateTime(2017,7, 3)
+			};
+			string datesString = string.Join(",", dates.Select(d => d.ToString("yyyy-MM-dd")));
+			string requestUri = $"/api/Admin/importAllByDates?dates={Uri.EscapeDataString(datesString)}";
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
 	}
 }

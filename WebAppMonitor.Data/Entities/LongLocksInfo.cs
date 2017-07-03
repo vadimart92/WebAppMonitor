@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppMonitor.Data.Entities
 {
+	[Table("LongLocksInfo")]
 	public class LongLocksInfo
 	{
 		public Guid Id { get; set; }

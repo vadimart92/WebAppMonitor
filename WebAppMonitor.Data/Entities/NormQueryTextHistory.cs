@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppMonitor.Data.Entities
 {
+	[Table("NormQueryTextHistory")]
 	public class NormQueryTextHistory
 	{
 

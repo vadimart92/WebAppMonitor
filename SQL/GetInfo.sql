@@ -98,7 +98,7 @@ FROM dbo.NormQueryTextHistory nqth
 CROSS JOIN dbo.Dates d
 LEFT JOIN dbo.StatementStats s ON nqth.Id = s.NormalizedQueryTextId AND s.DateId = d.Id
 LEFT JOIN dbo.LockersStats lrs 	ON nqth.Id = lrs.NormalizedQueryTextId AND lrs.DateId = d.Id
-LEFT JOIN dbo.LockersStats lds 	ON nqth.Id = lds.NormalizedQueryTextId AND lds.DateId = d.Id
+LEFT JOIN dbo.LockedStats lds 	ON nqth.Id = lds.NormalizedQueryTextId AND lds.DateId = d.Id
 
 GO
 

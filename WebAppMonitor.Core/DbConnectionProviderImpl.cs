@@ -22,6 +22,15 @@ namespace WebAppMonitor.Core
 			}
 		}
 
+		public void GetConnection(IsolationLevel isolationLevel, Action<DbConnection, DbTransaction> action) {
+			using (SqlConnection connection = GetConnection()) {
+				using (DbTransaction transaction = connection.BeginTransaction(isolationLevel)) {
+					action(connection, transaction);
+					transaction.Commit();
+				}
+			}
+		}
+
 		public IDataReader GetReader(CommandDefinition command) {
 			var connection = GetConnection();
 			return connection.ExecuteReader(command, CommandBehavior.CloseConnection);
@@ -34,7 +43,7 @@ namespace WebAppMonitor.Core
 		}
 
 		private void Ping() {
-			using (var connection = GetConnection()) {
+			using (SqlConnection connection = GetConnection()) {
 				if (new SqlCommand("SELECT @@version") {
 					Connection = connection
 				}.ExecuteScalar() == null) {

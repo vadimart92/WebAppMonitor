@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Dapper;
+using Joti.Connection.Bulk;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Data.Entities;
-using Z.Dapper.Plus;
-using Z.EntityFramework.Plus;
 
 namespace WebAppMonitor.Data {
 	public class ExtendedEventDataSaver : IExtendedEventDataSaver {
@@ -25,18 +24,8 @@ namespace WebAppMonitor.Data {
 		public ExtendedEventDataSaver(IDbConnectionProvider connectionProvider, QueryStatsContext queryStatsContext) {
 			_connectionProvider = connectionProvider;
 			_queryStatsContext = queryStatsContext;
-			InitDapperPlus();
 			_lockModeRepository = new SimpleLookupManager<LockingMode>(connectionProvider);
 			_querySourceRepository = new SimpleLookupManager<QuerySource>(connectionProvider);
-		}
-
-		private void InitDapperPlus() {
-			DapperPlusManager.Entity<NormQueryTextHistory>().Table("NormQueryTextHistory").Key(x => x.Id);
-			DapperPlusManager.Entity<LongLocksInfo>().Table("LongLocksInfo").Key(x => x.Id);
-			DapperPlusManager.Entity<NormQueryTextSource>().Table("NormQueryTextSource").Key(x => new {
-				x.NormQueryTextId,
-				x.QuerySourceId
-			});
 		}
 
 		private Dictionary<byte[], Guid> NormQueryMap => _normQueryMap ?? InitNormQueryMap();

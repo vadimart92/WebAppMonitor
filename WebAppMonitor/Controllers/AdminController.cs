@@ -41,6 +41,15 @@ namespace WebAppMonitor.Controllers {
 			return Ok();
 		}
 
+		[HttpGet("importAllByDates")]
+		public IActionResult ImportAllByDates(string dates) {
+			var parsedDates = dates.Split(',').Select(DateTime.Parse).ToList();
+			if (parsedDates.Count > 0) {
+				_dataImporter.ImportAllByDates(parsedDates);
+				return Ok();
+			}
+			return BadRequest();
+		}
 
 		[HttpPost("importDailyData")]
 		public IActionResult ImportDailyData([FromBody] ImportDailyDataRequest value) {

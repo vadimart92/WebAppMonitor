@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Dapper;
+using Dapper.Contrib.Extensions;
 using WebAppMonitor.Core;
 using WebAppMonitor.Data.Entities;
-using Z.Dapper.Plus;
 
 namespace WebAppMonitor.Data
 {
@@ -30,9 +30,6 @@ namespace WebAppMonitor.Data
 
 		public SimpleLookupManager(IDbConnectionProvider connectionProvider) {
 			_connectionProvider = connectionProvider;
-			DapperPlusManager.Entity<TLookup>()
-				.Table(_lookupName)
-				.Key(x => x.Id);
 		}
 
 		public Guid GetId(string code) {
@@ -43,7 +40,7 @@ namespace WebAppMonitor.Data
 				};
 				ItemsMapDictionary[code] = item.Id;
 				_connectionProvider.GetConnection(connection => {
-					connection.BulkInsert(item);
+					connection.Insert(item);
 				});
 			}
 			return ItemsMapDictionary[code];

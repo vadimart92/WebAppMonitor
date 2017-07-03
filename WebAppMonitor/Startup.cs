@@ -18,7 +18,8 @@ namespace WebAppMonitor {
 		public static IConfigurationRoot Configuration { get; set; }
 
 		public Startup(IHostingEnvironment env) {
-			var builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddEnvironmentVariables()
+			IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory)
+				.AddEnvironmentVariables("ASPNETCORE_")
 				.AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
 				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 

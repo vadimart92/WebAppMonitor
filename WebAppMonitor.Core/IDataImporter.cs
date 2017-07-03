@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace WebAppMonitor.Core
 {
 	public interface IDataImporter {
@@ -5,5 +8,6 @@ namespace WebAppMonitor.Core
 		void ChangeSettings(DataImportSettings newSettings);
 		DataImportSettings GetSettings();
 		void ImportExtendedEvents(string filePath);
+		void ImportAllByDates(IEnumerable<DateTime> dates);
 	}
 }
