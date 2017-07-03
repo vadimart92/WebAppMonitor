@@ -22,7 +22,7 @@ export class QueryStatInfo  {
 		this.lockedAvgDuration = json.lockedAvgDuration;
 		this.queryText = json.queryText;
 		this.normalizedQueryTextId = json.normalizedQueryTextId;
-		this.deadLocksCount = json.deadLocksCount;
+		this.deadlocksCount = json.deadlocksCount;
 
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
@@ -48,7 +48,7 @@ export class QueryStatInfo  {
 	lockedCount: number;
 	lockedTotalDuration: number;
 	lockedAvgDuration: number;
-	deadLocksCount: number;
+	deadlocksCount: number;
 
 	totalDurationStr: string;
 	avgDurationStr: string;
@@ -75,7 +75,7 @@ export class QueryStatInfoDisplayConfig {
 					new NumberColumnConfig("avgWrites", "AVG writes").with.width(100).freeze().build(),
 				])
 				.next("locks", [
-					new NumberColumnConfig("deadLocksCount", "Deadlocks count").with.width(100).freeze().build(),
+					new NumberColumnConfig("deadlocksCount", "Deadlocks count").with.width(100).freeze().build(),
 					new NumberColumnConfig("lockerCount", "Locker count").with.headerDesc("Locking other count").width(100).freeze().build(),
 					new TimeColumnConfig("lockerTotalDuration", "Total as locker").with.headerDesc("Locking other total").width(120).freeze().build(),
 					new TimeColumnConfig("lockerAvgDuration", "AVG as locker").with.headerDesc("AVG locking other").width(120).freeze().build(),

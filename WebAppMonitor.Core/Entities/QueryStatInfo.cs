@@ -24,6 +24,7 @@ namespace WebAppMonitor.Core.Entities {
 
 		public decimal? AvgAdoReads { get; set; }
 
+		public int DeadlocksCount { get; set; }
 		public decimal? LockerCount { get; set; }
 		public decimal? LockerTotalDuration { get; set; }
 		public decimal? LockerAvgDuration { get; set; }
