@@ -106,9 +106,7 @@ FROM TodayNormQueryText n
 INNER JOIN TempNormQueryText t ON n.QueryHash = t.NormalizedQueryHash
 WHERE t.TodayQueryId = TodayQueryText.TodayQueryId
 
-if EXISTS( SELECT * FROM TodayQueryText WHERE TodayNormQueryTextId IS NULL ) PRINT 'TodayQueryText contains bad TodayNormQueryTextId';
+--if EXISTS( SELECT * FROM TodayQueryText WHERE TodayNormQueryTextId IS NULL ) PRINT 'TodayQueryText contains bad TodayNormQueryTextId';
 
-DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
-DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
 
 END

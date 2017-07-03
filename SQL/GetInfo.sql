@@ -118,6 +118,10 @@ CREATE COLUMNSTORE INDEX Ix_1 ON QueryStatInfo (Date, TotalDuration, AvgDuration
 , AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId,
 LockerCount, LockerTotalDuration, LockerAvgDuration);
 
+
+DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
+DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
+
 END
 
 --EXEC ActualizeQueryStatInfo
