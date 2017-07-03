@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { Router, NavigationEnd } from '@angular/router';
 import * as moment from 'moment';
 import { AdminService } from '../admin.service';
+import { SettingsService } from "../settings.service"
 
 @Component({
 	selector: 'app-options',
@@ -13,7 +14,7 @@ import { AdminService } from '../admin.service';
 export class OptionsComponent implements OnInit {
 	lastQueryInHistory: Date;
 	totalRecords: number;
-	constructor(public snackBar: MdSnackBar, private _http: Http, private router: Router, private _adminService: AdminService) {
+	constructor(public snackBar: MdSnackBar, private _http: Http, private router: Router, private _adminService: AdminService, private settingsService: SettingsService) {
 		router.events.subscribe((val) => {
 			if (val instanceof NavigationEnd) {
 				this.snackBar.dismiss();
@@ -38,13 +39,16 @@ export class OptionsComponent implements OnInit {
 				});
 			});
 	}
-	refreshStatsInfo() {
-		this._adminService.getStatsInfo().then((info) => {
-			this.lastQueryInHistory = info.LastQueryInHistory;
-			this.totalRecords = info.TotalRecords;
-			this.importJobActive = info.ImportJobActive;
-			this.importSettings = info.ImportSettings;
-		});
+	clearAllSettings() {
+		this.settingsService.clearAllSettings();
+		window.location.reload(true);
+	}
+	async refreshStatsInfo() {
+		var info = await this._adminService.getStatsInfo();
+		this.lastQueryInHistory = info.LastQueryInHistory;
+		this.totalRecords = info.TotalRecords;
+		this.importJobActive = info.ImportJobActive;
+		this.importSettings = info.ImportSettings;
 	}
 	importData(fileName: string) {
 		this.snackBar.dismiss();

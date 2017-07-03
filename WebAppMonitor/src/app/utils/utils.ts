@@ -3,6 +3,9 @@ import * as moment from 'moment';
 import 'moment-duration-format';
 
 export function formatAsTime(seconds: Number): string {
+	if (seconds === null || seconds === undefined) {
+		return undefined;
+	}
 	return moment.duration(seconds, "seconds").format("h:mm:ss", { trim: false });
 }
 
