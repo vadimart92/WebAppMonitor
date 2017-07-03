@@ -8,10 +8,10 @@
 	                 color="primary"
 	                 mode="indeterminate">
 	</md-progress-bar>
-	<td><md-input-container class="import-data-full-width">
+	<td *ngIf="importSettings"><md-input-container class="import-data-full-width">
 		<input mdInput placeholder="Directory template" [(value)]="importSettings.EventsDataDirectoryTemplate">
 	</md-input-container></td>
-	<td><md-input-container class="import-data-full-width">
+	<td *ngIf="importSettings"><md-input-container class="import-data-full-width">
 			<input mdInput placeholder="File template" [(value)]="importSettings.StatementsFileTemplate">
 	</md-input-container></td>
 	<button md-raised-button (click)="importData(importSettings)">Import</button>

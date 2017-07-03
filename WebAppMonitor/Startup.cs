@@ -1,44 +1,54 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using NLog.Web;
 using WebAppMonitor.Common;
+using WebAppMonitor.Core;
 using WebAppMonitor.Data;
+using WebAppMonitor.XmlEventsParser;
 
-namespace WebAppMonitor
-{
-	public class Startup
-	{
+namespace WebAppMonitor {
+	public class Startup {
 		public static IConfigurationRoot Configuration { get; set; }
-		public Startup()
-		{
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", reloadOnChange:true, optional:false);
+
+		public Startup(IHostingEnvironment env) {
+			IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory)
+				.AddEnvironmentVariables("ASPNETCORE_")
+				.AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
 			Configuration = builder.Build();
+			env.ConfigureNLog("nlog.config");
 		}
+
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddMvc()
-				.AddJsonOptions(options =>
-				{
-					options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-				});
+			services.AddMvc().AddJsonOptions(options => {
+				options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+			});
 
 			string cs = Configuration.GetConnectionString("db");
-			services.AddSingleton<IDbConnectionProvider>(new DbConnectionProviderImpl(cs));
+			var connectionProvider = new DbConnectionProviderImpl(cs);
+			services.AddSingleton<IDbConnectionProvider>(connectionProvider);
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(cs));
 			services.AddSingleton<IDataImporter, DataImporter>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
+			services.AddSingleton<ISettingsRepository, SettingsRepository>();
+			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
+			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
+			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
+			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
-			loggerFactory.AddConsole();
+			loggerFactory.AddNLog();
+			app.AddNLogWeb();
 
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
@@ -46,8 +56,7 @@ namespace WebAppMonitor
 
 			app.Use(async (context, next) => {
 				await next();
-				if (context.Response.StatusCode == 404 &&
-				    !Path.HasExtension(context.Request.Path.Value) &&
+				if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) &&
 				    !context.Request.Path.Value.StartsWith("/api/")) {
 					context.Request.Path = "/index.html";
 					await next();
@@ -55,7 +64,7 @@ namespace WebAppMonitor
 			});
 			app.UseHangfireServer();
 			app.UseHangfireDashboard(options: new DashboardOptions() {
-				Authorization = new []{new HangfireAuthFilter()}
+				Authorization = new[] {new HangfireAuthFilter()}
 			});
 			app.UseMvcWithDefaultRoute();
 			app.UseDefaultFiles();

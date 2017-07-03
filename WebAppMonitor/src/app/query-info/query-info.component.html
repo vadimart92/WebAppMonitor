@@ -6,11 +6,15 @@
 		<h3 class="info-item">Total duration: <span>{{formatTime(queryData.info.totalDuration)}}</span></h3>
 	</div>
 	<div class="info-wrap-column">
-		<h3 class="info-item">AVG duration: <span>{{formatTime(queryData.info.averageDuration)}}</span></h3>
-		<h3 class="info-item">AVG rows count: <span>{{queryData.info.averageRowCount}}</span></h3>
-		<h3 class="info-item">AVG CPU: <span>{{queryData.info.averageCPU}}</span></h3>
-		<h3 class="info-item">AVG logical reads: <span>{{queryData.info.averageLogicalReads}}</span></h3>
-		<h3 class="info-item">AVG writes: <span>{{queryData.info.averageWrites}}</span></h3>
+		<h3 class="info-item">AVG duration: <span>{{formatTime(queryData.info.avgDuration)}}</span></h3>
+		<h3 class="info-item">AVG rows count: <span>{{queryData.info.avgRowCount}}</span></h3>
+		<h3 class="info-item">AVG CPU: <span>{{queryData.info.avgCPU}}</span></h3>
+		<h3 class="info-item">AVG logical reads: <span>{{queryData.info.avgLogicalReads}}</span></h3>
+		<h3 class="info-item">AVG writes: <span>{{queryData.info.avgWrites}}</span></h3>
+	</div>
+	<div class="info-wrap-column">
+		<h3 class="info-item">AVG ado reads: <span>{{queryData.info.avgAdoReads}}</span></h3>
+		
 	</div>
 </div>
 <md-tab-group dynamicHeight="true" [(selectedIndex)]="selectedTabIndex">
@@ -23,13 +27,7 @@
 			{{queryData.info.formatedText || queryData.info.queryText}}
 		</div>
 	</md-tab>
-	<md-tab [label]="chartData.chartCaption" *ngFor="let chartData of chartsData">
+	<md-tab [label]="chartData.chartCaption" *ngFor="let chartData of chartsData | isChartVisible:visibleColumns">
 		<app-query-chart [chartData]="chartData"></app-query-chart>
 	</md-tab>
-	<!--<md-tab label="AVG duration">
-		<app-query-chart [chartData]="avgDurationData"></app-query-chart>
-	</md-tab>
-	<md-tab label="Total duration">
-		<app-query-chart [chartData]="totalDurationData"></app-query-chart>
-	</md-tab>-->
 </md-tab-group>

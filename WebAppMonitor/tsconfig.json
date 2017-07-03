@@ -14,6 +14,7 @@
 		],
 		"types": [
 			"underscore",
+			"jasmine",
 			"@types/moment-duration-format"
 		],
 		"lib": [

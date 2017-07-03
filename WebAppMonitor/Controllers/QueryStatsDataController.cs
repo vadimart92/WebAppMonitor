@@ -8,7 +8,7 @@ using gudusoft.gsqlparser.pp.para;
 using gudusoft.gsqlparser.pp.stmtformatter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using WebAppMonitor.Common;
+using WebAppMonitor.Core;
 
 namespace WebAppMonitor.Controllers
 {
@@ -152,7 +152,7 @@ namespace WebAppMonitor.Controllers
 				var result = new QueryStatsInfo();
 				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
 				_connectionProvider.GetConnection((c) => {
-					result.DatesWithData = c.Query<DateTime>("SELECT Date FROM Dates");
+					result.DatesWithData = c.Query<DateTime>("SELECT Date FROM Dates ORDER BY Date ASC");
 				});
 				return Task.FromResult(result);
 			}).ConfigureAwait(false);

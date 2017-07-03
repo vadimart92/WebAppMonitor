@@ -301,3 +301,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+WebAppMonitor/appsettings.Development.json
+WebAppMonitor/appsettings.Development.json

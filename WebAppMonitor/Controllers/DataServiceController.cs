@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using Breeze.AspNetCore;
 using Breeze.Persistence.EF6;
 using Microsoft.AspNetCore.Mvc;
+using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Data;
 
 namespace WebAppMonitor.Controllers
@@ -17,9 +19,8 @@ namespace WebAppMonitor.Controllers
 		}
 
 		[HttpGet]
-		public IQueryable<QueryStatInfo> QueryStatInfo()
-		{
-			return _efPersistenceManager.Context.QueryStatInfo;
+		public IQueryable<QueryStatInfo> QueryStatInfo() {
+			return _efPersistenceManager.Context.QueryStatInfo.AsNoTracking();
 		}
 
 		[HttpGet]

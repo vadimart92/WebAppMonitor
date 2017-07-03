@@ -3,22 +3,7 @@ import * as moment from 'moment';
 import * as _ from 'underscore';
 
 import {TimeUtils} from '../utils/utils'
-
-export enum ChartAxisType {
-	Number,
-	Time
-}
-
-export class ChartData {
-	seriesData: any[];
-	yAxisType: ChartAxisType;
-	chartCaption: string; 
-	constructor() {
-		this.seriesData = [];
-		this.yAxisType = ChartAxisType.Number;
-	}
-}
-
+import { ChartData, ChartAxisType}  from "../common/charting"
 
 @Component({
 	selector: 'app-query-chart',

@@ -17,7 +17,8 @@ import { RowsLoadingDialogComponent } from '../rows-loading-dialog/rows-loading-
 import { QueryStatsService } from './query-stats.service'
 import { TimeUtils } from '../utils/utils'
 import { ApiDataService, StatsQueryOptions } from "../data.service"
-import { QueryStatInfo } from "../entities/query-stats-info"
+import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
+import { QueryData } from "../query-info/query-info.component"
 
 @Component({
 	selector: 'app-query-stats',
@@ -32,7 +33,7 @@ export class QueryStatsComponent implements OnInit {
 	queryStats: QueryStatInfo[];
 	daysWithData: Date[];
 	currentDate: Date;
-	activeQuery: any = null;
+	activeQuery: QueryData = null;
 	columnsSettings: any;
 	private _searchTerms = new Subject<string>();
 	private _timeUtils = new TimeUtils();
@@ -41,13 +42,17 @@ export class QueryStatsComponent implements OnInit {
 	sideNavOpened: boolean = true;
 	private _queryFilter: string = null;
 	private filterTextOnServer: boolean = false;
+	private _useColumnsProjections: boolean = false;
+	private _queryStatInfoDisplayConfigProvider = new QueryStatInfoDisplayConfig();
+	visibleColumns: string[] = [];
 	@ViewChild(MdDatepicker) dp: MdDatepicker<Date>;
 
 	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
 		this.currentDate = new Date();
 		this.daysWithData = [];
 		this.initGridOptions();
-		this.columnDefs = this.getColumns();
+		this.columnDefs = this._queryStatInfoDisplayConfigProvider.getColumnsConfig();
+		this.actualizeVisibleColumns();
 		this.initHotKeys();
 	}
 	initHotKeys() {
@@ -78,12 +83,10 @@ export class QueryStatsComponent implements OnInit {
 		this.gridOptions.columnApi.setColumnVisible(columnConfig.colId, columnConfig.hide);
 		columnConfig.hide = !columnConfig.hide;
 		this.gridOptions.api.sizeColumnsToFit();
+		this.actualizeVisibleColumns();
 	}
 	onGridSortChanged() {
 		this.loadGridData();
-	}
-	timeComparator(dataPropName, valueA, valueB, nodeA, nodeB, isInverted): Number {
-		return nodeA.data[dataPropName] - nodeB.data[dataPropName];
 	}
 	ngOnInit() {
 		this.loadData();
@@ -114,19 +117,6 @@ export class QueryStatsComponent implements OnInit {
 			})
 			.then(_ => this.loadGridData());
 	}
-	getColumns(): any[] {
-		return [
-			{ headerName: "Count", colId: "count", field: "count", sortingOrder: ['desc', 'asc'], filter: 'number', width: 70, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total duration", field: "totalDurationStr", colId: "totalDuration", sortingOrder: ['desc', 'asc'], sort: "desc" , width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration") },
-			{ headerName: "AVG duration", field: "avgDurationStr", colId: "avgDuration", sortingOrder: ['desc', 'asc'], width: 110, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "avgDuration") },
-			{ headerName: "AVG rows", colId: "avgRowCount", field: "avgRowCount", sortingOrder: ['desc', 'asc'], filter: 'number', width: 90, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG CPU", colId: "avgCPU", field: "avgCPU", sortingOrder: ['desc', 'asc'], filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG reads", colId: "avgLogicalReads", field: "avgLogicalReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG writes", colId: "avgWrites", field: "avgWrites", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG ado reads", headerDesc: "AVG ado.net reads", colId: "avgAdoReads", field: "avgAdoReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Text", colId: "queryText", field: "queryText",cellClass: 'query-stats-sql-cell'}
-		];
-	}
 	toggleLoadMask() {
 		if (!this._dialogRef && !this._dialogTimeout) {
 			this._dialogTimeout = window.setTimeout(() => this._dialogRef = this.dialog.open(RowsLoadingDialogComponent), 500);
@@ -143,8 +133,17 @@ export class QueryStatsComponent implements OnInit {
 		let options = <StatsQueryOptions>{
 			orderBy: orderBy,
 			take: 100,
-			date: this.currentDate
+			date: this.currentDate,
+			columns: []
 		};
+		if (this._useColumnsProjections) {
+			_.each(this.columnDefs, column => {
+				if (column.hide) {
+					return;
+				}
+				options.columns.push(column.colId);
+			});
+		}
 		if (this.filterTextOnServer && this._queryFilter) {
 			options.where = {
 				"queryText": {
@@ -179,12 +178,14 @@ export class QueryStatsComponent implements OnInit {
 		let date = moment(this.currentDate).add(offset, "days").toDate();
 		this.onSelectedDateChanged(date);
 	}
-
 	search(term: string): void {
 		this._searchTerms.next(term);
 	}
 	onGridReady(params) {
 		params.api.sizeColumnsToFit();
+	}
+	actualizeVisibleColumns() {
+		this.visibleColumns = this.columnDefs? this.columnDefs.filter(c => !c.hide).map(c => c.colId) : [];
 	}
 	onGridSelectionChanged() {
 		var selectedRows = this.gridOptions.api.getSelectedRows();

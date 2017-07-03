@@ -1,15 +1,42 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools", "DevTools\DevTools.csproj", "{F209A3B9-A579-41E5-927E-0226454FED10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedEventsXmlParser", "ExtendedEventsXmlParser\ExtendedEventsXmlParser.csproj", "{86443543-C034-4592-B977-4751228B3388}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data", "WebAppMonitor.Data\WebAppMonitor.Data.csproj", "{FB40853D-6433-4ED5-8319-C469EDF5ADEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Core", "WebAppMonitor.Core\WebAppMonitor.Core.csproj", "{4995CF07-BF93-4A1A-9059-3E281D4408F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Core.Tests", "WebAppMonitor.Core.Tests\WebAppMonitor.Core.Tests.csproj", "{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.XmlEventsParser", "WebAppMonitor.XmlEventsParser\WebAppMonitor.XmlEventsParser.csproj", "{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.XmlEventsParser.Tests", "WebAppMonitor.XmlEventsParser.Tests\WebAppMonitor.XmlEventsParser.Tests.csproj", "{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofixture.NUnit3", "Autofixture.NUnit3\Autofixture.NUnit3.csproj", "{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.DataProcessing", "WebAppMonitor.DataProcessing\WebAppMonitor.DataProcessing.csproj", "{0D954394-A107-463C-875D-3170BDABCB99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.DataProcessing.Tests", "WebAppMonitor.DataProcessing.Tests\WebAppMonitor.DataProcessing.Tests.csproj", "{1D420A80-7444-41CB-B866-F4A085C47689}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ExtendedEventsUtils", "ExtendedEventsUtils\ExtendedEventsUtils.sqlproj", "{76B44DC0-312C-41E3-9A01-50A64329FD25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data.Tests", "WebAppMonitor.Data.Tests\WebAppMonitor.Data.Tests.csproj", "{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAC2652A-E9BA-4858-9636-162F9502859B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{25DCAEA4-7A71-43DA-8E0F-91B299FDB6AC}"
+	ProjectSection(SolutionItems) = preProject
+		SQL\DDL.sql = SQL\DDL.sql
+		SQL\GetInfo.sql = SQL\GetInfo.sql
+		SQL\ImportDailyData.sql = SQL\ImportDailyData.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,16 +52,62 @@ Global
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F209A3B9-A579-41E5-927E-0226454FED10}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86443543-C034-4592-B977-4751228B3388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86443543-C034-4592-B977-4751228B3388}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86443543-C034-4592-B977-4751228B3388}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86443543-C034-4592-B977-4751228B3388}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB40853D-6433-4ED5-8319-C469EDF5ADEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4995CF07-BF93-4A1A-9059-3E281D4408F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D954394-A107-463C-875D-3170BDABCB99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D954394-A107-463C-875D-3170BDABCB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D954394-A107-463C-875D-3170BDABCB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D954394-A107-463C-875D-3170BDABCB99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D420A80-7444-41CB-B866-F4A085C47689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D420A80-7444-41CB-B866-F4A085C47689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D420A80-7444-41CB-B866-F4A085C47689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D420A80-7444-41CB-B866-F4A085C47689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F787CA0D-7FE1-4C5F-AE44-487589F1BC66} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{1D420A80-7444-41CB-B866-F4A085C47689} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{54A1797E-E039-4071-BC73-C2C3763A57E8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 	EndGlobalSection
 EndGlobal

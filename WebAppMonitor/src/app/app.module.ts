@@ -24,6 +24,7 @@ import { OptionsComponent } from './options/options.component';
 import { QueryChartComponent } from './query-chart/query-chart.component';
 import { AdminService } from './admin.service';
 import { ApiDataService } from './data.service';
+import { IsChartVisible as PropertyValue } from './utils/ng-utils';
 
 
 export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, routerInitializer: ɵg, apiDataService: ApiDataService) {
@@ -31,6 +32,7 @@ export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, ro
 	return () => routerInitializer.appInitializer().then(() => {
 		return entityManager.fetchMetadata().then((metadata: Object) => {
 			breezeBridgeAngularModule["metadata"] = metadata;
+			apiDataService.onMetadataInitialized();
 			return metadata;
 		});
 	});
@@ -43,7 +45,8 @@ export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, ro
 		QueryInfoComponent,
 		RowsLoadingDialogComponent,
 		OptionsComponent,
-		QueryChartComponent
+		QueryChartComponent,
+		PropertyValue
 	],
 	imports: [
 		BrowserModule,
