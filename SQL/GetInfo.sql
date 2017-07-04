@@ -126,10 +126,10 @@ END ELSE BEGIN
 	WHERE Date >= @date
 END;
 
+INSERT INTO QueryStatInfo
 SELECT *
-INTO QueryStatInfo
 FROM VwQueryStatInfo
-WHERE Date >= @date
+WHERE [Date] >= @date
 
 DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
 DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
@@ -137,3 +137,4 @@ DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
 END
 
 --EXEC ActualizeQueryStatInfo
+-- drop table QueryStatInfo

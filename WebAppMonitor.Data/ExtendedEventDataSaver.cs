@@ -15,8 +15,8 @@ namespace WebAppMonitor.Data {
 		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
 		private readonly SimpleLookupManager<QuerySource> _querySourceRepository;
 		private readonly QueryStatsContext _queryStatsContext;
-		private ResettableLazy<DateTime> LastQueryDate => new ResettableLazy<DateTime>(GetLastQueryDate<LongLocksInfo>);
-		private ResettableLazy<DateTime> LastDeadLockDate => new ResettableLazy<DateTime>(GetLastQueryDate<DeadLocksInfo>);
+		private readonly ResettableLazy<DateTime> LastQueryDate;
+		private readonly ResettableLazy<DateTime> LastDeadLockDate;
 		private ResettableLazy<Guid> LongLocksQuerySourceId => new ResettableLazy<Guid>(
 			() => _querySourceRepository.GetId("LongLocks"));
 		private ResettableLazy<Guid> DeadLocksQuerySourceId => new ResettableLazy<Guid>(
@@ -30,6 +30,8 @@ namespace WebAppMonitor.Data {
 			_queryTextSaver = queryTextSaver;
 			_lockModeRepository = new SimpleLookupManager<LockingMode>(connectionProvider);
 			_querySourceRepository = new SimpleLookupManager<QuerySource>(connectionProvider);
+			LastQueryDate = new ResettableLazy<DateTime>(GetLastQueryDate<LongLocksInfo>);
+			LastDeadLockDate = new ResettableLazy<DateTime>(GetLastQueryDate<DeadLocksInfo>);
 		}
 
 		private int GetDayId(DateTime dateTime) {
@@ -68,7 +70,7 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void RegisterDeadLock(QueryDeadLockInfo lockInfo) {
-			if (lockInfo.TimeStamp < LastDeadLockDate.Value) {
+			if (lockInfo.TimeStamp <= LastDeadLockDate.Value) {
 				return;
 			}
 			Guid blockedTextId = _queryTextSaver.GetOrCreate(lockInfo.QueryA, DeadLocksQuerySourceId.Value);
@@ -80,7 +82,7 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void RegisterLock(QueryLockInfo lockInfo) {
-			if (lockInfo.TimeStamp < LastQueryDate.Value) {
+			if (lockInfo.TimeStamp <= LastQueryDate.Value) {
 				return;
 			}
 			Guid blockedTextId = _queryTextSaver.GetOrCreate(lockInfo.Blocked.Text, LongLocksQuerySourceId.Value);
