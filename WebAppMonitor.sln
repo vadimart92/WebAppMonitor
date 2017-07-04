@@ -29,7 +29,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAC2652A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.SharedUtils", "WebAppMonitor.SharedUtils\WebAppMonitor.SharedUtils.csproj", "{5EA7F60F-FAB7-4BF2-BC23-B649AD8DF607}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38D59148-FEB4-491C-9DD5-6BDC5459ED0F}"
+	ProjectSection(SolutionItems) = preProject
+		DB\WebAppMonitor.sln = DB\WebAppMonitor.sln
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{7E5C0D21-6BDB-4EC1-B813-DB5E67BDC142}"
+	ProjectSection(SolutionItems) = preProject
+		DB\SQL\CreateEvents.sql = DB\SQL\CreateEvents.sql
+		DB\SQL\DDL.sql = DB\SQL\DDL.sql
+		DB\SQL\GetInfo.sql = DB\SQL\GetInfo.sql
+		DB\SQL\ImportDailyData.sql = DB\SQL\ImportDailyData.sql
+		DB\SQL\sp_ReplaceRecord.sql = DB\SQL\sp_ReplaceRecord.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +97,6 @@ Global
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EA7F60F-FAB7-4BF2-BC23-B649AD8DF607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EA7F60F-FAB7-4BF2-BC23-B649AD8DF607}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EA7F60F-FAB7-4BF2-BC23-B649AD8DF607}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EA7F60F-FAB7-4BF2-BC23-B649AD8DF607}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +108,6 @@ Global
 		{1D420A80-7444-41CB-B866-F4A085C47689} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{54A1797E-E039-4071-BC73-C2C3763A57E8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{7E5C0D21-6BDB-4EC1-B813-DB5E67BDC142} = {38D59148-FEB4-491C-9DD5-6BDC5459ED0F}
 	EndGlobalSection
 EndGlobal

@@ -142,6 +142,7 @@ END
 EXEC sp_configure 'clr enabled' , '1'
 go
 reconfigure;
+GO
 
 DROP ASSEMBLY IF EXISTS [WebAppMonitor]
 GO

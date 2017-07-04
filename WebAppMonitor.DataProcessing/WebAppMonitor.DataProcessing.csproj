@@ -48,15 +48,12 @@
     <Compile Include="Json\JsonLogParser.cs" />
     <Compile Include="Json\ReaderLogRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlExtractionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj">
       <Project>{4995cf07-bf93-4a1a-9059-3e281d4408f8}</Project>
       <Name>WebAppMonitor.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebAppMonitor.SharedUtils\WebAppMonitor.SharedUtils.csproj">
-      <Project>{5ea7f60f-fab7-4bf2-bc23-b649ad8df607}</Project>
-      <Name>WebAppMonitor.SharedUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
