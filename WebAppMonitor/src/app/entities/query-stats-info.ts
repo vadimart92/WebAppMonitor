@@ -208,10 +208,9 @@ class NumberColumnConfig extends ColumnConfig {
 class TimeColumnConfig extends ColumnConfig {
 	init(colId: string) {
 		super.init(colId + "Str");
-
 	}
 	comparator = (valueA, valueB, nodeA, nodeB) : number => {
-		return nodeA.data[this.field] - nodeB.data[this.field];
+		return nodeA.data[this.colId] - nodeB.data[this.colId];
 	}
 
 	getChartMetaData(): ChartMetaData {

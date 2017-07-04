@@ -58,6 +58,14 @@ namespace WebAppMonitor.Tests
 			var response = await _client.GetAsync(requestUri);
 			response.EnsureSuccessStatusCode();
 		}
+		[Test]
+		public async Task ImportReaderLogs() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "LoggingDataReader.json.0.json");
+			file = ShareFile(file);
+			string requestUri = $"/api/Admin/importReaderLogs?file={Uri.EscapeDataString(file)}";
+			var response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
 
 		[Test]
 		public async Task PrimaryImport() {

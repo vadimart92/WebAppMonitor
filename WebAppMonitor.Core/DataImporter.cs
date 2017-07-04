@@ -14,16 +14,18 @@ namespace WebAppMonitor.Core {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly ISettingsRepository _settingsRepository;
 		private readonly IExtendedEventLoader _extendedEventLoader;
+		private readonly IAppLogLoader _appLogLoader;
 		private readonly ILogger<DataImporter> _logger;
 
 		private static int _commandTimeout = 3600;
 
 		public DataImporter(IDbConnectionProvider connectionProvider, ISettingsRepository settingsRepository,
-			IExtendedEventLoader extendedEventLoader, ILogger<DataImporter> logger) {
+			IExtendedEventLoader extendedEventLoader, ILogger<DataImporter> logger, IAppLogLoader appLogLoader) {
 			_connectionProvider = connectionProvider;
 			_settingsRepository = settingsRepository;
 			_extendedEventLoader = extendedEventLoader;
 			_logger = logger;
+			_appLogLoader = appLogLoader;
 		}
 
 		private void BackupDb() {
@@ -124,6 +126,20 @@ namespace WebAppMonitor.Core {
 		public void ImportDeadlocks(string filePath) {
 			_extendedEventLoader.LoadDeadLocksData(filePath);
 			ActualizeInfo();
+		}
+
+		public void ImportDbExecutorLogs(string file) {
+			_logger.LogInformation("ImportDbExecutorLogs started");
+			_appLogLoader.LoadReaderLogs(file);
+			_logger.LogInformation("ImportDbExecutorLogs completed");
+		}
+
+		public void ImportReaderLogs(string file) {
+			throw new NotImplementedException();
+		}
+
+		public void ImportPerfomanceLoggerLogs(string file) {
+			throw new NotImplementedException();
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {

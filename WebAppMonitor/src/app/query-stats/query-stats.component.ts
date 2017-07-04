@@ -113,8 +113,8 @@ export class QueryStatsComponent implements OnInit {
 				return Observable.of<string>();
 			})
 			.subscribe((term) => {
+				this._queryFilter = term ? term.toString() : null;
 				if (this.filterTextOnServer) {
-					this._queryFilter = term ? term.toString() : null;
 					this.loadGridData();
 				}
 				let api = this.gridOptions.api;
@@ -165,16 +165,16 @@ export class QueryStatsComponent implements OnInit {
 		}
 		return options;
 	}
-	loadGridData() {
+	async loadGridData() {
 		this.queryStats = [];
 		this.toggleLoadMask();
-		this._dataService.getStats(this.getGridOptions()).then(stats => {
-			this.toggleLoadMask();
-			if (!stats.length) {
-				this.gridOptions.api.showNoRowsOverlay();
-			}
-			this.queryStats = stats;
-		});
+		var options = this.getGridOptions();
+		var stats = await this._dataService.getStats(options);
+		this.toggleLoadMask();
+		if (!stats.length) {
+			this.gridOptions.api.showNoRowsOverlay();
+		}
+		this.queryStats = stats;
 	}
 	getIsAvalilableDate(d: Date) {
 		var day = moment(d);

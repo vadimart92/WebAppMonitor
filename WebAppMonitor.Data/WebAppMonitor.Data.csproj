@@ -253,6 +253,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppLogLoader.cs" />
     <Compile Include="ByteArrayComparer.cs" />
     <Compile Include="DbConnectionUtils.cs" />
     <Compile Include="Entities\BaseLookup.cs" />

@@ -45,6 +45,12 @@ namespace WebAppMonitor.Controllers {
 			_dataImporter.ImportDeadlocks(file);
 			return Ok();
 		}
+		
+		[HttpGet("importReaderLogs")]
+		public IActionResult ImportReaderLogs(string file) {
+			_dataImporter.ImportReaderLogs(file);
+			return Ok();
+		}
 
 		[HttpGet("importAllByDates")]
 		public IActionResult ImportAllByDates(string dates) {

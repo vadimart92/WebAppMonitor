@@ -10,6 +10,8 @@ namespace WebAppMonitor.Core
 		void ImportLongLocks(string filePath);
 		void ImportAllByDates(IEnumerable<DateTime> dates);
 		void ImportDeadlocks(string file);
-
+		void ImportDbExecutorLogs(string file);
+		void ImportReaderLogs(string file);
+		void ImportPerfomanceLoggerLogs(string file);
 	}
 }
