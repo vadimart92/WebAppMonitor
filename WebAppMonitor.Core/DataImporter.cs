@@ -118,10 +118,12 @@ namespace WebAppMonitor.Core {
 
 		public void ImportLongLocks(string filePath) {
 			_extendedEventLoader.LoadLongLocksData(filePath);
+			ActualizeInfo();
 		}
 
 		public void ImportDeadlocks(string filePath) {
 			_extendedEventLoader.LoadDeadLocksData(filePath);
+			ActualizeInfo();
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {

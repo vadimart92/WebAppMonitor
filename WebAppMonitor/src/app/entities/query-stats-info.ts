@@ -84,7 +84,7 @@ export class QueryStatInfoDisplayConfig {
 					new TimeColumnConfig("lockedAvgDuration", "AVG locked").with.headerDesc("AVG locked by other").width(120).freeze().build()
 				])
 				.next("text", [
-					new ColumnConfig("queryText", "Text")
+					new ColumnConfig("queryText", "Text").with.cellClass("query-stats-sql-cell").build()
 				]);
 
 			//new NumberColumnConfig("avgAdoReads", "AVG ado reads").with.headerDesc("AVG ado.net reads").width(100).freeze().build(),
@@ -117,6 +117,10 @@ class ColumnConfigModifier {
 	}
 	width(windth: number): ColumnConfigModifier {
 		this.columnsConfig.width = windth;
+		return this;
+	}
+	cellClass(value: string): ColumnConfigModifier {
+		this.columnsConfig.cellClass = value;
 		return this;
 	}
 	hide(val: boolean): ColumnConfigModifier {
@@ -153,7 +157,7 @@ class ColumnConfig {
 		this.headerName = header;
 		this.init(this.colId);
 	}
-	colId: string
+	colId: string;
 	field: string;
 	sortingOrder: string[];
 	headerName: string;
@@ -165,6 +169,7 @@ class ColumnConfig {
 	hide: boolean = true;
 	sort: string;
 	columnGroup: string;
+	cellClass: string;
 	get with(): ColumnConfigModifier {
 		return new ColumnConfigModifier(this);
 	}

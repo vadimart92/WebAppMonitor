@@ -16,7 +16,7 @@ namespace WebAppMonitor.Data.Tests
 			var sut = new List<NormQueryTextHistory> {
 				new NormQueryTextHistory{Id = Guid.NewGuid(), QueryHash = new byte[]{1,2,3}, NormalizedQuery = "asd"}
 			};
-			sut.BinaryBulkInsert(connectionProvider);
+			sut.BulkInsert(connectionProvider);
 		}
 	}
 }

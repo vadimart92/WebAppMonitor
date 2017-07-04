@@ -114,9 +114,8 @@ export class QueryStatsComponent implements OnInit {
 			})
 			.subscribe((term) => {
 				if (this.filterTextOnServer) {
-					this._queryFilter = term.toString();
+					this._queryFilter = term ? term.toString() : null;
 					this.loadGridData();
-					return;
 				}
 				let api = this.gridOptions.api;
 				api.setQuickFilter(term);

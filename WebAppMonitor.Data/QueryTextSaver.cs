@@ -18,9 +18,9 @@ namespace WebAppMonitor.Data {
 		private Dictionary<byte[], Guid> NormQueryMap => _normQueryMap.Value;
 		private volatile bool _isWorking;
 		private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(true);
-		private readonly Logger<QueryTextSaver> _logger;
+		private readonly ILogger<QueryTextSaver> _logger;
 
-		public QueryTextSaver(IDbConnectionProvider connectionProvider, Logger<QueryTextSaver> logger) {
+		public QueryTextSaver(IDbConnectionProvider connectionProvider, ILogger<QueryTextSaver> logger) {
 			_connectionProvider = connectionProvider;
 			_logger = logger;
 			_normQueryMap = new Lazy<Dictionary<byte[], Guid>>(InitNormQueryMap);
