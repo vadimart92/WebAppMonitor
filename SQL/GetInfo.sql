@@ -126,6 +126,8 @@ END ELSE BEGIN
 	WHERE Date >= @date
 END;
 
+PRINT 'Date: ' + CAST(@date AS NVARCHAR(MAX));
+
 INSERT INTO QueryStatInfo
 SELECT *
 FROM VwQueryStatInfo
