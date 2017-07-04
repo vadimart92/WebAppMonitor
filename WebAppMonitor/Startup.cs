@@ -10,10 +10,10 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using WebAppMonitor.Common;
 using WebAppMonitor.Core;
-using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data;
 using WebAppMonitor.DataProcessing;
+using WebAppMonitor.DataProcessing.Json;
 using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor {
@@ -50,6 +50,7 @@ namespace WebAppMonitor {
 			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
 			services.AddTransient<IAppLogLoader, AppLogLoader>();
 			services.AddSingleton<IQueryTextSaver, QueryTextSaver>();
+			services.AddSingleton<IJsonLogParser, JsonLogParser>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

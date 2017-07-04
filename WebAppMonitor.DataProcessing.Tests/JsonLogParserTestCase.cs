@@ -17,7 +17,7 @@ namespace WebAppMonitor.DataProcessing.Tests {
 		[Test]
 		public void ReadFile_ReaderLogRecord() {
 			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "LoggingDataReader.json.0.json");
-			var parser = new JsonLogParser.JsonLogParser();
+			var parser = new Json.JsonLogParser();
 			var data = parser.ReadFile<ReaderLogRecord>(file).ToList();
 			data.Count.Should().Be(392);
 			data.Any(d => string.IsNullOrWhiteSpace(d.MessageObject.Sql) || 

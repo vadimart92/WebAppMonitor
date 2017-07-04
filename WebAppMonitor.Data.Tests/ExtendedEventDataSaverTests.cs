@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofixture.NUnit3;
-using FluentAssertions;
 using NUnit.Framework;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;

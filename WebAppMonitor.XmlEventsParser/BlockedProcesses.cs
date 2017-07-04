@@ -1,4 +1,4 @@
-﻿
+﻿#pragma warning disable IDE1006 // Стили именования
 /// <remarks/>
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
 [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
@@ -996,3 +996,4 @@ public partial class BlockingProcess
 	}
 }
 
+#pragma warning restore IDE1006 // Стили именования

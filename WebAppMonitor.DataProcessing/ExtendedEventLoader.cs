@@ -1,5 +1,6 @@
 ﻿using System;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Core.Import;
 
@@ -31,8 +32,8 @@ namespace WebAppMonitor.DataProcessing {
 			string databaseName = _settingsProvider.DatabaseName;
 			_dataSaver.BeginWork();
 			foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
-				if (queryLockInfo.ObjectAName.Contains(databaseName) ||
-						queryLockInfo.ObjectBName.Contains(databaseName)) {
+				if (queryLockInfo.ObjectAName.Contain(databaseName) ||
+						queryLockInfo.ObjectBName.Contain(databaseName)) {
 					_dataSaver.RegisterDeadLock(queryLockInfo);
 				}
 			}

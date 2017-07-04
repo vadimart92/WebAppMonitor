@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#pragma warning disable IDE1006 // Стили именования
+using System.Xml;
 
 namespace WebAppMonitor.XmlEventsParser.Deadlocks
 {
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
 	[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-	public partial class @event
+
+	public class @event
+
 	{
 
 		private eventData dataField;
@@ -26,10 +25,10 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventData data {
 			get {
-				return this.dataField;
+				return dataField;
 			}
 			set {
-				this.dataField = value;
+				dataField = value;
 			}
 		}
 
@@ -37,50 +36,50 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		[System.Xml.Serialization.XmlElementAttribute("action")]
 		public eventAction[] action {
 			get {
-				return this.actionField;
+				return actionField;
 			}
 			set {
-				this.actionField = value;
+				actionField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string name {
 			get {
-				return this.nameField;
+				return nameField;
 			}
 			set {
-				this.nameField = value;
+				nameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string package {
 			get {
-				return this.packageField;
+				return packageField;
 			}
 			set {
-				this.packageField = value;
+				packageField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public System.DateTime timestamp {
 			get {
-				return this.timestampField;
+				return timestampField;
 			}
 			set {
-				this.timestampField = value;
+				timestampField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventData
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventData
 	{
 
 		private eventDataValue valueField;
@@ -90,28 +89,28 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventDataValue value {
 			get {
-				return this.valueField;
+				return valueField;
 			}
 			set {
-				this.valueField = value;
+				valueField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string name {
 			get {
-				return this.nameField;
+				return nameField;
 			}
 			set {
-				this.nameField = value;
+				nameField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValue
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValue
 	{
 
 		private eventDataValueDeadlock deadlockField;
@@ -119,64 +118,63 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventDataValueDeadlock deadlock {
 			get {
-				return this.deadlockField;
+				return deadlockField;
 			}
 			set {
-				this.deadlockField = value;
+				deadlockField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlock
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlock
 	{
 
 		private eventDataValueDeadlockVictimlist victimlistField;
 
 		private eventDataValueDeadlockProcess[] processlistField;
 
-		private eventDataValueDeadlockPagelock[] resourcelistField;
+		private XmlNode resourcelistField;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("victim-list")]
+		[System.Xml.Serialization.XmlElement("victim-list")]
 		public eventDataValueDeadlockVictimlist victimlist {
 			get {
-				return this.victimlistField;
+				return victimlistField;
 			}
 			set {
-				this.victimlistField = value;
+				victimlistField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayAttribute("process-list")]
-		[System.Xml.Serialization.XmlArrayItemAttribute("process", IsNullable = false)]
+		[System.Xml.Serialization.XmlArray("process-list")]
+		[System.Xml.Serialization.XmlArrayItem("process", IsNullable = false)]
 		public eventDataValueDeadlockProcess[] processlist {
 			get {
-				return this.processlistField;
+				return processlistField;
 			}
 			set {
-				this.processlistField = value;
+				processlistField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayAttribute("resource-list")]
-		[System.Xml.Serialization.XmlArrayItemAttribute("pagelock", IsNullable = false)]
-		public eventDataValueDeadlockPagelock[] resourcelist {
+		[System.Xml.Serialization.XmlAnyElement("resource-list")]
+		public XmlNode resourcelist {
 			get {
-				return this.resourcelistField;
+				return resourcelistField;
 			}
 			set {
-				this.resourcelistField = value;
+				resourcelistField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockVictimlist
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockVictimlist
 	{
 
 		private eventDataValueDeadlockVictimlistVictimProcess victimProcessField;
@@ -184,36 +182,36 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventDataValueDeadlockVictimlistVictimProcess victimProcess {
 			get {
-				return this.victimProcessField;
+				return victimProcessField;
 			}
 			set {
-				this.victimProcessField = value;
+				victimProcessField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockVictimlistVictimProcess
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockVictimlistVictimProcess
 	{
 
 		private string idField;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string id {
 			get {
-				return this.idField;
+				return idField;
 			}
 			set {
-				this.idField = value;
+				idField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockProcess
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockProcess
 	{
 
 		private eventDataValueDeadlockProcessFrame[] executionStackField;
@@ -283,371 +281,371 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		private long clientoption2Field;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlArrayItemAttribute("frame", IsNullable = false)]
+		[System.Xml.Serialization.XmlArrayItem("frame", IsNullable = false)]
 		public eventDataValueDeadlockProcessFrame[] executionStack {
 			get {
-				return this.executionStackField;
+				return executionStackField;
 			}
 			set {
-				this.executionStackField = value;
+				executionStackField = value;
 			}
 		}
 
 		/// <remarks/>
 		public string inputbuf {
 			get {
-				return this.inputbufField;
+				return inputbufField;
 			}
 			set {
-				this.inputbufField = value;
+				inputbufField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string id {
 			get {
-				return this.idField;
+				return idField;
 			}
 			set {
-				this.idField = value;
+				idField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long taskpriority {
 			get {
-				return this.taskpriorityField;
+				return taskpriorityField;
 			}
 			set {
-				this.taskpriorityField = value;
+				taskpriorityField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long logused {
 			get {
-				return this.logusedField;
+				return logusedField;
 			}
 			set {
-				this.logusedField = value;
+				logusedField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string waitresource {
 			get {
-				return this.waitresourceField;
+				return waitresourceField;
 			}
 			set {
-				this.waitresourceField = value;
+				waitresourceField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long waittime {
 			get {
-				return this.waittimeField;
+				return waittimeField;
 			}
 			set {
-				this.waittimeField = value;
+				waittimeField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long ownerId {
 			get {
-				return this.ownerIdField;
+				return ownerIdField;
 			}
 			set {
-				this.ownerIdField = value;
+				ownerIdField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string transactionname {
 			get {
-				return this.transactionnameField;
+				return transactionnameField;
 			}
 			set {
-				this.transactionnameField = value;
+				transactionnameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public System.DateTime lasttranstarted {
 			get {
-				return this.lasttranstartedField;
+				return lasttranstartedField;
 			}
 			set {
-				this.lasttranstartedField = value;
+				lasttranstartedField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string XDES {
 			get {
-				return this.xDESField;
+				return xDESField;
 			}
 			set {
-				this.xDESField = value;
+				xDESField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string lockMode {
 			get {
-				return this.lockModeField;
+				return lockModeField;
 			}
 			set {
-				this.lockModeField = value;
+				lockModeField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long schedulerid {
 			get {
-				return this.scheduleridField;
+				return scheduleridField;
 			}
 			set {
-				this.scheduleridField = value;
+				scheduleridField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long kpid {
 			get {
-				return this.kpidField;
+				return kpidField;
 			}
 			set {
-				this.kpidField = value;
+				kpidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string status {
 			get {
-				return this.statusField;
+				return statusField;
 			}
 			set {
-				this.statusField = value;
+				statusField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long spid {
 			get {
-				return this.spidField;
+				return spidField;
 			}
 			set {
-				this.spidField = value;
+				spidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long sbid {
 			get {
-				return this.sbidField;
+				return sbidField;
 			}
 			set {
-				this.sbidField = value;
+				sbidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long ecid {
 			get {
-				return this.ecidField;
+				return ecidField;
 			}
 			set {
-				this.ecidField = value;
+				ecidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long priority {
 			get {
-				return this.priorityField;
+				return priorityField;
 			}
 			set {
-				this.priorityField = value;
+				priorityField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long trancount {
 			get {
-				return this.trancountField;
+				return trancountField;
 			}
 			set {
-				this.trancountField = value;
+				trancountField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public System.DateTime lastbatchstarted {
 			get {
-				return this.lastbatchstartedField;
+				return lastbatchstartedField;
 			}
 			set {
-				this.lastbatchstartedField = value;
+				lastbatchstartedField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public System.DateTime lastbatchcompleted {
 			get {
-				return this.lastbatchcompletedField;
+				return lastbatchcompletedField;
 			}
 			set {
-				this.lastbatchcompletedField = value;
+				lastbatchcompletedField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public System.DateTime lastattention {
 			get {
-				return this.lastattentionField;
+				return lastattentionField;
 			}
 			set {
-				this.lastattentionField = value;
+				lastattentionField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string clientapp {
 			get {
-				return this.clientappField;
+				return clientappField;
 			}
 			set {
-				this.clientappField = value;
+				clientappField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string hostname {
 			get {
-				return this.hostnameField;
+				return hostnameField;
 			}
 			set {
-				this.hostnameField = value;
+				hostnameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long hostpid {
 			get {
-				return this.hostpidField;
+				return hostpidField;
 			}
 			set {
-				this.hostpidField = value;
+				hostpidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string loginname {
 			get {
-				return this.loginnameField;
+				return loginnameField;
 			}
 			set {
-				this.loginnameField = value;
+				loginnameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string isolationlevel {
 			get {
-				return this.isolationlevelField;
+				return isolationlevelField;
 			}
 			set {
-				this.isolationlevelField = value;
+				isolationlevelField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long xactid {
 			get {
-				return this.xactidField;
+				return xactidField;
 			}
 			set {
-				this.xactidField = value;
+				xactidField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long currentdb {
 			get {
-				return this.currentdbField;
+				return currentdbField;
 			}
 			set {
-				this.currentdbField = value;
+				currentdbField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long lockTimeout {
 			get {
-				return this.lockTimeoutField;
+				return lockTimeoutField;
 			}
 			set {
-				this.lockTimeoutField = value;
+				lockTimeoutField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long clientoption1 {
 			get {
-				return this.clientoption1Field;
+				return clientoption1Field;
 			}
 			set {
-				this.clientoption1Field = value;
+				clientoption1Field = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long clientoption2 {
 			get {
-				return this.clientoption2Field;
+				return clientoption2Field;
 			}
 			set {
-				this.clientoption2Field = value;
+				clientoption2Field = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockProcessFrame
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockProcessFrame
 	{
 
 		private string procnameField;
@@ -667,233 +665,117 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		private string valueField;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string procname {
 			get {
-				return this.procnameField;
+				return procnameField;
 			}
 			set {
-				this.procnameField = value;
+				procnameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long line {
 			get {
-				return this.lineField;
+				return lineField;
 			}
 			set {
-				this.lineField = value;
+				lineField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long stmtstart {
 			get {
-				return this.stmtstartField;
+				return stmtstartField;
 			}
 			set {
-				this.stmtstartField = value;
+				stmtstartField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[System.Xml.Serialization.XmlIgnoreAttribute]
 		public bool stmtstartSpecified {
 			get {
-				return this.stmtstartFieldSpecified;
+				return stmtstartFieldSpecified;
 			}
 			set {
-				this.stmtstartFieldSpecified = value;
+				stmtstartFieldSpecified = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public long stmtend {
 			get {
-				return this.stmtendField;
+				return stmtendField;
 			}
 			set {
-				this.stmtendField = value;
+				stmtendField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		[System.Xml.Serialization.XmlIgnoreAttribute]
 		public bool stmtendSpecified {
 			get {
-				return this.stmtendFieldSpecified;
+				return stmtendFieldSpecified;
 			}
 			set {
-				this.stmtendFieldSpecified = value;
+				stmtendFieldSpecified = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string sqlhandle {
 			get {
-				return this.sqlhandleField;
+				return sqlhandleField;
 			}
 			set {
-				this.sqlhandleField = value;
+				sqlhandleField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlTextAttribute()]
+		[System.Xml.Serialization.XmlTextAttribute]
 		public string Value {
 			get {
-				return this.valueField;
+				return valueField;
 			}
 			set {
-				this.valueField = value;
+				valueField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockPagelock
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class lockResource
 	{
-
-		private eventDataValueDeadlockPagelockOwnerlist ownerlistField;
-
-		private eventDataValueDeadlockPagelockWaiterlist waiterlistField;
-
-		private long fileidField;
-
-		private long pageidField;
-
-		private long dbidField;
-
-		private string subresourceField;
-
+		
 		private string objectnameField;
 
-		private string idField;
-
-		private string modeField;
-
-		private long associatedObjectIdField;
-
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("owner-list")]
-		public eventDataValueDeadlockPagelockOwnerlist ownerlist {
-			get {
-				return this.ownerlistField;
-			}
-			set {
-				this.ownerlistField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("waiter-list")]
-		public eventDataValueDeadlockPagelockWaiterlist waiterlist {
-			get {
-				return this.waiterlistField;
-			}
-			set {
-				this.waiterlistField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public long fileid {
-			get {
-				return this.fileidField;
-			}
-			set {
-				this.fileidField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public long pageid {
-			get {
-				return this.pageidField;
-			}
-			set {
-				this.pageidField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public long dbid {
-			get {
-				return this.dbidField;
-			}
-			set {
-				this.dbidField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string subresource {
-			get {
-				return this.subresourceField;
-			}
-			set {
-				this.subresourceField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string objectname {
 			get {
-				return this.objectnameField;
+				return objectnameField;
 			}
 			set {
-				this.objectnameField = value;
+				objectnameField = value;
 			}
 		}
 
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string id {
-			get {
-				return this.idField;
-			}
-			set {
-				this.idField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public string mode {
-			get {
-				return this.modeField;
-			}
-			set {
-				this.modeField = value;
-			}
-		}
-
-		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
-		public long associatedObjectId {
-			get {
-				return this.associatedObjectIdField;
-			}
-			set {
-				this.associatedObjectIdField = value;
-			}
-		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockPagelockOwnerlist
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockPagelockOwnerlist
 	{
 
 		private eventDataValueDeadlockPagelockOwnerlistOwner ownerField;
@@ -901,17 +783,17 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventDataValueDeadlockPagelockOwnerlistOwner owner {
 			get {
-				return this.ownerField;
+				return ownerField;
 			}
 			set {
-				this.ownerField = value;
+				ownerField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockPagelockOwnerlistOwner
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockPagelockOwnerlistOwner
 	{
 
 		private string idField;
@@ -919,31 +801,31 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		private string modeField;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string id {
 			get {
-				return this.idField;
+				return idField;
 			}
 			set {
-				this.idField = value;
+				idField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string mode {
 			get {
-				return this.modeField;
+				return modeField;
 			}
 			set {
-				this.modeField = value;
+				modeField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockPagelockWaiterlist
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockPagelockWaiterlist
 	{
 
 		private eventDataValueDeadlockPagelockWaiterlistWaiter waiterField;
@@ -951,17 +833,17 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public eventDataValueDeadlockPagelockWaiterlistWaiter waiter {
 			get {
-				return this.waiterField;
+				return waiterField;
 			}
 			set {
-				this.waiterField = value;
+				waiterField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventDataValueDeadlockPagelockWaiterlistWaiter
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventDataValueDeadlockPagelockWaiterlistWaiter
 	{
 
 		private string idField;
@@ -971,42 +853,42 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		private string requestTypeField;
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string id {
 			get {
-				return this.idField;
+				return idField;
 			}
 			set {
-				this.idField = value;
+				idField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string mode {
 			get {
-				return this.modeField;
+				return modeField;
 			}
 			set {
-				this.modeField = value;
+				modeField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string requestType {
 			get {
-				return this.requestTypeField;
+				return requestTypeField;
 			}
 			set {
-				this.requestTypeField = value;
+				requestTypeField = value;
 			}
 		}
 	}
 
 	/// <remarks/>
-	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-	public partial class eventAction
+	[System.Xml.Serialization.XmlType(AnonymousType = true)]
+	public class eventAction
 	{
 
 		private object valueField;
@@ -1018,35 +900,36 @@ namespace WebAppMonitor.XmlEventsParser.Deadlocks
 		/// <remarks/>
 		public object value {
 			get {
-				return this.valueField;
+				return valueField;
 			}
 			set {
-				this.valueField = value;
+				valueField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string name {
 			get {
-				return this.nameField;
+				return nameField;
 			}
 			set {
-				this.nameField = value;
+				nameField = value;
 			}
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlAttribute]
 		public string package {
 			get {
-				return this.packageField;
+				return packageField;
 			}
 			set {
-				this.packageField = value;
+				packageField = value;
 			}
 		}
 	}
 
 
 }
+#pragma warning restore IDE1006 // Стили именования

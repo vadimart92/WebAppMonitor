@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
-using WebAppMonitor.Core;
 using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.XmlEventsParser.Tests {

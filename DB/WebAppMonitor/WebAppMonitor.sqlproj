@@ -4,27 +4,25 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>ExtendedEventsUtils</Name>
+    <Name>WebAppMonitor</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{76b44dc0-312c-41e3-9a01-50a64329fd25}</ProjectGuid>
+    <ProjectGuid>{f424cb65-a9f5-40d1-a49a-188153a189c1}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>ExtendedEventsUtils</RootNamespace>
-    <AssemblyName>ExtendedEventsUtils</AssemblyName>
+    <RootNamespace>WebAppMonitor</RootNamespace>
+    <AssemblyName>WebAppMonitor</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <GenerateCreateScript>True</GenerateCreateScript>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -67,8 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NormalizeQueryText.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExtendedEventsUtils.publish.xml" />
+    <Compile Include="..\..\WebAppMonitor.DataProcessing\SqlExtractionUtils.cs" />
   </ItemGroup>
 </Project>

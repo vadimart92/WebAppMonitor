@@ -22,6 +22,6 @@ public partial class UserDefinedFunctions
 		int lenght = last - first;
 		bool found = first > -1 && lenght > 0 && input.Length - first > lenght;
 		string subInput = found ? input.Substring(first, lenght) : input;
-		return _eolRegex.Replace(subInput, " ");
+		return _eolRegex.Replace(subInput, " ").Trim();
 	}
 }

@@ -118,7 +118,7 @@ namespace WebAppMonitor.Core.Import {
 
 		public void ImportDeadlocks(string filePath) {
 			_extendedEventLoader.LoadDeadLocksData(filePath);
-			ActualizeInfo();
+			//ActualizeInfo();
 		}
 
 		public void ImportDbExecutorLogs(string file) {

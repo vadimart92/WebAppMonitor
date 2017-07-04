@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Extensions.Logging;
-using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Core.Import;
 using WebAppMonitor.DataProcessing;
@@ -49,15 +49,19 @@ namespace WebAppMonitor.XmlEventsParser
 				QueryDeadLockInfo info;
 				try {
 					var parsedInfo = parser.Parse(row.XML);
-					var queryAText = parsedInfo.data.value.deadlock.processlist.First().inputbuf;
-					var queryBText = parsedInfo.data.value.deadlock.processlist.Last().inputbuf;
+					var queryAText = parsedInfo.data.value.deadlock.processlist.First()?.inputbuf;
+					var queryBText = parsedInfo.data.value.deadlock.processlist.Last()?.inputbuf;
 					info = new QueryDeadLockInfo {
 						TimeStamp = parsedInfo.timestamp,
 						QueryA = queryAText.ExtractLocksSqlText(),
-						QueryB = queryBText.ExtractLocksSqlText(),
-						ObjectAName = GetFirstObjectName(parsedInfo),
-						ObjectBName = GetLsatObjectName(parsedInfo)
+						QueryB = queryBText.ExtractLocksSqlText()
 					};
+					var objects = parsedInfo.data.value.deadlock.resourcelist?
+						.SelectNodes("//@objectname")?.OfType<XmlNode>().ToList();
+					if (objects != null) {
+						info.ObjectAName = objects.FirstOrDefault()?.InnerText;
+						info.ObjectBName = objects.LastOrDefault()?.InnerText;
+					}
 				} catch (Exception e) {
 					_logger.LogError(new EventId(1), e, "Error while parsing deadlocks xml record: {0}", row.XML);
 					continue;
@@ -69,8 +73,7 @@ namespace WebAppMonitor.XmlEventsParser
 		private static QueryLockInfo GetQueryLockInfo(LongLockParser parser, XmlRow row) {
 			var info = parser.Parse(row.XML);
 			string durationStr = GetDataValue(info, "duration");
-			long duration;
-			long.TryParse(durationStr, out duration);
+			long.TryParse(durationStr, out long duration);
 			eventDataValueBlockedprocessreport processesInfo =
 				GetDataItem(info, "blocked_process").value.blockedprocessreport;
 			string blockedText = processesInfo.blockedprocess.process.inputbuf;
@@ -91,12 +94,12 @@ namespace WebAppMonitor.XmlEventsParser
 		}
 
 		private static string GetFirstObjectName(Deadlocks.@event info) {
-			var dbName = info.data.value.deadlock.resourcelist.FirstOrDefault()?.objectname;
-			return dbName;
+			var dbName = info.data.value.deadlock.resourcelist;
+			return dbName.ToString();
 		}
-		private static string GetLsatObjectName(Deadlocks.@event info) {
-			var dbName = info.data.value.deadlock.resourcelist.LastOrDefault()?.objectname;
-			return dbName;
+		private static string GetLatsObjectName(Deadlocks.@event info) {
+			var dbName = info.data.value.deadlock.resourcelist;
+			return dbName.ToString();
 		}
 
 		private static string GetDbName(@event info) {

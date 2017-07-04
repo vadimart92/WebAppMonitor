@@ -11,6 +11,7 @@
     <AssemblyName>WebAppMonitor.DataProcessing</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,15 +45,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtendedEventLoader.cs" />
-    <Compile Include="JsonLogParser\JsonLogParser.cs" />
-    <Compile Include="JsonLogParser\ReaderLogRecord.cs" />
-    <Compile Include="SqlExtractionUtils.cs" />
+    <Compile Include="Json\JsonLogParser.cs" />
+    <Compile Include="Json\ReaderLogRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj">
       <Project>{4995cf07-bf93-4a1a-9059-3e281d4408f8}</Project>
       <Name>WebAppMonitor.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebAppMonitor.SharedUtils\WebAppMonitor.SharedUtils.csproj">
+      <Project>{5ea7f60f-fab7-4bf2-bc23-b649ad8df607}</Project>
+      <Name>WebAppMonitor.SharedUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
