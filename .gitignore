@@ -303,3 +303,4 @@ $RECYCLE.BIN/
 *.lnk
 WebAppMonitor/appsettings.Development.json
 ExtendedEventsUtils/ExtendedEventsUtils.jfm
+ExtendedEventsUtils/ExtendedEventsUtils.jfm
