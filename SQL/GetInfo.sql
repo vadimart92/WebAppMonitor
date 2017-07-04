@@ -80,7 +80,7 @@ SELECT
 	d.Date [Date]
    ,CAST(ROUND(s.TotalDuration, 2) AS DECIMAL(18, 2)) TotalDuration
    ,CAST(ROUND(s.TotalDuration / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgDuration
-   ,CAST(ROUND(s.[count], 2) AS DECIMAL(18, 2)) [count]
+   ,s.[count] [count]
    ,CAST(ROUND(TotalRowCount / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgRowCount
    ,CAST(ROUND(TotalLogicalReads / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgLogicalReads
    ,CAST(ROUND(TotalCPU / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgCPU
@@ -88,12 +88,13 @@ SELECT
    ,CAST(0 AS DECIMAL(18, 2)) AS AvgAdoReads
    ,nqth.NormalizedQuery QueryText
    ,nqth.Id NormalizedQueryTextId
-   ,CAST(ROUND(lrs.[count], 2) AS DECIMAL(18, 2)) LockerCount
+   ,lrs.[count] LockerCount
    ,CAST(ROUND(lrs.TotalDuration, 2) AS DECIMAL(18, 2)) LockerTotalDuration
    ,CAST(ROUND(lrs.TotalDuration / NULLIF(lrs.[count], 0), 2) AS DECIMAL(18, 2)) LockerAvgDuration
-   ,CAST(ROUND(lds.[count], 2) AS DECIMAL(18, 2)) LockedCount
+   ,lds.[count] LockedCount
    ,CAST(ROUND(lds.TotalDuration, 2) AS DECIMAL(18, 2)) LockedTotalDuration
    ,CAST(ROUND(lds.TotalDuration / NULLIF(lds.[count], 0), 2) AS DECIMAL(18, 2)) LockedAvgDuration
+   ,(SELECT COUNT_BIG(*) FROM DeadLocksInfo dli WHERE dli.DateId = d.Id AND (dli.QueryAId = nqth.Id OR dli.QuerybId = nqth.Id)) DeadLocksCount
 FROM dbo.NormQueryTextHistory nqth
 CROSS JOIN dbo.Dates d
 LEFT JOIN dbo.StatementStats s ON nqth.Id = s.NormalizedQueryTextId AND s.DateId = d.Id
@@ -107,17 +108,35 @@ GO
 
 CREATE PROCEDURE ActualizeQueryStatInfo AS BEGIN
 
-DROP TABLE IF EXISTS QueryStatInfo;
+DECLARE @date DATETIME2 = DATEADD(DAY, -5, CAST(GETDATE() AS DATE));
 
+IF (OBJECT_ID('QueryStatInfo','U') IS NULL) BEGIN
+	SELECT TOP 0 *
+	INTO QueryStatInfo
+	FROM VwQueryStatInfo;
+
+	CREATE CLUSTERED INDEX ix_cl ON QueryStatInfo (Date, NormalizedQueryTextId);
+	CREATE COLUMNSTORE INDEX Ix_1 ON QueryStatInfo (Date, TotalDuration, AvgDuration, count, AvgRowCount
+	, AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId,
+	LockerCount, LockerTotalDuration, LockerAvgDuration, DeadLocksCount);
+
+	SET @date = CAST('2000-01-01' AS DATE);
+END ELSE BEGIN
+	DELETE QueryStatInfo
+	WHERE Date >= @date
+END;
+
+PRINT 'Date: ' + CAST(@date AS NVARCHAR(MAX));
+
+INSERT INTO QueryStatInfo
 SELECT *
-INTO QueryStatInfo
-FROM VwQueryStatInfo;
+FROM VwQueryStatInfo
+WHERE [Date] >= @date
 
-CREATE CLUSTERED INDEX ix_cl ON QueryStatInfo (Date, NormalizedQueryTextId);
-CREATE COLUMNSTORE INDEX Ix_1 ON QueryStatInfo (Date, TotalDuration, AvgDuration, count, AvgRowCount
-, AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId,
-LockerCount, LockerTotalDuration, LockerAvgDuration);
+DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
+DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
 
 END
 
 --EXEC ActualizeQueryStatInfo
+-- drop table QueryStatInfo

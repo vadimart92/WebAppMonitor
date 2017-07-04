@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
 
@@ -11,7 +12,7 @@ namespace WebAppMonitor.Data {
 		}
 
 		private Setting GetSettingFromDb(string settingCode, string defValue) {
-			Setting setting = _dbContext.Settings.FirstOrDefault(s => s.Code == settingCode);
+			Setting setting = _dbContext.Settings.AsNoTracking().FirstOrDefault(s => s.Code == settingCode);
 			if (setting == null) {
 				setting = new Setting {
 					Code = settingCode,

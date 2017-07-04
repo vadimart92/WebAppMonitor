@@ -8,7 +8,7 @@ using WebAppMonitor.DataProcessing;
 
 namespace WebAppMonitor.XmlEventsParser
 {
-	public class QueryLockInfoRow
+	public class XmlRow
 	{
 
 		public string XML { get; set; }
@@ -23,10 +23,14 @@ namespace WebAppMonitor.XmlEventsParser
 			_logger = logger;
 		}
 
-		public IEnumerable<QueryLockInfo> ReadEvents(string file) {
+		private IEnumerable<XmlRow> ReadEventData(string file) {
 			var query = @"SELECT CAST(event_data AS XML) XML FROM sys.fn_xe_file_target_read_file(@fileName, NULL, NULL, NULL)";
-			var parser = new ReportParser();
-			foreach (QueryLockInfoRow row in _simpleDataProvider.Enumerate<QueryLockInfoRow>(query, new { fileName = file })) {
+			return _simpleDataProvider.Enumerate<XmlRow>(query, new { fileName = file });
+		}
+
+		public IEnumerable<QueryLockInfo> ReadLongLockEvents(string file) {
+			var parser = new LongLockParser();
+			foreach (XmlRow row in ReadEventData(file)) {
 				QueryLockInfo info;
 				try {
 					info = GetQueryLockInfo(parser, row);
@@ -38,7 +42,28 @@ namespace WebAppMonitor.XmlEventsParser
 			}
 		}
 
-		private static QueryLockInfo GetQueryLockInfo(ReportParser parser, QueryLockInfoRow row) {
+		public IEnumerable<QueryDeadLockInfo> ReadDeadLockEvents(string file) {
+			var parser = new DeadLockParser();
+			foreach (XmlRow row in ReadEventData(file)) {
+				QueryDeadLockInfo info;
+				try {
+					var parsedInfo = parser.Parse(row.XML);
+					var queryAText = parsedInfo.data.value.deadlock.processlist.First().inputbuf;
+					var queryBText = parsedInfo.data.value.deadlock.processlist.Last().inputbuf;
+					info = new QueryDeadLockInfo {
+						TimeStamp = parsedInfo.timestamp,
+						QueryA = queryAText.ExtractLocksSqlText(),
+						QueryB = queryBText.ExtractLocksSqlText()
+					};
+				} catch (Exception e) {
+					_logger.LogError(new EventId(1), e, "Error while parsing deadlocks xml record: {0}", row.XML);
+					continue;
+				}
+				yield return info;
+			}
+		}
+
+		private static QueryLockInfo GetQueryLockInfo(LongLockParser parser, XmlRow row) {
 			var info = parser.Parse(row.XML);
 			string durationStr = GetDataValue(info, "duration");
 			long duration;
@@ -52,10 +77,10 @@ namespace WebAppMonitor.XmlEventsParser
 				Duration = duration,
 				LockMode = GetDataItem(info, "lock_mode")?.text,
 				Blocked = new Proess {
-					Text = blockedText.ExtractLongLocksSqlText()
+					Text = blockedText.ExtractLocksSqlText()
 				},
 				Blocker = new Proess {
-					Text = blockerText.ExtractLongLocksSqlText()
+					Text = blockerText.ExtractLocksSqlText()
 				},
 				SourceXml = row.XML
 			};

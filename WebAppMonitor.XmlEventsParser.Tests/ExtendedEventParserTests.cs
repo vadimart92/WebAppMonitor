@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autofixture.NUnit3;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
@@ -15,8 +17,8 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 			return Path.Combine(TestContext.CurrentContext.TestDirectory, filePath);
 		}
 
-		private IEnumerable<string> ReadXmlLines() {
-			using (var reader = new JsonTextReader(new StreamReader(GetFilePath("data.json")))) {
+		private IEnumerable<XmlRow> ReadXmlLines(string fileName) {
+			using (var reader = new JsonTextReader(new StreamReader(GetFilePath(fileName)))) {
 				if (!reader.Read()) {
 					yield break;
 				}
@@ -27,7 +29,7 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 					while (reader.TokenType != JsonToken.PropertyName) {
 						reader.Read();
 					}
-					yield return reader.ReadAsString();
+					yield return new XmlRow { XML = reader.ReadAsString() };
 					reader.Read();
 				}
 			}
@@ -35,9 +37,9 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 
 		[Test, AutoNSubstituteData]
 		public void ReadEvents(ISimpleDataProvider dataProvider, ILogger<ExtendedEventParser> logger) {
-			dataProvider.Enumerate<string>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines());
+			dataProvider.Enumerate<XmlRow>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines("data.json"));
 			var p = new ExtendedEventParser(dataProvider, logger);
-			var events = p.ReadEvents("someFile");
+			var events = p.ReadLongLockEvents("someFile");
 			var result = events.ToList();
 			bool emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
 			bool emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
@@ -45,6 +47,22 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 			Assert.IsFalse(emptyBlockers);
 			Assert.IsFalse(emptyBlocked);
 			Assert.IsFalse(emptyDuration);
+			result.Should().NotBeEmpty();
+		}
+
+		[Test, AutoNSubstituteData]
+		public void ReadDeadlocksEvents(ISimpleDataProvider dataProvider, ILogger<ExtendedEventParser> logger) {
+			dataProvider.Enumerate<XmlRow>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines("deadlockData.json"));
+			var p = new ExtendedEventParser(dataProvider, logger);
+			var events = p.ReadDeadLockEvents("someFile");
+			var result = events.ToList();
+			bool emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.QueryA));
+			bool emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.QueryB));
+			bool emptyDuration = result.Any(r => r.TimeStamp == DateTime.MinValue);
+			Assert.IsFalse(emptyBlockers);
+			Assert.IsFalse(emptyBlocked);
+			Assert.IsFalse(emptyDuration);
+			result.Should().NotBeEmpty();
 		}
 	}
 }

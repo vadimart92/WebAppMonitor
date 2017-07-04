@@ -13,5 +13,6 @@ namespace WebAppMonitor.Core {
 			Date.ToString("yyyy-MM-dd"));
 
 		public string LongLocksFileTemplate { get; set; }
+		public string DeadLocksFileTemplate { get; set; }
 	}
 }

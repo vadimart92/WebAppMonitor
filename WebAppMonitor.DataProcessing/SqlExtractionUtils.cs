@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace WebAppMonitor.DataProcessing
@@ -21,7 +22,7 @@ namespace WebAppMonitor.DataProcessing
 			return _eolRegex.Replace(subInput, " ");
 		}
 
-		public static string ExtractLongLocksSqlText(this string input) {
+		public static string ExtractLocksSqlText(this string input) {
 			if (input == null) {
 				return null;
 			}
@@ -31,6 +32,28 @@ namespace WebAppMonitor.DataProcessing
 				int indexOfNewLine = result.IndexOf("\n", StringComparison.OrdinalIgnoreCase);
 				if (indexOfClosingBrace > -1 && indexOfNewLine > indexOfClosingBrace) {
 					result = result.Substring(indexOfNewLine + 1).Trim();
+				} else if (result.StartsWith("(@", StringComparison.OrdinalIgnoreCase)) {
+					using (var reader = new StringReader(result)) {
+						int currebtChar = -1;
+						int startBrace = char.ConvertToUtf32("(", 0);
+						int endBrace = char.ConvertToUtf32(")", 0);
+						int startBracesCount = 0;
+						int endBracesCount = 0;
+						int posistion = -1;
+						int maxAllowedPosition = result.Length - 1;
+						while ((currebtChar = reader.Read()) != -1) {
+							posistion++;
+							if (currebtChar == startBrace) {
+								startBracesCount++;
+							} else if (currebtChar == endBrace) {
+								endBracesCount++;
+							}
+							if (startBracesCount == endBracesCount && posistion < maxAllowedPosition) {
+								result = result.Substring(posistion + 1).Trim();
+								break;
+							}
+						}
+					}
 				}
 			}
 			return _eolRegex.Replace(result, " ");

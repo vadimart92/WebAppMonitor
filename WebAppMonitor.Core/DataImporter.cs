@@ -45,6 +45,13 @@ namespace WebAppMonitor.Core {
 			_logger.LogInformation("Import of long locks completed.");
 		}
 
+		private void ImportDeadLocksData(DirectoryInfo directory, DataImportSettings settings) {
+			string file = Path.Combine(directory.FullName, settings.DeadLocksFileTemplate);
+			_logger.LogInformation("Import of dead locks from {0} started.", file);
+			_extendedEventLoader.LoadDeadLocksData(file);
+			_logger.LogInformation("Import of dead locks completed.");
+		}
+
 		private void ImportLongQueriesData(DbConnection connection, DirectoryInfo directory,
 			DataImportSettings settings) {
 			_logger.LogInformation("Executing ImportDailyData for {0}.", directory.FullName);
@@ -84,6 +91,7 @@ namespace WebAppMonitor.Core {
 					ImportLongQueriesData(connection, directory, settings);
 				});
 				ImportLongLocksData(directory, settings);
+				ImportDeadLocksData(directory, settings);
 			}
 			_logger.LogInformation("Import daily data completed.");
 		}
@@ -98,16 +106,24 @@ namespace WebAppMonitor.Core {
 				@"\\tscore-dev-13\WorkAnalisys\xevents\Export_{date}\");
 			Setting statementsFileSetting = _settingsRepository.Get("StatementsFileTemplate", @"ts_sqlprofiler_05_sec*.xel");
 			Setting locksFileSetting = _settingsRepository.Get("LongLocksFileTemplate", @"collect_long_locks_data*.xel");
+			Setting deadLocksFileSetting = _settingsRepository.Get("DeadLocksFileTemplate", @"collect_deadlock_data*.xel");
 			var settings = new DataImportSettings {
 				EventsDataDirectoryTemplate = setting.Value,
 				StatementsFileTemplate = statementsFileSetting.Value,
-				LongLocksFileTemplate = locksFileSetting.Value
+				LongLocksFileTemplate = locksFileSetting.Value,
+				DeadLocksFileTemplate = deadLocksFileSetting.Value
 			};
 			return settings;
 		}
 
-		public void ImportExtendedEvents(string filePath) {
+		public void ImportLongLocks(string filePath) {
 			_extendedEventLoader.LoadLongLocksData(filePath);
+			ActualizeInfo();
+		}
+
+		public void ImportDeadlocks(string filePath) {
+			_extendedEventLoader.LoadDeadLocksData(filePath);
+			ActualizeInfo();
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {

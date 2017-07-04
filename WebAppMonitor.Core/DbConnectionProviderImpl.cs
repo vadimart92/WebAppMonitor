@@ -36,14 +36,18 @@ namespace WebAppMonitor.Core
 			return connection.ExecuteReader(command, CommandBehavior.CloseConnection);
 		}
 
-		private SqlConnection GetConnection() {
-			var connection = new SqlConnection(_cs);
+		private SqlConnection GetConnection(int? timeout = null) {
+			var connectionString = _cs;
+			if (timeout.HasValue) {
+				connectionString = new SqlConnectionStringBuilder(connectionString){ConnectTimeout = timeout.Value}.ToString();
+			}
+			var connection = new SqlConnection(connectionString);
 			connection.Open();
 			return connection;
 		}
 
 		private void Ping() {
-			using (SqlConnection connection = GetConnection()) {
+			using (SqlConnection connection = GetConnection(2)) {
 				if (new SqlCommand("SELECT @@version") {
 					Connection = connection
 				}.ExecuteScalar() == null) {

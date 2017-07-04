@@ -7,7 +7,7 @@ import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 import { TimeUtils } from '../utils/utils'
 import { QueryStatsService } from '../query-stats/query-stats.service'
 import { ApiDataService, StatsQueryOptions } from '../data.service'
-import { ChartAxisType, ChartData } from "../common/charting"
+import { ChartData } from "../common/charting"
 import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
 
 export class QueryData {
@@ -59,7 +59,7 @@ export class QueryInfoComponent implements OnInit {
 	getCurrentInfo():QueryStatInfo {
 		return this.queryData.info;
 	}
-	ngOnInit() {
+	async ngOnInit() {
 		if (!this.queryData) {
 			this.queryData = <QueryData>{
 				date: new Date(),
@@ -78,12 +78,11 @@ export class QueryInfoComponent implements OnInit {
 			}
 		}
 		var info = this.getCurrentInfo();
-		this._dataService.getStats(<StatsQueryOptions>{
+		var rows = await this._dataService.getStats(<StatsQueryOptions>{
 			orderBy: ["date"],
 			queryTextId: info.normalizedQueryTextId
-		}).then(rows => {
-			this.prepareChartData(rows);
 		});
+		this.prepareChartData(rows);
 	}
 	chartsData: any[] = [];
 	prepareChartData(rows) {
@@ -129,12 +128,8 @@ export class QueryInfoComponent implements OnInit {
 			duration: 1000
 		});
 	}
-	public formatSql() {
-		this._statsService.formatSql(this.getCurrentInfo())
-			.then(text => {
-				this.queryData.info.formatedText = text;
-			});
+	public async formatSql() {
+		var text = await this._statsService.formatSql(this.getCurrentInfo());
+		this.queryData.info.formatedText = text;
 	}
 }
-
-

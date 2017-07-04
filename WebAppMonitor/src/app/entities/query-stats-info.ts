@@ -1,4 +1,6 @@
-﻿import {formatAsTime} from "../utils/utils"
+﻿import * as _ from 'underscore';
+
+import { formatAsTime } from "../utils/utils"
 import { ChartAxisType } from "../common/charting"
 
 export class QueryStatInfo  {
@@ -20,6 +22,8 @@ export class QueryStatInfo  {
 		this.lockedAvgDuration = json.lockedAvgDuration;
 		this.queryText = json.queryText;
 		this.normalizedQueryTextId = json.normalizedQueryTextId;
+		this.deadlocksCount = json.deadlocksCount;
+
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
 		this.lockerTotalDurationStr = formatAsTime(this.lockerTotalDuration);
@@ -44,6 +48,7 @@ export class QueryStatInfo  {
 	lockedCount: number;
 	lockedTotalDuration: number;
 	lockedAvgDuration: number;
+	deadlocksCount: number;
 
 	totalDurationStr: string;
 	avgDurationStr: string;
@@ -56,97 +61,197 @@ export class QueryStatInfo  {
 }
 
 export class QueryStatInfoDisplayConfig {
+	private columns: any[] = null;
+	private groupsMap: Object = null;
+	getColumnsConfig(): ColumnsConfig {
+		if (!this.columns) {
+			var groupList = new ColumnGroup("statements", [
+					new NumberColumnConfig("count", "Count").with.sort("desc").width(70).freeze().build(),
+					new TimeColumnConfig("totalDuration", "Total duration").with.width(120).freeze().build(),
+					new TimeColumnConfig("avgDuration", "AVG duration").with.width(110).freeze().build(),
+					new NumberColumnConfig("avgRowCount", "AVG rows").with.width(90).freeze().build(),
+					new NumberColumnConfig("avgCPU", "AVG CPU").with.width(100).freeze().build(),
+					new NumberColumnConfig("avgLogicalReads", "AVG reads").with.width(100).freeze().build(),
+					new NumberColumnConfig("avgWrites", "AVG writes").with.width(100).freeze().build(),
+				])
+				.next("locks", [
+					new NumberColumnConfig("deadlocksCount", "Deadlocks count").with.width(100).freeze().build(),
+					new NumberColumnConfig("lockerCount", "Locker count").with.headerDesc("Locking other count").width(100).freeze().build(),
+					new TimeColumnConfig("lockerTotalDuration", "Total as locker").with.headerDesc("Locking other total").width(120).freeze().build(),
+					new TimeColumnConfig("lockerAvgDuration", "AVG as locker").with.headerDesc("AVG locking other").width(120).freeze().build(),
+					new NumberColumnConfig("lockedCount", "Locked count").with.headerDesc("Locked by other count").width(100).freeze().build(),
+					new TimeColumnConfig("lockedTotalDuration", "Total locked").with.headerDesc("Locked by other total").width(120).freeze().build(),
+					new TimeColumnConfig("lockedAvgDuration", "AVG locked").with.headerDesc("AVG locked by other").width(120).freeze().build()
+				])
+				.next("text", [
+					new ColumnConfig("queryText", "Text").with.cellClass("query-stats-sql-cell").build()
+				]);
 
-	timeComparator(dataPropName, valueA, valueB, nodeA, nodeB, isInverted): Number {
-		return nodeA.data[dataPropName] - nodeB.data[dataPropName];
-	}
-	getColumnsConfig() : any[] {
-		return [
-			{ headerName: "Count", colId: "count", field: "count", sortingOrder: ['desc', 'asc'], filter: 'number', width: 70, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total duration", field: "totalDurationStr", colId: "totalDuration", sortingOrder: ['desc', 'asc'], sort: "desc", width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "totalDuration") },
-			{ headerName: "AVG duration", field: "avgDurationStr", colId: "avgDuration", sortingOrder: ['desc', 'asc'], width: 110, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "avgDuration") },
-			{ headerName: "AVG rows", colId: "avgRowCount", field: "avgRowCount", sortingOrder: ['desc', 'asc'], filter: 'number', width: 90, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG CPU", colId: "avgCPU", field: "avgCPU", sortingOrder: ['desc', 'asc'], filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG reads", colId: "avgLogicalReads", field: "avgLogicalReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG writes", colId: "avgWrites", field: "avgWrites", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "AVG ado reads", headerDesc: "AVG ado.net reads", colId: "avgAdoReads", field: "avgAdoReads", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Locker count", headerDesc: "Locking other count", colId: "lockerCount", field: "lockerCount", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total as locker", headerDesc: "Locking other total", field: "lockerTotalDurationStr", colId: "lockerTotalDuration", sortingOrder: ['desc', 'asc'], hide: true, width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "lockerTotalDuration") },
-			{ headerName: "AVG as locker", headerDesc: "AVG locking other", field: "lockerAvgDurationStr", colId: "lockerAvgDuration", sortingOrder: ['desc', 'asc'], hide: true, width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "lockerTotalDuration") },
-			{ headerName: "Locked count", headerDesc: "Locked by other count", colId: "lockedCount", field: "lockedCount", sortingOrder: ['desc', 'asc'], hide: true, filter: 'number', width: 100, suppressSizeToFit: true, suppressResize: true },
-			{ headerName: "Total locked", headerDesc: "Locked by other total", field: "lockedTotalDurationStr", colId: "lockedTotalDuration", sortingOrder: ['desc', 'asc'], hide: true, width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "lockedTotalDuration") },
-			{ headerName: "AVG locked", headerDesc: "AVG locked by other", field: "lockedAvgDurationStr", colId: "lockedAvgDuration", sortingOrder: ['desc', 'asc'], hide: true, width: 120, suppressSizeToFit: true, suppressResize: true, comparator: this.timeComparator.bind(this, "lockedTotalDuration") },
-			{ headerName: "Text", colId: "queryText", field: "queryText", cellClass: 'query-stats-sql-cell' }
-		];
-	}
-
-	getChartsConfig() : Object {
-		return {
-			"count": {
-				label: "Count",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "count"
-			},
-			"totalDuration": {
-				label: "Total duration",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "totalDuration"
-			},
-			"avgDuration": {
-				label: "AVG duration",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "avgDuration"
-			},
-			"avgCPU": {
-				label: "AVG CPU",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "avgCPU"
-			},
-			"avgRowCount": {
-				label: "AVG row count",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "avgRowCount"
-			},
-			"avgLogicalReads": {
-				label: "AVG logical reads",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "avgLogicalReads"
-			},
-			"avgAdoReads": {
-				label: "AVG ado.net reads",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "avgAdoReads"
-			},
-			"lockerCount": {
-				label: "Locks count",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "lockerCount"
-			},
-			"lockerTotalDuration": {
-				label: "Total locker",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "lockerTotalDuration"
-			},
-			"lockerAvgDuration": {
-				label: "AVG locker",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "lockerAvgDuration"
-			},
-			"lockedCount": {
-				label: "Locked count",
-				yAxisType: ChartAxisType.Number,
-				dataColumn: "lockedCount"
-			},
-			"lockedTotalDuration": {
-				label: "Total locked",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "lockedTotalDuration"
-			},
-			"lockedAvgDuration": {
-				label: "AVG locked",
-				yAxisType: ChartAxisType.Time,
-				dataColumn: "lockedAvgDuration"
-			}
+			//new NumberColumnConfig("avgAdoReads", "AVG ado reads").with.headerDesc("AVG ado.net reads").width(100).freeze().build(),
+			this.groupsMap = groupList.toGroups();
+			this.groupsMap["statements"].modifyItems(c => c.hide = false);
+			this.groupsMap["text"].modifyItems(c => c.hide = false);
+			this.columns = groupList.toArray();
 		}
+		return <ColumnsConfig>{
+			columns: this.columns as ColumnConfig[],
+			groupsMap: this.groupsMap
+		};
 	}
+	getChartsConfig(): Object {
+		let columns = this.getColumnsConfig().columns;
+		let result = {};
+		_.each(columns, (column) => {
+			if (column.displayChart()) {
+				result[column.colId] = column.getChartMetaData();
+			}
+		});
+		return result;
+	}
+}
+
+class ColumnConfigModifier {
+	constructor(private columnsConfig: ColumnConfig) { }
+	build():ColumnConfig {
+		return this.columnsConfig;
+	}
+	width(windth: number): ColumnConfigModifier {
+		this.columnsConfig.width = windth;
+		return this;
+	}
+	cellClass(value: string): ColumnConfigModifier {
+		this.columnsConfig.cellClass = value;
+		return this;
+	}
+	hide(val: boolean): ColumnConfigModifier {
+		this.columnsConfig.hide = val;
+		return this;
+	}
+	show(): ColumnConfigModifier {
+		return this.hide(false);
+	}
+	headerDesc(val: string): ColumnConfigModifier {
+		this.columnsConfig.headerDesc = val;
+		return this;
+	}
+	sort(val: string): ColumnConfigModifier {
+		this.columnsConfig.sort = val;
+		return this;
+	}
+	freeze(): ColumnConfigModifier {
+		this.columnsConfig.suppressSizeToFit = true;
+		this.columnsConfig.suppressResize = true;
+		return this;
+	}
+}
+
+class ChartMetaData {
+	label: string;
+	yAxisType: ChartAxisType;
+	dataColumn: string;
+}
+
+class ColumnConfig {
+	constructor(colId: string, header: string) {
+		this.colId = colId;
+		this.headerName = header;
+		this.init(this.colId);
+	}
+	colId: string;
+	field: string;
+	sortingOrder: string[];
+	headerName: string;
+	headerDesc: string;
+	filter: string;
+	width: number;
+	suppressSizeToFit: boolean;
+	suppressResize: boolean;
+	hide: boolean = true;
+	sort: string;
+	columnGroup: string;
+	cellClass: string;
+	get with(): ColumnConfigModifier {
+		return new ColumnConfigModifier(this);
+	}
+	init(colId: string) {
+		this.field = colId;
+		this.sortingOrder = ['desc', 'asc'];
+	}
+
+	displayChart(): boolean {
+		return false;
+	}
+
+	getChartMetaData(): ChartMetaData{
+		return <ChartMetaData>{
+			dataColumn: this.colId,
+			label: this.headerName
+		};
+	}
+}
+
+class NumberColumnConfig extends ColumnConfig {
+	init(colId: string) {
+		super.init(colId);
+		this.filter = 'number';
+	}
+	getChartMetaData():ChartMetaData {
+		var data = super.getChartMetaData();
+		data.yAxisType = ChartAxisType.Number;
+		return data;
+	}
+	displayChart(): boolean {
+		return true;
+	}
+}
+
+class TimeColumnConfig extends ColumnConfig {
+	init(colId: string) {
+		super.init(colId + "Str");
+
+	}
+	comparator = (valueA, valueB, nodeA, nodeB) : number => {
+		return nodeA.data[this.field] - nodeB.data[this.field];
+	}
+
+	getChartMetaData(): ChartMetaData {
+		var data = super.getChartMetaData();
+		data.yAxisType = ChartAxisType.Time;
+		return data;
+	}
+	displayChart(): boolean {
+		return true;
+	}
+}
+
+class ColumnGroup {
+	constructor(private groupName: string, private columns: ColumnConfig[], private previousGroup: ColumnGroup = null) {
+		_.each(columns, c => {
+			c.columnGroup = groupName;
+		});
+		this.columns = columns || [];
+	}
+	next(groupName: string, columns: ColumnConfig[]): ColumnGroup {
+		return new ColumnGroup(groupName, columns, this);
+	}
+	toArray(): ColumnConfig[] {
+		var prevItems = this.previousGroup ? this.previousGroup.toArray() : [];
+		return prevItems.concat(this.columns);
+	}
+	toGroups(obj: Object = null): Object {
+		obj = obj || {};
+		obj[this.groupName] = this;
+		if (this.previousGroup) {
+			this.previousGroup.toGroups(obj);
+		}
+		return obj;
+	}
+	modifyItems(func: (n: ColumnConfig) => void) {
+		_.each(this.columns, func);
+	}
+}
+
+class ColumnsConfig {
+	columns: ColumnConfig[];
+	groupsMap: Object;
 }

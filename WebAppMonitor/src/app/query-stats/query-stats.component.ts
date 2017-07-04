@@ -19,6 +19,8 @@ import { TimeUtils } from '../utils/utils'
 import { ApiDataService, StatsQueryOptions } from "../data.service"
 import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
 import { QueryData } from "../query-info/query-info.component"
+import { SettingsService, LocalSettingsProvider } from "../settings.service"
+
 
 @Component({
 	selector: 'app-query-stats',
@@ -45,15 +47,28 @@ export class QueryStatsComponent implements OnInit {
 	private _useColumnsProjections: boolean = false;
 	private _queryStatInfoDisplayConfigProvider = new QueryStatInfoDisplayConfig();
 	visibleColumns: string[] = [];
+	settingsProvider: LocalSettingsProvider;
 	@ViewChild(MdDatepicker) dp: MdDatepicker<Date>;
 
-	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
+	constructor(private _statsService: QueryStatsService, public dialog: MdDialog, private _hotkeysService: HotkeysService,
+		private _dataService: ApiDataService, private settingsService: SettingsService) {
+		this.settingsProvider = settingsService.getSettingsProvider("queryStatsGrid");
 		this.currentDate = new Date();
 		this.daysWithData = [];
 		this.initGridOptions();
-		this.columnDefs = this._queryStatInfoDisplayConfigProvider.getColumnsConfig();
-		this.actualizeVisibleColumns();
+		this.initColumns();
 		this.initHotKeys();
+	}
+	initColumns() {
+		let columnsConfig = this._queryStatInfoDisplayConfigProvider.getColumnsConfig();
+		var savedVisibleColumns = this.settingsProvider.getVisibleColumnIds();
+		if (savedVisibleColumns) {
+			_.each(columnsConfig.columns, column => {
+				column.hide = savedVisibleColumns.indexOf(column.colId) === -1;
+			});
+		}
+		this.columnDefs = columnsConfig.columns;
+		this.actualizeVisibleColumns();
 	}
 	initHotKeys() {
 		var closeHotKey = this._hotkeysService.add(new Hotkey('alt+n', (event: KeyboardEvent): boolean => {
@@ -99,23 +114,20 @@ export class QueryStatsComponent implements OnInit {
 			})
 			.subscribe((term) => {
 				if (this.filterTextOnServer) {
-					this._queryFilter = term.toString();
+					this._queryFilter = term ? term.toString() : null;
 					this.loadGridData();
-					return;
 				}
 				let api = this.gridOptions.api;
 				api.setQuickFilter(term);
 			});
 	}
-	loadData() {
-		this._statsService.getDatesWithData()
-			.then(days => {
-				this.daysWithData = days || [];
-				if (days.length) {
-					this.currentDate = days[days.length - 1];
-				}
-			})
-			.then(_ => this.loadGridData());
+	async loadData() {
+		var days = await this._statsService.getDatesWithData();
+		this.daysWithData = days || [];
+		if (days.length) {
+			this.currentDate = days[days.length - 1];
+		}
+		this.loadGridData();
 	}
 	toggleLoadMask() {
 		if (!this._dialogRef && !this._dialogTimeout) {
@@ -185,7 +197,8 @@ export class QueryStatsComponent implements OnInit {
 		params.api.sizeColumnsToFit();
 	}
 	actualizeVisibleColumns() {
-		this.visibleColumns = this.columnDefs? this.columnDefs.filter(c => !c.hide).map(c => c.colId) : [];
+		this.visibleColumns = this.columnDefs ? this.columnDefs.filter(c => !c.hide).map(c => c.colId) : [];
+		this.settingsProvider.saveVisibleColumns(this.visibleColumns);
 	}
 	onGridSelectionChanged() {
 		var selectedRows = this.gridOptions.api.getSelectedRows();
