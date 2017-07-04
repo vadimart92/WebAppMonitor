@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WebAppMonitor.Core
+namespace WebAppMonitor.Core.Import
 {
 	public interface IJsonLogParser
 	{

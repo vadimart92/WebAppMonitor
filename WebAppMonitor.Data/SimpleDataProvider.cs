@@ -2,6 +2,7 @@
 using System.Data;
 using Dapper;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.Data
 {

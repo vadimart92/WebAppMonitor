@@ -7,7 +7,7 @@ using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Logging;
 
-namespace WebAppMonitor.Core {
+namespace WebAppMonitor.Core.Import {
 	public class DataImporter : IDataImporter {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly IExtendedEventLoader _extendedEventLoader;

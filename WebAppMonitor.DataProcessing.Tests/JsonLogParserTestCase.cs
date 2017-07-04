@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using WebAppMonitor.Core.JsonLogParser;
+using WebAppMonitor.DataProcessing.JsonLogParser;
 
-namespace WebAppMonitor.Core.Tests {
+namespace WebAppMonitor.DataProcessing.Tests {
 
 	#region Class: JsonLogParserTestCase
 

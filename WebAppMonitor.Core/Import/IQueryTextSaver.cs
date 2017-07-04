@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebAppMonitor.Core
+namespace WebAppMonitor.Core.Import
 {
     public interface IQueryTextSaver {
 	    Guid GetOrCreate(string queryText, Guid? querySourceId);

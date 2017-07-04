@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
+using WebAppMonitor.Core.Import;
 using WebAppMonitor.DataProcessing;
 
 namespace WebAppMonitor.XmlEventsParser
@@ -53,7 +54,9 @@ namespace WebAppMonitor.XmlEventsParser
 					info = new QueryDeadLockInfo {
 						TimeStamp = parsedInfo.timestamp,
 						QueryA = queryAText.ExtractLocksSqlText(),
-						QueryB = queryBText.ExtractLocksSqlText()
+						QueryB = queryBText.ExtractLocksSqlText(),
+						ObjectAName = GetFirstObjectName(parsedInfo),
+						ObjectBName = GetLsatObjectName(parsedInfo)
 					};
 				} catch (Exception e) {
 					_logger.LogError(new EventId(1), e, "Error while parsing deadlocks xml record: {0}", row.XML);
@@ -76,7 +79,7 @@ namespace WebAppMonitor.XmlEventsParser
 				TimeStamp = info.timestamp,
 				Duration = duration,
 				LockMode = GetDataItem(info, "lock_mode")?.text,
-				DatabaseName = GetDataItem(info, "database_name")?.text,
+				DatabaseName = GetDbName(info),
 				Blocked = new Proess {
 					Text = blockedText.ExtractLocksSqlText()
 				},
@@ -87,13 +90,28 @@ namespace WebAppMonitor.XmlEventsParser
 			};
 		}
 
+		private static string GetFirstObjectName(Deadlocks.@event info) {
+			var dbName = info.data.value.deadlock.resourcelist.FirstOrDefault()?.objectname;
+			return dbName;
+		}
+		private static string GetLsatObjectName(Deadlocks.@event info) {
+			var dbName = info.data.value.deadlock.resourcelist.LastOrDefault()?.objectname;
+			return dbName;
+		}
+
+		private static string GetDbName(@event info) {
+			return GetDataItem(info, "database_name")?.value.Text.FirstOrDefault();
+		}
+
 		private static string GetDataValue(@event info, string propertyName) {
 			eventData data = GetDataItem(info, propertyName);
 			return data?.value.Text.FirstOrDefault();
 		}
 
 		private static eventData GetDataItem(@event info, string propertyName) {
-			return info.data.FirstOrDefault(d => propertyName.Equals(d.name, StringComparison.OrdinalIgnoreCase));
+			var item = info.data.FirstOrDefault(d => propertyName.Equals(d.name, StringComparison.OrdinalIgnoreCase));
+			return item;
 		}
+
 	}
 }

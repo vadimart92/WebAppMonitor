@@ -1,7 +1,6 @@
-﻿using System;
-using WebAppMonitor.Core.Entities;
+﻿using WebAppMonitor.Core.Entities;
 
-namespace WebAppMonitor.Core
+namespace WebAppMonitor.Core.Import
 {
     public interface IExtendedEventDataSaver {
 	    void RegisterLock(QueryLockInfo lockInfo);

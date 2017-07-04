@@ -1,4 +1,4 @@
-﻿namespace WebAppMonitor.Core
+﻿namespace WebAppMonitor.Core.Import
 {
     public interface IAppLogLoader
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace WebAppMonitor.Core {
+namespace WebAppMonitor.Core.Import {
 	public class DataImportSettings {
 
 		public DataImportSettings() {

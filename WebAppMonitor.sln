@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
@@ -31,11 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAC2652A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{25DCAEA4-7A71-43DA-8E0F-91B299FDB6AC}"
 	ProjectSection(SolutionItems) = preProject
-		CreateEvents.sql = CreateEvents.sql
+		SQL\CreateEvents.sql = SQL\CreateEvents.sql
 		SQL\DDL.sql = SQL\DDL.sql
 		SQL\GetInfo.sql = SQL\GetInfo.sql
 		SQL\ImportDailyData.sql = SQL\ImportDailyData.sql
-		sp_ReplaceRecord.sql = sp_ReplaceRecord.sql
+		SQL\sp_ReplaceRecord.sql = SQL\sp_ReplaceRecord.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"

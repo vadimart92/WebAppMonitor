@@ -3,6 +3,7 @@ using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
 using Ploeh.AutoFixture.NUnit3;
+using WebAppMonitor.Core.Common;
 
 namespace WebAppMonitor.Core.Tests
 {

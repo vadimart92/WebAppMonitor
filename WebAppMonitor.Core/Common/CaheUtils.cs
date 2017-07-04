@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace WebAppMonitor.Core
+namespace WebAppMonitor.Core.Common
 {
     public class CaheUtils
     {

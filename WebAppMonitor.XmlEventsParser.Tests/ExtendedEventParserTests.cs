@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.XmlEventsParser.Tests {
 	[TestFixture]
@@ -58,7 +59,7 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 			result.Any(r => string.IsNullOrWhiteSpace(r.QueryA)).Should().BeFalse();
 			result.Any(r => string.IsNullOrWhiteSpace(r.QueryB)).Should().BeFalse();
 			result.Any(r => r.TimeStamp == DateTime.MinValue).Should().BeFalse();
-			result.Any(r => !string.IsNullOrWhiteSpace(r.DatabaseName)).Should().BeTrue();
+			result.Any(r => !string.IsNullOrWhiteSpace(r.ObjectAName) && !string.IsNullOrWhiteSpace(r.ObjectBName)).Should().BeTrue();
 		}
 	}
 }

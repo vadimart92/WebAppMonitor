@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 
-namespace WebAppMonitor.Core.JsonLogParser
+namespace WebAppMonitor.DataProcessing.JsonLogParser
 {
 	public class JsonLogParser: IJsonLogParser
 	{

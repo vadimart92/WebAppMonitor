@@ -10,7 +10,10 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using WebAppMonitor.Common;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Common;
+using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data;
+using WebAppMonitor.DataProcessing;
 using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor {

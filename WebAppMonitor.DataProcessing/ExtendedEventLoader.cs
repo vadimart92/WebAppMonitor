@@ -1,7 +1,9 @@
 ﻿using System;
+using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
+using WebAppMonitor.Core.Import;
 
-namespace WebAppMonitor.Core {
+namespace WebAppMonitor.DataProcessing {
 	public class ExtendedEventLoader : IExtendedEventLoader {
 		private readonly IExtendedEventParser _parser;
 		private readonly IExtendedEventDataSaver _dataSaver;
@@ -29,7 +31,8 @@ namespace WebAppMonitor.Core {
 			string databaseName = _settingsProvider.DatabaseName;
 			_dataSaver.BeginWork();
 			foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
-				if (databaseName.Equals(queryLockInfo.DatabaseName, StringComparison.OrdinalIgnoreCase)) {
+				if (queryLockInfo.ObjectAName.Contains(databaseName) ||
+						queryLockInfo.ObjectBName.Contains(databaseName)) {
 					_dataSaver.RegisterDeadLock(queryLockInfo);
 				}
 			}

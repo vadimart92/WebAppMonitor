@@ -5,6 +5,8 @@ using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Common;
+using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.Controllers {
 	public class ImportDailyDataRequest {

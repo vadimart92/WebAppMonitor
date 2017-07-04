@@ -6,6 +6,7 @@ using System.Threading;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data.Entities;
 
 namespace WebAppMonitor.Data {
