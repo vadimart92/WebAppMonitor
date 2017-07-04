@@ -13,7 +13,7 @@ namespace WebAppMonitor.Core
 
 	public class QueryDeadLockInfo
 	{
-
+		public string DatabaseName { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public string QueryA { get; set; }
 		public string QueryB { get; set; }

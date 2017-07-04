@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{25DCAEA4-7A7
 		SQL\DDL.sql = SQL\DDL.sql
 		SQL\GetInfo.sql = SQL\GetInfo.sql
 		SQL\ImportDailyData.sql = SQL\ImportDailyData.sql
+		sp_ReplaceRecord.sql = sp_ReplaceRecord.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"

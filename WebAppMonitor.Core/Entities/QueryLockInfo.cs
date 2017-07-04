@@ -18,6 +18,8 @@ namespace WebAppMonitor.Core.Entities
 
 	public class QueryLockInfo
 	{
+
+		public string DatabaseName { get; set; }
 		public string LockMode { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public long Duration { get; set; }

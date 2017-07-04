@@ -2,6 +2,7 @@
 
 namespace WebAppMonitor.Core
 {
+
 	public interface ISettingsRepository
 	{
 		Setting Get(string code, string defValue);

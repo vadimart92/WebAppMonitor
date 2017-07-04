@@ -76,6 +76,7 @@ namespace WebAppMonitor.XmlEventsParser
 				TimeStamp = info.timestamp,
 				Duration = duration,
 				LockMode = GetDataItem(info, "lock_mode")?.text,
+				DatabaseName = GetDataItem(info, "database_name")?.text,
 				Blocked = new Proess {
 					Text = blockedText.ExtractLocksSqlText()
 				},

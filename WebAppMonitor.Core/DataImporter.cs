@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using WebAppMonitor.Core.Entities;
 
 namespace WebAppMonitor.Core {
 	public class DataImporter : IDataImporter {
 		private readonly IDbConnectionProvider _connectionProvider;
-		private readonly ISettingsRepository _settingsRepository;
 		private readonly IExtendedEventLoader _extendedEventLoader;
 		private readonly IAppLogLoader _appLogLoader;
 		private readonly ILogger<DataImporter> _logger;
+		private readonly ISettingsProvider _settingsProvider;
 
 		private static int _commandTimeout = 3600;
 
-		public DataImporter(IDbConnectionProvider connectionProvider, ISettingsRepository settingsRepository,
+		public DataImporter(IDbConnectionProvider connectionProvider, ISettingsProvider settingsProvider,
 			IExtendedEventLoader extendedEventLoader, ILogger<DataImporter> logger, IAppLogLoader appLogLoader) {
 			_connectionProvider = connectionProvider;
-			_settingsRepository = settingsRepository;
+			_settingsProvider = settingsProvider;
 			_extendedEventLoader = extendedEventLoader;
 			_logger = logger;
 			_appLogLoader = appLogLoader;
@@ -99,21 +97,16 @@ namespace WebAppMonitor.Core {
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {
-			_settingsRepository.Set("EventsDataDirectoryTemplate", newSettings.EventsDataDirectoryTemplate);
-			_settingsRepository.Set("StatementsFileTemplate", newSettings.StatementsFileTemplate);
+			_settingsProvider.EventsDataDirectoryTemplate = newSettings.EventsDataDirectoryTemplate;
+			_settingsProvider.StatementsFileTemplate = newSettings.StatementsFileTemplate;
 		}
 
 		public DataImportSettings GetSettings() {
-			Setting setting = _settingsRepository.Get("EventsDataDirectoryTemplate",
-				@"\\tscore-dev-13\WorkAnalisys\xevents\Export_{date}\");
-			Setting statementsFileSetting = _settingsRepository.Get("StatementsFileTemplate", @"ts_sqlprofiler_05_sec*.xel");
-			Setting locksFileSetting = _settingsRepository.Get("LongLocksFileTemplate", @"collect_long_locks_data*.xel");
-			Setting deadLocksFileSetting = _settingsRepository.Get("DeadLocksFileTemplate", @"collect_deadlock_data*.xel");
 			var settings = new DataImportSettings {
-				EventsDataDirectoryTemplate = setting.Value,
-				StatementsFileTemplate = statementsFileSetting.Value,
-				LongLocksFileTemplate = locksFileSetting.Value,
-				DeadLocksFileTemplate = deadLocksFileSetting.Value
+				EventsDataDirectoryTemplate = _settingsProvider.EventsDataDirectoryTemplate,
+				StatementsFileTemplate = _settingsProvider.StatementsFileTemplate,
+				LongLocksFileTemplate = _settingsProvider.LongLocksFileTemplate,
+				DeadLocksFileTemplate = _settingsProvider.DeadLocksFileTemplate
 			};
 			return settings;
 		}

@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+﻿using System;
 using System.Linq;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Entities;
@@ -29,9 +29,10 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void Set(string code, string value) {
-			var settings = GetSettingFromDb(code, value);
+			Setting settings = GetSettingFromDb(code, value);
 			settings.Value = value;
 			_dbContext.SaveChanges();
 		}
+
 	}
 }
