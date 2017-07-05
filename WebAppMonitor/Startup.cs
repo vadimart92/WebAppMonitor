@@ -40,7 +40,7 @@ namespace WebAppMonitor {
 			services.AddSingleton<IDbConnectionProvider>(connectionProvider);
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(cs));
-			services.AddSingleton<IDataImporter, DataImporter>();
+			services.AddSingleton<IDataLoader, DataLoader>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddSingleton<ISettingsRepository, SettingsRepository>();
 			services.AddSingleton<ISettingsProvider, SettingsProvider>();
@@ -50,8 +50,10 @@ namespace WebAppMonitor {
 			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
 			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
 			services.AddTransient<IAppLogLoader, AppLogLoader>();
-			services.AddSingleton<IQueryTextSaver, QueryTextSaver>();
+			services.AddSingleton<IQueryTextStoringService, QueryTextStoringService>();
 			services.AddSingleton<IJsonLogParser, JsonLogParser>();
+			services.AddSingleton<IJsonLogStoringService, JsonLogStoringService>();
+			services.AddSingleton<IStackStoringService, StackStoringService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

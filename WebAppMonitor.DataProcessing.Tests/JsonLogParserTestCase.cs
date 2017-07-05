@@ -24,6 +24,7 @@ namespace WebAppMonitor.DataProcessing.Tests {
 				string.IsNullOrWhiteSpace(d.MessageObject.StackTrace))
 			.Should().BeFalse();
 			data.Any(d => d.Date == default(DateTime)).Should().BeFalse();
+			data.Any(d => d.GetSourceLogHash() == null).Should().BeFalse();
 		}
 
 		#endregion

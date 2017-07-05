@@ -21,6 +21,13 @@ namespace WebAppMonitor.DataProcessing
 			return EolRegex.Replace(subInput, " ").Trim();
 		}
 
+		public static string ExtractLogSqlText(this string input) {
+			if (input == null) {
+				return null;
+			}
+			return EolRegex.Replace(input, " ").Trim();
+		}
+
 		public static string ExtractLocksSqlText(this string input) {
 			if (input == null) {
 				return null;

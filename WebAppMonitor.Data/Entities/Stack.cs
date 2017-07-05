@@ -6,6 +6,7 @@ namespace WebAppMonitor.Data.Entities {
 	public class Stack {
 		[ExplicitKey]
 		public Guid Id { get; set; }
+		public Guid SourceId { get; set; }
 		public string StackTrace { get; set; }
 		public byte[] StackHash { get; set; }
 	}

@@ -13,6 +13,7 @@ DROP VIEW IF EXISTS VwLockersStats;
 DROP VIEW IF EXISTS VwLockedStats;
 DROP TABLE IF EXISTS Grouped_QueryStatInfo;
 DROP VIEW IF EXISTS VwQueryTextByDate;
+DROP VIEW IF EXISTS VwReaderLogStats;
 GO
 SET QUOTED_IDENTIFIER, ANSI_NULLS ON
 GO
@@ -81,6 +82,19 @@ GO
 CREATE UNIQUE CLUSTERED INDEX IX_Cl ON VwLockedStats (DateId, NormalizedQueryTextId);
 CREATE COLUMNSTORE INDEX Ix_AllColumns ON VwLockedStats (DateId, NormalizedQueryTextId, [Count], TotalDuration);
 GO
+CREATE VIEW VwReaderLogStats WITH SCHEMABINDING
+AS 
+SELECT rl.DateId
+	  ,rl.QueryId NormalizedQueryTextId
+	  ,COUNT_BIG(*) [Count]
+    ,SUM(ISNULL(rl.Rows, 0)) TotalReads
+FROM dbo.ReaderLog rl
+GROUP BY rl.DateId, rl.QueryId
+GO
+CREATE UNIQUE CLUSTERED INDEX IX_Cl ON VwReaderLogStats (DateId, NormalizedQueryTextId);
+CREATE COLUMNSTORE INDEX Ix_AllColumns ON VwReaderLogStats (DateId, NormalizedQueryTextId, [Count], TotalReads);
+GO
+
 CREATE VIEW VwQueryTextByDate as 
 select nqth.Id TextId, 
 	d.id DateId
@@ -100,7 +114,6 @@ SELECT
    ,CAST(ROUND(TotalLogicalReads / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgLogicalReads
    ,CAST(ROUND(TotalCPU / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgCPU
    ,CAST(ROUND(TotalWrites / NULLIF(s.[count], 0), 2) AS DECIMAL(18, 2)) AvgWrites
-   ,CAST(0 AS DECIMAL(18, 2)) AS AvgAdoReads
    ,qd.TextId NormalizedQueryTextId
    ,lrs.[count] LockerCount
    ,CAST(ROUND(lrs.TotalDuration, 2) AS DECIMAL(18, 2)) LockerTotalDuration
@@ -109,10 +122,16 @@ SELECT
    ,CAST(ROUND(lds.TotalDuration, 2) AS DECIMAL(18, 2)) LockedTotalDuration
    ,CAST(ROUND(lds.TotalDuration / NULLIF(lds.[count], 0), 2) AS DECIMAL(18, 2)) LockedAvgDuration
    ,(SELECT COUNT_BIG(*) FROM DeadLocksInfo dli WHERE dli.DateId = qd.DateId AND (dli.QueryAId = qd.TextId OR dli.QuerybId = qd.TextId)) DeadLocksCount
+   ,CAST(ROUND(rls.Count, 2) AS DECIMAL(18, 2)) ReaderLogsCount
+   ,CAST(ROUND(rls.TotalReads, 2) AS DECIMAL(18, 2)) TotalReaderLogsReads
+   ,CAST(ROUND(rls.TotalReads / NULLIF(rls.Count, 0), 2) AS DECIMAL(18, 2)) AvgReaderLogsReads
+   ,(SELECT COUNT_BIG(DISTINCT rl.StackId) FROM ReaderLog rl WHERE rl.DateId = qd.DateId AND rl.QueryId = qd.TextId) DistinctReaderLogsStacks
 FROM VwQueryTextByDate qd
 LEFT JOIN dbo.VwStatementStats s ON qd.TextId = s.NormalizedQueryTextId AND s.DateId = qd.DateId
 LEFT JOIN dbo.VwLockersStats lrs ON qd.TextId = lrs.NormalizedQueryTextId AND lrs.DateId = qd.DateId
 LEFT JOIN dbo.VwLockedStats lds ON qd.TextId = lds.NormalizedQueryTextId AND lds.DateId = qd.DateId
+LEFT JOIN dbo.VwReaderLogStats rls ON qd.TextId = rls.NormalizedQueryTextId AND rls.DateId = qd.DateId
+
 GO
 
 GO
@@ -122,8 +141,9 @@ FROM VwQueryStatInfo;
 
 CREATE CLUSTERED INDEX ix_cl ON Grouped_QueryStatInfo (DateId, NormalizedQueryTextId);
 CREATE COLUMNSTORE INDEX Ix_1 ON Grouped_QueryStatInfo (DateId, TotalDuration, AvgDuration, count, AvgRowCount
-, AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId,
-LockerCount, LockerTotalDuration, LockerAvgDuration, DeadLocksCount);
+, AvgLogicalReads, AvgCPU, AvgWrites, NormalizedQueryTextId
+,LockerCount, LockerTotalDuration, LockerAvgDuration, DeadLocksCount
+,ReaderLogsCount,TotalReaderLogsReads,AvgReaderLogsReads,DistinctReaderLogsStacks);
 GO
 
 CREATE VIEW QueryStatInfo AS
@@ -166,4 +186,4 @@ DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
 END
 
 --EXEC ActualizeQueryStatInfo
--- drop table QueryStatInfo
+-- delete Grouped_QueryStatInfo

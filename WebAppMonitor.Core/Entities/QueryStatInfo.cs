@@ -23,6 +23,10 @@ namespace WebAppMonitor.Core.Entities {
 		public decimal? LockedTotalDuration { get; set; }
 		public decimal? LockedAvgDuration { get; set; }
 		public string QueryText { get; set; }
+		public decimal? ReaderLogsCount { get; set; }
+		public decimal? TotalReaderLogsReads { get; set; }
+		public decimal? AvgReaderLogsReads { get; set; }
+		public long? DistinctReaderLogsStacks { get; set; }
 
 		[Key]
 		public Guid NormalizedQueryTextId { get; set; }

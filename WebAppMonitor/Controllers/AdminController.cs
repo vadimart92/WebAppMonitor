@@ -28,29 +28,29 @@ namespace WebAppMonitor.Controllers {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly IMemoryCache _memoryCache;
 
-		private readonly IDataImporter _dataImporter;
+		private readonly IDataLoader _dataLoader;
 
 		public AdminController(IDbConnectionProvider connectionProvider, IMemoryCache memoryCache,
-			IDataImporter dataImporter) {
+			IDataLoader dataLoader) {
 			_connectionProvider = connectionProvider;
 			_memoryCache = memoryCache;
-			_dataImporter = dataImporter;
+			_dataLoader = dataLoader;
 		}
 
 		[HttpGet("importLongLocks")]
 		public IActionResult ImportExtendedEvents(string file) {
-			_dataImporter.ImportLongLocks(file);
+			_dataLoader.ImportLongLocks(file);
 			return Ok();
 		}
 		[HttpGet("importDeadLocks")]
 		public IActionResult ImportDeadLocks(string file) {
-			_dataImporter.ImportDeadlocks(file);
+			_dataLoader.ImportDeadlocks(file);
 			return Ok();
 		}
 		
 		[HttpGet("importReaderLogs")]
 		public IActionResult ImportReaderLogs(string file) {
-			_dataImporter.ImportReaderLogs(file);
+			_dataLoader.ImportReaderLogs(file);
 			return Ok();
 		}
 
@@ -58,7 +58,7 @@ namespace WebAppMonitor.Controllers {
 		public IActionResult ImportAllByDates(string dates) {
 			var parsedDates = dates.Split(',').Select(DateTime.Parse).ToList();
 			if (parsedDates.Count > 0) {
-				_dataImporter.ImportAllByDates(parsedDates);
+				_dataLoader.ImportAllByDates(parsedDates);
 				return Ok();
 			}
 			return BadRequest();
@@ -67,10 +67,10 @@ namespace WebAppMonitor.Controllers {
 		[HttpPost("importDailyData")]
 		public IActionResult ImportDailyData([FromBody] ImportDailyDataRequest value) {
 			if (value.ImportSettings != null) {
-				_dataImporter.ChangeSettings(value.ImportSettings);
+				_dataLoader.ChangeSettings(value.ImportSettings);
 			}
 			try {
-				_dataImporter.ImportDailyData();
+				_dataLoader.ImportDailyData();
 			}
 			catch (Exception e) {
 				return BadRequest(e.Message);
@@ -86,7 +86,7 @@ namespace WebAppMonitor.Controllers {
 				RecurringJob.RemoveIfExists(ImportDailyStatementDatajobId);
 			}
 			else {
-				RecurringJob.AddOrUpdate<IDataImporter>(ImportDailyStatementDatajobId, d => d.ImportDailyData(), Cron.Daily(5, 30));
+				RecurringJob.AddOrUpdate<IDataLoader>(ImportDailyStatementDatajobId, d => d.ImportDailyData(), Cron.Daily(5, 30));
 			}
 			return Ok();
 		}
@@ -106,7 +106,7 @@ namespace WebAppMonitor.Controllers {
 					connection.ExecuteScalar<DateTime>("SELECT TOP 1 end_time_utc FROM QueryHistory ORDER BY end_time_utc DESC");
 				result.TotalRecords = connection.ExecuteScalar<long>("SELECT Count(*) FROM QueryHistory");
 			});
-			result.ImportSettings = _dataImporter.GetSettings();
+			result.ImportSettings = _dataLoader.GetSettings();
 			result.ImportJobActive = GetIsJobExists();
 			return result;
 		}

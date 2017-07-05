@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebAppMonitor.Core.Import
 {
-	public interface IDataImporter {
+	public interface IDataLoader {
 		void ImportDailyData();
 		void ChangeSettings(DataImportSettings newSettings);
 		DataImportSettings GetSettings();

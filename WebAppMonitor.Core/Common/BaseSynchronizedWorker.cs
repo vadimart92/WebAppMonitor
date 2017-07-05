@@ -6,16 +6,16 @@ using WebAppMonitor.Core.Import;
 namespace WebAppMonitor.Core.Common {
 	public abstract class BaseSynchronizedWorker : ISynchronizedWorker {
 
-		private readonly ILogger _logger;
+		protected readonly ILogger Logger;
 		private volatile bool _isWorking;
 		private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(true);
 
 		protected BaseSynchronizedWorker(ILogger logger) {
-			_logger = logger;
+			Logger = logger;
 		}
 
 		public virtual void BeginWork() {
-			_logger.LogInformation("BeginWork");
+			Logger.LogInformation("BeginWork");
 			_autoResetEvent.WaitOne();
 			_isWorking = true;
 		}
@@ -24,13 +24,13 @@ namespace WebAppMonitor.Core.Common {
 			if (!_isWorking) {
 				throw new InvalidOperationException();
 			}
-			OnFlush();
+			SaveItems();
 			_isWorking = false;
 			_autoResetEvent.Set();
-			_logger.LogInformation("Flush complete");
+			Logger.LogInformation("Flush complete");
 		}
 
-		protected abstract void OnFlush();
+		protected abstract void SaveItems();
 
 		protected void EnsureWorkingState() {
 			if (!_isWorking) {

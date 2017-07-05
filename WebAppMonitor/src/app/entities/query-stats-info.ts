@@ -23,6 +23,10 @@ export class QueryStatInfo  {
 		this.queryText = json.queryText;
 		this.normalizedQueryTextId = json.normalizedQueryTextId;
 		this.deadlocksCount = json.deadlocksCount;
+		this.readerLogsCount = json.readerLogsCount;
+		this.totalReaderLogsReads = json.totalReaderLogsReads;
+		this.avgReaderLogsReads = json.avgReaderLogsReads;
+		this.distinctReaderLogsStacks = json.distinctReaderLogsStacks;
 
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
@@ -49,6 +53,10 @@ export class QueryStatInfo  {
 	lockedTotalDuration: number;
 	lockedAvgDuration: number;
 	deadlocksCount: number;
+	readerLogsCount:number;
+	totalReaderLogsReads:number;
+	avgReaderLogsReads:number;
+	distinctReaderLogsStacks:number;
 
 	totalDurationStr: string;
 	avgDurationStr: string;
@@ -73,6 +81,11 @@ export class QueryStatInfoDisplayConfig {
 					new NumberColumnConfig("avgCPU", "AVG CPU").with.width(100).freeze().build(),
 					new NumberColumnConfig("avgLogicalReads", "AVG reads").with.width(100).freeze().build(),
 					new NumberColumnConfig("avgWrites", "AVG writes").with.width(100).freeze().build(),
+				]).next("readerLogs", [
+					new NumberColumnConfig("readerLogsCount", "Reader logs").with.width(100).freeze().build(),
+					new NumberColumnConfig("totalReaderLogsReads", "Total ado reads").with.width(100).freeze().build(),
+					new NumberColumnConfig("avgReaderLogsReads", "AVG ado reads").with.width(100).freeze().build(),
+					new NumberColumnConfig("distinctReaderLogsStacks", "Ado stacks").with.headerDesc("Distinct ado stacks").width(100).freeze().build()
 				])
 				.next("locks", [
 					new NumberColumnConfig("deadlocksCount", "Deadlocks count").with.width(100).freeze().build(),
@@ -86,8 +99,6 @@ export class QueryStatInfoDisplayConfig {
 				.next("text", [
 					new ColumnConfig("queryText", "Text").with.cellClass("query-stats-sql-cell").build()
 				]);
-
-			//new NumberColumnConfig("avgAdoReads", "AVG ado reads").with.headerDesc("AVG ado.net reads").width(100).freeze().build(),
 			this.groupsMap = groupList.toGroups();
 			this.groupsMap["statements"].modifyItems(c => c.hide = false);
 			this.groupsMap["text"].modifyItems(c => c.hide = false);

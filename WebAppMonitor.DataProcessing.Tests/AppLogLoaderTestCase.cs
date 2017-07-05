@@ -11,13 +11,13 @@ namespace WebAppMonitor.DataProcessing.Tests {
 	public class AppLogLoaderTestCase {
 
 	[Test, AutoNSubstituteData]
-		public void LoadReaderLogs(IJsonLogParser parser, IJsonLogSaver saver, string fileName) {
+		public void LoadReaderLogs(IJsonLogParser parser, IJsonLogStoringService storingService, string fileName) {
 			var logRecord = new ReaderLogRecord{Logger = "test"};
 			parser.ReadFile<ReaderLogRecord>(fileName).Returns(new List<ReaderLogRecord> {logRecord});
-			var loader = new AppLogLoader(parser, saver);
+			var loader = new AppLogLoader(parser, storingService);
 			loader.LoadReaderLogs(fileName);
-			saver.Received(1).BeginWork();
-			saver.Received(1).RegisterReaderLogItem(logRecord);
+			storingService.Received(1).BeginWork();
+			storingService.Received(1).RegisterReaderLogItem(logRecord);
 		}
 	}
 }

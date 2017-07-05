@@ -8,17 +8,17 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 
 namespace WebAppMonitor.Core.Import {
-	public class DataImporter : IDataImporter {
+	public class DataLoader : IDataLoader {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly IExtendedEventLoader _extendedEventLoader;
 		private readonly IAppLogLoader _appLogLoader;
-		private readonly ILogger<DataImporter> _logger;
+		private readonly ILogger<DataLoader> _logger;
 		private readonly ISettingsProvider _settingsProvider;
 
 		private static int _commandTimeout = 3600;
 
-		public DataImporter(IDbConnectionProvider connectionProvider, ISettingsProvider settingsProvider,
-			IExtendedEventLoader extendedEventLoader, ILogger<DataImporter> logger, IAppLogLoader appLogLoader) {
+		public DataLoader(IDbConnectionProvider connectionProvider, ISettingsProvider settingsProvider,
+			IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader) {
 			_connectionProvider = connectionProvider;
 			_settingsProvider = settingsProvider;
 			_extendedEventLoader = extendedEventLoader;
@@ -123,12 +123,14 @@ namespace WebAppMonitor.Core.Import {
 
 		public void ImportDbExecutorLogs(string file) {
 			_logger.LogInformation("ImportDbExecutorLogs started");
-			_appLogLoader.LoadReaderLogs(file);
-			_logger.LogInformation("ImportDbExecutorLogs completed");
+			throw new NotImplementedException();
+			//_logger.LogInformation("ImportDbExecutorLogs completed");
 		}
 
 		public void ImportReaderLogs(string file) {
-			throw new NotImplementedException();
+			_logger.LogInformation("ImportReaderLogs started");
+			_appLogLoader.LoadReaderLogs(file);
+			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
 		public void ImportPerfomanceLoggerLogs(string file) {

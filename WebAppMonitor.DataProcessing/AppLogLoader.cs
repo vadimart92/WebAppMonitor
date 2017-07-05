@@ -7,17 +7,17 @@ namespace WebAppMonitor.DataProcessing
 	{
 
 		private readonly IJsonLogParser _jsonLogParser;
-		private readonly IJsonLogSaver _jsonLogSaver;
+		private readonly IJsonLogStoringService _jsonLogStoringService;
 
-		public AppLogLoader(IJsonLogParser jsonLogParser, IJsonLogSaver jsonLogSaver) {
+		public AppLogLoader(IJsonLogParser jsonLogParser, IJsonLogStoringService jsonLogStoringService) {
 			_jsonLogParser = jsonLogParser;
-			_jsonLogSaver = jsonLogSaver;
+			_jsonLogStoringService = jsonLogStoringService;
 		}
 
 		public void LoadReaderLogs(string file) {
-			using (_jsonLogSaver.BeginWork()) {
+			using (_jsonLogStoringService.BeginWork()) {
 				foreach (ReaderLogRecord logRecord in _jsonLogParser.ReadFile<ReaderLogRecord>(file)) {
-					_jsonLogSaver.RegisterReaderLogItem(logRecord);
+					_jsonLogStoringService.RegisterReaderLogItem(logRecord);
 				}
 			}
 		}

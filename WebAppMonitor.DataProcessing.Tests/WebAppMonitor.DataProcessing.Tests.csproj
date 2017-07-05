@@ -59,6 +59,7 @@
     <Compile Include="JsonLogParserTestCase.cs" />
     <Compile Include="SqlExtractionUtilsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StackProcessingUtilsTestCase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LoggingDataReader.json.0.json">

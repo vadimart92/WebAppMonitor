@@ -2,7 +2,7 @@
 
 namespace WebAppMonitor.Core.Import
 {
-    public interface IJsonLogSaver
+    public interface IJsonLogStoringService
     {
 	    ITransaction BeginWork();
 	    void RegisterReaderLogItem(ReaderLogRecord logRecord);
