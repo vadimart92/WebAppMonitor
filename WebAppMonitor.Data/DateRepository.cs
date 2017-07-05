@@ -30,7 +30,5 @@ namespace WebAppMonitor.Data {
 			_queryStatsContext.SaveChanges();
 			return foundDate.Id;
 		}
-
-
 	}
 }
