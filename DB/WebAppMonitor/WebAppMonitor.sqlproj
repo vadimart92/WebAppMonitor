@@ -14,7 +14,7 @@
     </RootPath>
     <RootNamespace>WebAppMonitor</RootNamespace>
     <AssemblyName>WebAppMonitor</AssemblyName>
-    <ModelCollation>1033, CI</ModelCollation>
+    <ModelCollation>1049,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
@@ -23,6 +23,9 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>Cyrillic_General_CI_AS</DefaultCollation>
+    <AnsiNulls>False</AnsiNulls>
+    <QuotedIdentifier>False</QuotedIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -66,5 +69,8 @@
   <ItemGroup>
     <Compile Include="NormalizeQueryText.cs" />
     <Compile Include="..\..\WebAppMonitor.DataProcessing\SqlExtractionUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WebAppMonitor.publish.xml" />
   </ItemGroup>
 </Project>

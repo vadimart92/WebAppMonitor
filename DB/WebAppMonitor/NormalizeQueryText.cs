@@ -1,5 +1,5 @@
 ﻿using System.Data.SqlTypes;
-using WebAppMonitor.SharedUtils;
+using WebAppMonitor.DataProcessing;
 
 public partial class UserDefinedFunctions
 {
