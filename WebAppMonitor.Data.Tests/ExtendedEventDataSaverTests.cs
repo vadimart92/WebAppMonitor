@@ -2,7 +2,7 @@
 using Autofixture.NUnit3;
 using NUnit.Framework;
 using WebAppMonitor.Core;
-using WebAppMonitor.Core.Entities;
+using WebAppMonitor.Core.Import.Entity;
 
 namespace WebAppMonitor.Data.Tests
 {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Microsoft.Extensions.Logging;
-using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Core.Import;
+using WebAppMonitor.Core.Import.Entity;
 using WebAppMonitor.DataProcessing;
 
 namespace WebAppMonitor.XmlEventsParser
@@ -103,7 +103,7 @@ namespace WebAppMonitor.XmlEventsParser
 		}
 
 		private static string GetDbName(@event info) {
-			return GetDataItem(info, "database_name")?.value.Text.FirstOrDefault();
+			return GetDataItem(info, "database_name")?.value.Text?.FirstOrDefault();
 		}
 
 		private static string GetDataValue(@event info, string propertyName) {

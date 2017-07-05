@@ -4,16 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace WebAppMonitor.Data.Entities
 {
 
-	public class BaseLockInfo
+	public class BaseInfoRecord:IRecordWithDate
 	{
-
 		public Guid Id { get; set; }
 		public DateTime Date { get; set; }
 		public int DateId { get; set; }
 	}
 	
 	[Table("LongLocksInfo")]
-	public class LongLocksInfo : BaseLockInfo
+	public class LongInfoRecord : BaseInfoRecord
 	{
 		public Guid BlockedQueryId { get; set; }
 		public Guid BlockerQueryId { get; set; }
@@ -22,7 +21,7 @@ namespace WebAppMonitor.Data.Entities
 	}
 
 	[Table("DeadLocksInfo")]
-	public class DeadLocksInfo : BaseLockInfo
+	public class DeadInfoRecord : BaseInfoRecord
 	{
 		public Guid QueryAId { get; set; }
 		public Guid QueryBId { get; set; }

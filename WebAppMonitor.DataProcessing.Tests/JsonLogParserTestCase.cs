@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using WebAppMonitor.DataProcessing.JsonLogParser;
+using WebAppMonitor.Core.Import.Entity;
 
 namespace WebAppMonitor.DataProcessing.Tests {
 

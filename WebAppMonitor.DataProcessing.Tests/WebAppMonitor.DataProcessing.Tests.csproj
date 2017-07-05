@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppLogLoaderTestCase.cs" />
     <Compile Include="JsonLogParserTestCase.cs" />
     <Compile Include="SqlExtractionUtilsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +70,10 @@
     <ProjectReference Include="..\Autofixture.NUnit3\Autofixture.NUnit3.csproj">
       <Project>{ad2cf50a-6acf-48d3-be1b-0b74f58d11b1}</Project>
       <Name>Autofixture.NUnit3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj">
+      <Project>{4995CF07-BF93-4A1A-9059-3E281D4408F8}</Project>
+      <Name>WebAppMonitor.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebAppMonitor.DataProcessing\WebAppMonitor.DataProcessing.csproj">
       <Project>{0D954394-A107-463C-875D-3170BDABCB99}</Project>

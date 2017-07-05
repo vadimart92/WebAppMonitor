@@ -44,9 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppLogLoader.cs" />
     <Compile Include="ExtendedEventLoader.cs" />
     <Compile Include="Json\JsonLogParser.cs" />
-    <Compile Include="Json\ReaderLogRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlExtractionUtils.cs" />
   </ItemGroup>

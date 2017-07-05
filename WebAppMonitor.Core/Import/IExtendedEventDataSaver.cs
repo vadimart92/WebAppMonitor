@@ -1,10 +1,9 @@
-﻿using WebAppMonitor.Core.Entities;
+﻿using WebAppMonitor.Core.Import.Entity;
 
 namespace WebAppMonitor.Core.Import {
 	public interface IExtendedEventDataSaver {
 		void RegisterLock(QueryLockInfo lockInfo);
-		void BeginWork();
-		void Flush();
+		ITransaction BeginWork();
 		void RegisterDeadLock(QueryDeadLockInfo queryLockInfo);
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebAppMonitor.Core.Entities
+namespace WebAppMonitor.Core.Import.Entity
 {
 	public class Proess
 	{

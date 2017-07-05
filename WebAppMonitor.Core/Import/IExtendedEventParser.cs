@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using WebAppMonitor.Core.Entities;
+using WebAppMonitor.Core.Import.Entity;
 
 namespace WebAppMonitor.Core.Import
 {

@@ -44,6 +44,7 @@ namespace WebAppMonitor {
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddSingleton<ISettingsRepository, SettingsRepository>();
 			services.AddSingleton<ISettingsProvider, SettingsProvider>();
+			services.AddSingleton<IDateRepository, DateRepository>();
 			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
 			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
 			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();

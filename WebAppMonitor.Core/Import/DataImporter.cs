@@ -85,8 +85,8 @@ namespace WebAppMonitor.Core.Import {
 		private void ImportData(string directoryName, DataImportSettings settings) {
 			_logger.LogInformation("Import daily data started.");
 			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName)
-				.Select(p => new DirectoryInfo(p))
-				.OrderBy(d => d.CreationTime)) {
+					.Select(p => new DirectoryInfo(p))
+					.OrderBy(d => d.CreationTime)) {
 				_connectionProvider.GetConnection(connection => {
 					ImportLongQueriesData(connection, directory, settings);
 				});
@@ -118,7 +118,7 @@ namespace WebAppMonitor.Core.Import {
 
 		public void ImportDeadlocks(string filePath) {
 			_extendedEventLoader.LoadDeadLocksData(filePath);
-			//ActualizeInfo();
+			ActualizeInfo();
 		}
 
 		public void ImportDbExecutorLogs(string file) {

@@ -1,9 +1,7 @@
-﻿namespace WebAppMonitor.Core.Import
-{
-    public interface IAppLogLoader
-    {
+﻿namespace WebAppMonitor.Core.Import {
+	public interface IAppLogLoader {
 
-	    void LoadReaderLogs(string file);
+		void LoadReaderLogs(string file);
 
-    }
+	}
 }

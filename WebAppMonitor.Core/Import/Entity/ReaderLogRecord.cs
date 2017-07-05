@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebAppMonitor.DataProcessing.JsonLogParser
+namespace WebAppMonitor.Core.Import.Entity
 {
 	public class ReaderLogRecord
 	{

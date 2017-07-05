@@ -1,12 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using Dapper;
 using FastMember;
 using WebAppMonitor.Core;
 
 namespace WebAppMonitor.Data
 {
+	public interface IRecordWithDate
+	{
+
+		DateTime Date { get; set; }
+
+	}
 
 	public static class DbConnectionUtils
 	{
@@ -41,6 +49,15 @@ namespace WebAppMonitor.Data
 			connectionProvider.GetConnection(connection => {
 				Insert(connection, items);
 			});
+		}
+
+		public static DateTime GetLastQueryDate<T>(this IDbConnectionProvider connectionProvider) where T : class, IRecordWithDate {
+			string tableName = OrmUtils.GetTableName<T>();
+			DateTime result = DateTime.MinValue;
+			connectionProvider.GetConnection(connection => {
+				result = connection.ExecuteScalar<DateTime>($"SELECT MAX(Date) FROM [{tableName}]");
+			});
+			return result;
 		}
 
 		private static bool IsItemsEmpty<T>(IEnumerable<T> items) where T : class {

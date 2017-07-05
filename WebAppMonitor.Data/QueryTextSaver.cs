@@ -2,28 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data.Entities;
 
 namespace WebAppMonitor.Data {
-	public class QueryTextSaver : IQueryTextSaver {
+	public class QueryTextSaver : BaseSynchronizedWorker, IQueryTextSaver {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly List<NormQueryTextHistory> _pendingQueries = new List<NormQueryTextHistory>();
 		private readonly List<NormQueryTextSource> _pendingQuerySources = new List<NormQueryTextSource>();
 		private readonly SHA512 _hasher = SHA512.Create();
 		private readonly Lazy<Dictionary<byte[], Guid>> _normQueryMap;
 		private Dictionary<byte[], Guid> NormQueryMap => _normQueryMap.Value;
-		private volatile bool _isWorking;
-		private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(true);
-		private readonly ILogger<QueryTextSaver> _logger;
 
-		public QueryTextSaver(IDbConnectionProvider connectionProvider, ILogger<QueryTextSaver> logger) {
+		public QueryTextSaver(IDbConnectionProvider connectionProvider, ILogger<QueryTextSaver> logger) : base(logger) {
 			_connectionProvider = connectionProvider;
-			_logger = logger;
 			_normQueryMap = new Lazy<Dictionary<byte[], Guid>>(InitNormQueryMap);
 		}
 
@@ -54,16 +50,8 @@ namespace WebAppMonitor.Data {
 			}
 		}
 
-		public void BeginWork() {
-			_logger.LogInformation("BeginWork");
-			_autoResetEvent.WaitOne();
-			_isWorking = true;
-		}
-
 		public Guid GetOrCreate(string queryText, Guid? querySourceId) {
-			if (!_isWorking) {
-				throw new InvalidOperationException();
-			}
+			EnsureWorkingState();
 			var hash = GetQueryHash(queryText);
 			if (NormQueryMap.ContainsKey(hash)) {
 				return NormQueryMap[hash];
@@ -80,14 +68,8 @@ namespace WebAppMonitor.Data {
 			return historyItem.Id;
 		}
 
-		public void Flush() {
-			if (!_isWorking) {
-				throw new InvalidOperationException();
-			}
+		protected override void OnFlush() {
 			SaveItems();
-			_isWorking = false;
-			_autoResetEvent.Set();
-			_logger.LogInformation("Flush complete");
 		}
 
 		private void SaveItems() {

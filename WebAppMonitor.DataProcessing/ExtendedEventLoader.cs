@@ -1,8 +1,8 @@
 ﻿using System;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Common;
-using WebAppMonitor.Core.Entities;
 using WebAppMonitor.Core.Import;
+using WebAppMonitor.Core.Import.Entity;
 
 namespace WebAppMonitor.DataProcessing {
 	public class ExtendedEventLoader : IExtendedEventLoader {
@@ -19,25 +19,25 @@ namespace WebAppMonitor.DataProcessing {
 
 		public void LoadLongLocksData(string file) {
 			string databaseName = _settingsProvider.DatabaseName;
-			_dataSaver.BeginWork();
-			foreach (QueryLockInfo queryLockInfo in _parser.ReadLongLockEvents(file)) {
-				if (databaseName.Equals(queryLockInfo.DatabaseName, StringComparison.OrdinalIgnoreCase)) {
-					_dataSaver.RegisterLock(queryLockInfo);
+			using (_dataSaver.BeginWork()) {
+				foreach (QueryLockInfo queryLockInfo in _parser.ReadLongLockEvents(file)) {
+					if (databaseName.Equals(queryLockInfo.DatabaseName, StringComparison.OrdinalIgnoreCase)) {
+						_dataSaver.RegisterLock(queryLockInfo);
+					}
 				}
 			}
-			_dataSaver.Flush();
 		}
 
 		public void LoadDeadLocksData(string file) {
 			string databaseName = _settingsProvider.DatabaseName;
-			_dataSaver.BeginWork();
-			foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
-				if (queryLockInfo.ObjectAName.Contain(databaseName) ||
+			using (_dataSaver.BeginWork()) {
+				foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
+					if (queryLockInfo.ObjectAName.Contain(databaseName) ||
 						queryLockInfo.ObjectBName.Contain(databaseName)) {
-					_dataSaver.RegisterDeadLock(queryLockInfo);
+						_dataSaver.RegisterDeadLock(queryLockInfo);
+					}
 				}
 			}
-			_dataSaver.Flush();
 		}
 	}
 }
