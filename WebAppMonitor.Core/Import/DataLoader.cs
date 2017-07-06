@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.IO;
-using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
+using AutoMapper;
 using Dapper;
 using Microsoft.Extensions.Logging;
 
@@ -13,17 +14,24 @@ namespace WebAppMonitor.Core.Import {
 		private readonly IExtendedEventLoader _extendedEventLoader;
 		private readonly IAppLogLoader _appLogLoader;
 		private readonly ILogger<DataLoader> _logger;
-		private readonly ISettingsProvider _settingsProvider;
+		private readonly ISettings _settings;
+		private readonly ISettingsRepository _settingsRepository;
+		private readonly IMapper _mapper;
+		private readonly IDataFilePathProvider _dataFilePathProvider;
 
 		private static int _commandTimeout = 3600;
 
-		public DataLoader(IDbConnectionProvider connectionProvider, ISettingsProvider settingsProvider,
-			IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader) {
+		public DataLoader(IDbConnectionProvider connectionProvider, ISettings settings,
+				IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader,
+				IDataFilePathProvider dataFilePathProvider, IMapper mapper, ISettingsRepository settingsRepository) {
 			_connectionProvider = connectionProvider;
-			_settingsProvider = settingsProvider;
+			_settings = settings;
 			_extendedEventLoader = extendedEventLoader;
 			_logger = logger;
 			_appLogLoader = appLogLoader;
+			_dataFilePathProvider = dataFilePathProvider;
+			_mapper = mapper;
+			_settingsRepository = settingsRepository;
 		}
 
 		private void BackupDb() {
@@ -38,38 +46,34 @@ namespace WebAppMonitor.Core.Import {
 			});
 		}
 
-		private void ImportLongLocksData(DirectoryInfo directory, DataImportSettings settings) {
-			string file = Path.Combine(directory.FullName, settings.LongLocksFileTemplate);
+		private void ImportLongLocksData(string directory) {
+			string file = Path.Combine(directory, _settings.LongLocksFileTemplate);
 			_logger.LogInformation("Import of long locks from {0} started.", file);
 			_extendedEventLoader.LoadLongLocksData(file);
 			_logger.LogInformation("Import of long locks completed.");
 		}
 
-		private void ImportDeadLocksData(DirectoryInfo directory, DataImportSettings settings) {
-			string file = Path.Combine(directory.FullName, settings.DeadLocksFileTemplate);
+		private void ImportDeadLocksData(string directory) {
+			string file = Path.Combine(directory, _settings.DeadLocksFileTemplate);
 			_logger.LogInformation("Import of dead locks from {0} started.", file);
 			_extendedEventLoader.LoadDeadLocksData(file);
 			_logger.LogInformation("Import of dead locks completed.");
 		}
 
-		private void ImportLongQueriesData(DbConnection connection, DirectoryInfo directory,
-			DataImportSettings settings) {
-			_logger.LogInformation("Executing ImportDailyData for {0}.", directory.FullName);
-			connection.Execute("ImportDailyData", new {
-				fileName = Path.Combine(directory.FullName, settings.StatementsFileTemplate)
-			}, commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
-			_logger.LogInformation("Executing SaveDailyData.");
-			connection.Execute("SaveDailyData", commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
+		private void ImportLongQueriesData(string directory) {
+			_logger.LogInformation("Executing ImportDailyData for {0}.", directory);
+			_connectionProvider.GetConnection(connection => {
+				connection.Execute("ImportDailyData", new {
+					fileName = Path.Combine(directory, _settings.StatementsFileTemplate)
+				}, commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
+				_logger.LogInformation("Executing SaveDailyData.");
+				connection.Execute("SaveDailyData", commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
+			});
 		}
 
 		public void ImportDailyData() {
-			DataImportSettings settings = GetSettings();
-			string directoryName = Path.GetDirectoryName(settings.CurrentEventsDataDirectory);
-			if (!Directory.Exists(directoryName)) {
-				throw new Exception($"directory {directoryName} not found.");
-			}
 			BackupDb();
-			ImportData(directoryName, settings);
+			ImportData(_dataFilePathProvider);
 			ActualizeInfo();
 		}
 
@@ -82,33 +86,39 @@ namespace WebAppMonitor.Core.Import {
 			_logger.LogInformation("ActualizeQueryStatInfo completed.");
 		}
 
-		private void ImportData(string directoryName, DataImportSettings settings) {
+		private void SafeExecute(Expression<Action> action) {
+			try {
+				action.Compile()();
+			} catch (Exception e) {
+				_logger.LogError(action.Body.ToString(), e);
+			}
+		}
+
+		private void ImportData(IDataFilePathProvider pathProvider) {
 			_logger.LogInformation("Import daily data started.");
-			foreach (DirectoryInfo directory in Directory.EnumerateDirectories(directoryName)
-					.Select(p => new DirectoryInfo(p))
-					.OrderBy(d => d.CreationTime)) {
-				_connectionProvider.GetConnection(connection => {
-					ImportLongQueriesData(connection, directory, settings);
-				});
-				ImportLongLocksData(directory, settings);
-				ImportDeadLocksData(directory, settings);
+			foreach (var directory in pathProvider.GetDailyExtEventsDirs()) {
+				SafeExecute(()=>ImportLongQueriesData(directory));
+				SafeExecute(() => ImportLongLocksData(directory));
+				SafeExecute(() => ImportDeadLocksData(directory));
+			}
+			foreach (var executorLog in pathProvider.GetReaderLogs()) {
+				SafeExecute(() => ImportReaderLogs(executorLog));
+			}
+			foreach (var executorLog in pathProvider.GetExecutorLogs()) {
+				SafeExecute(() => ImportDbExecutorLogs(executorLog));
+			}
+			foreach (var perfomanceLog in pathProvider.GetPerfomanceLogs()) {
+				SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
 			}
 			_logger.LogInformation("Import daily data completed.");
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {
-			_settingsProvider.EventsDataDirectoryTemplate = newSettings.EventsDataDirectoryTemplate;
-			_settingsProvider.StatementsFileTemplate = newSettings.StatementsFileTemplate;
+			_settingsRepository.Change(newSettings);
 		}
 
 		public DataImportSettings GetSettings() {
-			var settings = new DataImportSettings {
-				EventsDataDirectoryTemplate = _settingsProvider.EventsDataDirectoryTemplate,
-				StatementsFileTemplate = _settingsProvider.StatementsFileTemplate,
-				LongLocksFileTemplate = _settingsProvider.LongLocksFileTemplate,
-				DeadLocksFileTemplate = _settingsProvider.DeadLocksFileTemplate
-			};
-			return settings;
+			return _mapper.Map<ISettings, DataImportSettings>(_settings);
 		}
 
 		public void ImportLongLocks(string filePath) {
@@ -138,16 +148,10 @@ namespace WebAppMonitor.Core.Import {
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {
-			DataImportSettings settings = GetSettings();
 			BackupDb();
 			foreach (DateTime dateTime in dates) {
-				settings.Date = dateTime;
-				string directoryName = Path.GetDirectoryName(settings.CurrentEventsDataDirectory);
-				if (!Directory.Exists(directoryName)) {
-					_logger.LogError("Directory {0} does not exists", directoryName);
-					continue;
-				}
-				ImportData(directoryName, settings);
+				ImportData(new DataFilePathProvider(_settings,
+					new StaticDateTimeProvider(dateTime), _logger));
 			}
 			ActualizeInfo();
 		}

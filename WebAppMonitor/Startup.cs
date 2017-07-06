@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +44,7 @@ namespace WebAppMonitor {
 			services.AddSingleton<IDataLoader, DataLoader>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddSingleton<ISettingsRepository, SettingsRepository>();
-			services.AddSingleton<ISettingsProvider, SettingsProvider>();
+			services.AddSingleton<ISettings, Settings>();
 			services.AddSingleton<IDateRepository, DateRepository>();
 			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
 			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
@@ -54,6 +55,9 @@ namespace WebAppMonitor {
 			services.AddSingleton<IJsonLogParser, JsonLogParser>();
 			services.AddSingleton<IJsonLogStoringService, JsonLogStoringService>();
 			services.AddSingleton<IStackStoringService, StackStoringService>();
+			services.AddSingleton<IDataFilePathProvider, DataFilePathProvider>();
+			services.AddSingleton<IDateTimeProvider, CurrentDateTimeProvider>();
+			services.AddAutoMapper();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

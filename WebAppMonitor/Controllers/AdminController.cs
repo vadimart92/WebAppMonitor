@@ -9,16 +9,12 @@ using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.Controllers {
-	public class ImportDailyDataRequest {
-		public DataImportSettings ImportSettings { get; set; }
-	}
 
 	public class GetStatsInfoResult {
 		public DateTime LastQueryInHistory { get; set; }
 		public long TotalRecords { get; set; }
-
 		public bool ImportJobActive { get; set; }
-		public DataImportSettings ImportSettings { get; set; }
+		public ISettings ImportSettings { get; set; }
 	}
 
 	[Route("api/[controller]")]
@@ -69,11 +65,14 @@ namespace WebAppMonitor.Controllers {
 			return BadRequest();
 		}
 
+		[HttpPost("saveSettings")]
+		public IActionResult SaveSettings([FromBody]DataImportSettings settings) {
+			_dataLoader.ChangeSettings(settings);
+			return Ok();
+		}
+
 		[HttpPost("importDailyData")]
-		public IActionResult ImportDailyData([FromBody] ImportDailyDataRequest value) {
-			if (value.ImportSettings != null) {
-				_dataLoader.ChangeSettings(value.ImportSettings);
-			}
+		public IActionResult ImportDailyData() {
 			try {
 				_dataLoader.ImportDailyData();
 			}

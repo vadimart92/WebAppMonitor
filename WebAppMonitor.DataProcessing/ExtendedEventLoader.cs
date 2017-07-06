@@ -8,17 +8,17 @@ namespace WebAppMonitor.DataProcessing {
 	public class ExtendedEventLoader : IExtendedEventLoader {
 		private readonly IExtendedEventParser _parser;
 		private readonly IExtendedEventDataSaver _dataSaver;
-		private readonly ISettingsProvider _settingsProvider;
+		private readonly ISettings _settings;
 
 		public ExtendedEventLoader(IExtendedEventParser parser, IExtendedEventDataSaver dataSaver,
-				ISettingsProvider settingsProvider) {
+				ISettings settings) {
 			_parser = parser;
 			_dataSaver = dataSaver;
-			_settingsProvider = settingsProvider;
+			_settings = settings;
 		}
 
 		public void LoadLongLocksData(string file) {
-			string databaseName = _settingsProvider.DatabaseName;
+			string databaseName = _settings.DatabaseName;
 			using (_dataSaver.BeginWork()) {
 				foreach (QueryLockInfo queryLockInfo in _parser.ReadLongLockEvents(file)) {
 					if (databaseName.Equals(queryLockInfo.DatabaseName, StringComparison.OrdinalIgnoreCase)) {
@@ -29,7 +29,7 @@ namespace WebAppMonitor.DataProcessing {
 		}
 
 		public void LoadDeadLocksData(string file) {
-			string databaseName = _settingsProvider.DatabaseName;
+			string databaseName = _settings.DatabaseName;
 			using (_dataSaver.BeginWork()) {
 				foreach (QueryDeadLockInfo queryLockInfo in _parser.ReadDeadLockEvents(file)) {
 					if (queryLockInfo.ObjectAName.Contain(databaseName) ||

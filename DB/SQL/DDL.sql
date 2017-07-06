@@ -264,3 +264,10 @@ CREATE TABLE ExecutorLog (
 	, [Duration] BIGINT
 );
 GO
+
+CREATE INDEX IDX_QueryHistory_end_time_utc
+ON QueryHistory (end_time_utc) 
+ON [PRIMARY]  
+
+select *
+from Settings

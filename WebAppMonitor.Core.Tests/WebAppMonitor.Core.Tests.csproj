@@ -17,4 +17,84 @@
     <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestDir\LogDir1\" />
+    <Folder Include="TestDir\LogDir2\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestDir\LogDir1\0\log\2017_07_03\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\0\log\2017_07_03\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\0\log\2017_07_03\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\0\log\2017_07_04\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\0\log\2017_07_04\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\0\log\2017_07_04\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_03\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_03\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_03\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_04\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_04\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir1\log\2017_07_04\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_03\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_03\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_03\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_04\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_04\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\0\log\2017_07_04\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_03\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_03\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_03\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_04\LoggingDataReader.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_04\PerformanceLogger.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestDir\LogDir2\log\2017_07_04\Sql.0.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

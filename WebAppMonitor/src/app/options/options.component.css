@@ -1,13 +1,13 @@
 ﻿:host {
-	position:absolute;
+	position: absolute;
 	margin-top: 64px;
 	position: absolute;
 	padding: 20px;
-	width: 100%;
+	width: 100vh;
 }
 .import-data-form {
 	margin-top: 20px;
-	width: 50%;
+	width: 90vh;
 }
 .import-data-form td {
 	width: 100%;
@@ -18,4 +18,7 @@
 }
 .import-data-full-width {
 	width: 100%;
+}
+.action-btn {
+	margin-left: 10px;
 }

@@ -1,4 +1,8 @@
 ﻿<form class="import-data-form" onsubmit="return false">
+	<button md-raised-button (click)="clearCache()" class="action-btn" >Clear cache</button>
+	<button md-raised-button (click)="clearAllSettings()" class="action-btn" >Clear settings</button>
+	<button md-raised-button (click)="openHangfire()" class="action-btn" >Open hangfire</button>
+	<hr class="clear-cache-divider" />
 	<div *ngIf="lastQueryInHistory">
 		<h4>Last query in history: {{moment(lastQueryInHistory).format("YYYY-MM-DD hh:mm")}}</h4>
 		<h4>Total records: {{totalRecords}}</h4>
@@ -8,18 +12,16 @@
 	                 color="primary"
 	                 mode="indeterminate">
 	</md-progress-bar>
-	<td *ngIf="importSettings"><md-input-container class="import-data-full-width">
-		<input mdInput placeholder="Directory template" [(value)]="importSettings.EventsDataDirectoryTemplate">
-	</md-input-container></td>
-	<td *ngIf="importSettings"><md-input-container class="import-data-full-width">
-			<input mdInput placeholder="File template" [(value)]="importSettings.StatementsFileTemplate">
-	</md-input-container></td>
-	<button md-raised-button (click)="importData(importSettings)">Import</button>
-	<md-button-toggle (change)="toggleImportJob()" [checked]="!importJobActive">
+	<button md-raised-button (click)="importData(importSettings)" class="action-btn">Import</button>
+	<md-button-toggle (change)="toggleImportJob()" [checked]="!importJobActive" class="action-btn">
 		{{importJobActive? "Deactivate" : "Activate"}} import job
 	</md-button-toggle>
-	<hr class="clear-cache-divider"/>
-	<button md-raised-button (click)="clearCache()">Clear cache</button>
-	<button md-raised-button (click)="clearAllSettings()">Clear settings</button>
-	<button md-raised-button (click)="openHangfire()">Open hangfire</button>
+	<hr class="clear-cache-divider" />
+	<div *ngFor="let settingName of settings">
+		<md-input-container class="import-data-full-width">
+			<input #input mdInput placeholder="{{settingName}}" [(value)]="importSettings[settingName]" (change)="importSettings[settingName]= input.value">
+		</md-input-container>
+	</div>
+	<button md-raised-button (click)="saveSettings(importSettings)">SaveSettings</button>
+
 </form>
