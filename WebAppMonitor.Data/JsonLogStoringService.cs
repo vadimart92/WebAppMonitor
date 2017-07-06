@@ -45,10 +45,11 @@ namespace WebAppMonitor.Data {
 			_pendingReaderLogs.BulkInsert(_connectionProvider);
 			_logger.LogInformation("{0} reader logs inserted", _pendingReaderLogs.Count);
 			_pendingReaderLogs.Clear();
-			_pendingExecutorLogs.BulkInsert(_connectionProvider);
-			_logger.LogInformation("{0} reader executor logs inserted", _pendingExecutorLogs.Count);
-			_pendingExecutorLogs.Clear();
 			_importedReaderLogs.Flush();
+			_pendingExecutorLogs.BulkInsert(_connectionProvider);
+			_logger.LogInformation("{0} executor logs inserted", _pendingExecutorLogs.Count);
+			_pendingExecutorLogs.Clear();
+			_importedExecutorLogs.Flush();
 		}
 
 		public ITransaction BeginWork() {
