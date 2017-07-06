@@ -14,7 +14,6 @@ namespace WebAppMonitor.Core.Entities {
 		public decimal? AvgLogicalReads { get; set; }
 		public decimal? AvgCPU { get; set; }
 		public decimal? AvgWrites { get; set; }
-		public decimal? AvgAdoReads { get; set; }
 		public long? DeadlocksCount { get; set; }
 		public long? LockerCount { get; set; }
 		public decimal? LockerTotalDuration { get; set; }

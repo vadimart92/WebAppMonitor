@@ -14,6 +14,11 @@ namespace WebAppMonitor.Data
 
 	public class QueryStatsContext : DbContext
 	{
+
+		static QueryStatsContext() {
+			Database.SetInitializer<QueryStatsContext>(null);
+		}
+
 		public QueryStatsContext(string  connectionString)
 			: base(connectionString) {
 		}

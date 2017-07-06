@@ -30,7 +30,8 @@ namespace WebAppMonitor.Data {
 
 		private HashSet<byte[]> InitHashSet() {
 			var res = new HashSet<byte[]>(ByteArrayComparer.Instance);
-			foreach (var item in _dataProvider.Enumerate<BaseHashStorage>($"SELECT [Hash] FROM [{_tableName}]")) {
+			string query = $"SELECT [Hash] FROM [{_tableName}]";
+			foreach (BaseHashStorage item in _dataProvider.Enumerate<BaseHashStorage>(query)) {
 				res.Add(item.Hash);
 			}
 			return res;
@@ -76,7 +77,7 @@ namespace WebAppMonitor.Data {
 			if (NormQueryMap.ContainsKey(hash)) {
 				return NormQueryMap[hash];
 			}
-			var data = func(hash);
+			TData data = func(hash);
 			NormQueryMap[hash] = data;
 			return data;
 		}

@@ -67,6 +67,15 @@ namespace WebAppMonitor.Tests
 		}
 
 		[Test]
+		public async Task ImportDbExecutorLogs() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "Sql.0.json");
+			file = ShareFile(file);
+			string requestUri = $"/api/Admin/importDbExecutorLogs?file={Uri.EscapeDataString(file)}";
+			var response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
+
+		[Test]
 		public async Task PrimaryImport() {
 			var files = Directory.EnumerateFiles(@"\\tscore-dev-13\WorkAnalisys\xevents", "collect_long_locks*.xel",
 					SearchOption.AllDirectories)

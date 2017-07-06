@@ -123,8 +123,8 @@ namespace WebAppMonitor.Core.Import {
 
 		public void ImportDbExecutorLogs(string file) {
 			_logger.LogInformation("ImportDbExecutorLogs started");
-			throw new NotImplementedException();
-			//_logger.LogInformation("ImportDbExecutorLogs completed");
+			_appLogLoader.ImportDbExecutorLogs(file);
+			_logger.LogInformation("ImportDbExecutorLogs completed");
 		}
 
 		public void ImportReaderLogs(string file) {

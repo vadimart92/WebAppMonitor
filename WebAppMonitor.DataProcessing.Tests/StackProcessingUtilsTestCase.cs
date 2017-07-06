@@ -7,7 +7,7 @@ namespace WebAppMonitor.DataProcessing.Tests {
 	[TestFixture]
 	public class StackProcessingUtilsTestCase {
 
-		private static IEnumerable<object> TestCaseSources {
+		private static IEnumerable<object> ReaderTestCaseSources {
 			get {
 				yield return new TestCaseData(null, null);
 				yield return new TestCaseData("()aa", "()aa");
@@ -61,24 +61,57 @@ at Terrasoft.Configuration.DelayedNotificationManagement.OnAppStart(AppEventCont
 at Terrasoft.Web.Common.AppEventDispatcher.\u003c\u003ec__DisplayClass9_0.\u003cOnAppStart\u003eb__0(IAppEventListener listener)
 at Terrasoft.Web.Common.AppEventDispatcher.OnAppEvent(Action`1 method)
 at Terrasoft.Web.Common.AppEventDispatcher.OnAppStart(AppEventContext context)
-at Terrasoft.WebApp.Global.Application_Start(Object sender, EventArgs e)
-at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
-at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
-at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
-at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
-at System.Web.HttpApplication.InvokeMethodWithAssert(MethodInfo method, Int32 paramCount, Object eventSource, EventArgs eventArgs)
-at System.Web.HttpApplication.ProcessSpecialRequest(HttpContext context, MethodInfo method, Int32 paramCount, Object eventSource, EventArgs eventArgs, HttpSessionState session)
-at System.Web.HttpApplicationFactory.EnsureAppStartCalledForIntegratedMode(HttpContext context, HttpApplication app)
-at System.Web.HttpApplication.RegisterEventSubscriptionsWithIIS(IntPtr appContext, HttpContext context, MethodInfo[] handlers)
-at System.Web.HttpApplication.InitSpecial(HttpApplicationState state, MethodInfo[] handlers, IntPtr appContext, HttpContext context)
-at System.Web.HttpApplicationFactory.GetSpecialApplicationInstance(IntPtr appContext, HttpContext context)
-at System.Web.Hosting.PipelineRuntime.InitializeApplication(IntPtr appContext)");
+at Terrasoft.WebApp.Global.Application_Start(Object sender, EventArgs e)");
+			}
+		}
+		private static IEnumerable<object> ExecutorTestCaseSources {
+			get {
+				yield return new TestCaseData(null, null);
+				yield return new TestCaseData("()aa", "()aa");
+				yield return new TestCaseData(@"   at System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)
+   at System.Environment.get_StackTrace()
+   at Terrasoft.Core.DB.DBExecutor.LogQueryExecutingComplete(String sqlText, DbParameterCollection parameters, Stopwatch watchQueryExecuting)
+   at Terrasoft.Core.DB.DBExecutor.LoggingWrap[TResult](String sqlText, Func`2 queryExecutionAction)
+   at Terrasoft.Core.DB.DBExecutor.Execute(String sqlText, QueryParameterCollection parameters)
+   at Terrasoft.Core.DB.BaseInsert.Execute()
+   at Terrasoft.Core.UserConnection.LogSessionStart(String clientIP, String agent)
+   at Terrasoft.Core.UserConnection.InitializeCurrentUser(String userName, TimeZoneInfo timeZone, String clientIP, String agent, Boolean logSessionStart)
+   at Terrasoft.Core.UserConnectionFactory.CreateUserConnection(AppConnection appConnection, AuthData authData, String sessionId, String clientIP, String agent, Boolean checkPasswordExpiry, TimeZoneInfo forceTimeZone)
+   at Terrasoft.Web.Common.SessionHelper.RecreateUserConnection(AuthData authData)
+   at Terrasoft.WebApp.Global.Session_Start(Object sender, EventArgs e)
+   at System.Web.SessionState.SessionStateModule.CompleteAcquireState()
+   at System.Web.SessionState.SessionStateModule.BeginAcquireState(Object source, EventArgs e, AsyncCallback cb, Object extraData)
+   at System.Web.HttpApplication.AsyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+   at System.Web.HttpApplication.PipelineStepManager.ResumeSteps(Exception error)
+   at System.Web.HttpApplication.BeginProcessRequestNotification(HttpContext context, AsyncCallback cb)
+   at System.Web.HttpRuntime.ProcessRequestNotificationPrivate(IIS7WorkerRequest wr, HttpContext context)
+   at System.Web.Hosting.PipelineRuntime.ProcessRequestNotificationHelper(IntPtr rootedObjectsPointer, IntPtr nativeRequestContext, IntPtr moduleData, Int32 flags)
+   at System.Web.Hosting.PipelineRuntime.ProcessRequestNotification(IntPtr rootedObjectsPointer, IntPtr nativeRequestContext, IntPtr moduleData, Int32 flags)
+   at System.Web.Hosting.UnsafeIISMethods.MgdIndicateCompletion(IntPtr pHandler, RequestNotificationStatus& notificationStatus)
+   at System.Web.Hosting.UnsafeIISMethods.MgdIndicateCompletion(IntPtr pHandler, RequestNotificationStatus& notificationStatus)
+   at System.Web.Hosting.PipelineRuntime.ProcessRequestNotificationHelper(IntPtr rootedObjectsPointer, IntPtr nativeRequestContext, IntPtr moduleData, Int32 flags)
+   at System.Web.Hosting.PipelineRuntime.ProcessRequestNotification(IntPtr rootedObjectsPointer, IntPtr nativeRequestContext, IntPtr moduleData, Int32 flags)",
+
+   @"at Terrasoft.Core.DB.DBExecutor.Execute(String sqlText, QueryParameterCollection parameters)
+at Terrasoft.Core.DB.BaseInsert.Execute()
+at Terrasoft.Core.UserConnection.LogSessionStart(String clientIP, String agent)
+at Terrasoft.Core.UserConnection.InitializeCurrentUser(String userName, TimeZoneInfo timeZone, String clientIP, String agent, Boolean logSessionStart)
+at Terrasoft.Core.UserConnectionFactory.CreateUserConnection(AppConnection appConnection, AuthData authData, String sessionId, String clientIP, String agent, Boolean checkPasswordExpiry, TimeZoneInfo forceTimeZone)
+at Terrasoft.Web.Common.SessionHelper.RecreateUserConnection(AuthData authData)
+at Terrasoft.WebApp.Global.Session_Start(Object sender, EventArgs e)");
 			}
 		}
 
-		[TestCaseSource(nameof(TestCaseSources))]
+		[TestCaseSource(nameof(ReaderTestCaseSources))]
 		public void NormalizeReaderStack(string sourceString, string expectedString) {
 			string actual = sourceString.NormalizeReaderStack();
+			actual.Should().BeEquivalentTo(expectedString);
+		}
+
+		[TestCaseSource(nameof(ExecutorTestCaseSources))]
+		public void NormalizeExecutorStack(string sourceString, string expectedString) {
+			string actual = sourceString.NormalizeExecutorStack();
 			actual.Should().BeEquivalentTo(expectedString);
 		}
 	}

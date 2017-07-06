@@ -34,7 +34,7 @@ namespace WebAppMonitor.Data {
 					Id = Guid.NewGuid(),
 					SourceId = _stackSourceRepository.GetId(source),
 					StackHash = hash,
-					StackTrace = stackTrace.NormalizeReaderStack()
+					StackTrace = stackTrace
 				};
 				_pendingStacks.Add(stack);
 				if (_pendingStacks.Count > 500) {

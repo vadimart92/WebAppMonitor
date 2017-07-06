@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core;
 using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Import;
@@ -14,15 +15,18 @@ namespace WebAppMonitor.Data {
 		private readonly List<LongInfoRecord> _pendingLocksInfo = new List<LongInfoRecord>();
 		private readonly List<DeadInfoRecord> _pendingDeadLocksInfo = new List<DeadInfoRecord>();
 		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
-		
+
+		private readonly ILogger _logger;
 		private readonly ResettableLazy<DateTime> _lastQueryDate;
 		private readonly ResettableLazy<DateTime> _lastDeadLockDate;
 
 		public ExtendedEventDataSaver(IDbConnectionProvider connectionProvider,
-				IQueryTextStoringService queryTextStoringService, IDateRepository dateRepository) {
+				IQueryTextStoringService queryTextStoringService, IDateRepository dateRepository, 
+				ILogger<ExtendedEventDataSaver> logger) {
 			_connectionProvider = connectionProvider;
 			_queryTextStoringService = queryTextStoringService;
 			_dateRepository = dateRepository;
+			_logger = logger;
 			_lockModeRepository = new SimpleLookupManager<LockingMode>(connectionProvider);
 			_lastQueryDate = new ResettableLazy<DateTime>(connectionProvider.GetLastQueryDate<LongInfoRecord>);
 			_lastDeadLockDate = new ResettableLazy<DateTime>(connectionProvider.GetLastQueryDate<DeadInfoRecord>);
@@ -62,8 +66,10 @@ namespace WebAppMonitor.Data {
 		private void Flush() {
 			_queryTextStoringService.Flush();
 			_pendingLocksInfo.BulkInsert(_connectionProvider);
+			_logger.LogInformation("{0} long locks inserted.", _pendingDeadLocksInfo.Count);
 			_pendingLocksInfo.Clear();
 			_pendingDeadLocksInfo.BulkInsert(_connectionProvider);
+			_logger.LogInformation("{0} deadloks inserted.", _pendingDeadLocksInfo.Count);
 			_pendingDeadLocksInfo.Clear();
 			_lastQueryDate.Reset();
 			_lastDeadLockDate.Reset();

@@ -18,8 +18,10 @@ namespace WebAppMonitor.Data {
 		private readonly IStackStoringService _stackStoringService;
 		private readonly IDateRepository _dateRepository;
 		private readonly List<ReaderLog> _pendingReaderLogs = new List<ReaderLog>();
+		private readonly List<ExecutorLog> _pendingExecutorLogs = new List<ExecutorLog>();
 		private readonly ILogger _logger;
-		private readonly HashStorage<ImportedLogRecord> _importedLogs;
+		private readonly HashStorage<ImportedReaderLogRecord> _importedReaderLogs;
+		private readonly HashStorage<ImportedExecutorLogRecord> _importedExecutorLogs;
 
 		public JsonLogStoringService(IQueryTextStoringService queryTextStoringService, IDbConnectionProvider connectionProvider,
 				IDateRepository dateRepository, IStackStoringService stackStoringService, ILogger<JsonLogStoringService> logger, ISimpleDataProvider dataProvider) {
@@ -28,7 +30,8 @@ namespace WebAppMonitor.Data {
 			_dateRepository = dateRepository;
 			_stackStoringService = stackStoringService;
 			_logger = logger;
-			_importedLogs = new HashStorage<ImportedLogRecord>(dataProvider, connectionProvider, logger);
+			_importedReaderLogs = new HashStorage<ImportedReaderLogRecord>(dataProvider, connectionProvider, logger);
+			_importedExecutorLogs = new HashStorage<ImportedExecutorLogRecord>(dataProvider, connectionProvider, logger);
 		}
 
 		private void Start() {
@@ -42,7 +45,10 @@ namespace WebAppMonitor.Data {
 			_pendingReaderLogs.BulkInsert(_connectionProvider);
 			_logger.LogInformation("{0} reader logs inserted", _pendingReaderLogs.Count);
 			_pendingReaderLogs.Clear();
-			_importedLogs.Flush();
+			_pendingExecutorLogs.BulkInsert(_connectionProvider);
+			_logger.LogInformation("{0} reader executor logs inserted", _pendingExecutorLogs.Count);
+			_pendingExecutorLogs.Clear();
+			_importedReaderLogs.Flush();
 		}
 
 		public ITransaction BeginWork() {
@@ -51,19 +57,38 @@ namespace WebAppMonitor.Data {
 
 		public void RegisterReaderLogItem(ReaderLogRecord logRecord) {
 			var hash = logRecord.GetSourceLogHash();
-			if (!_importedLogs.Add(hash)) {
+			if (!_importedReaderLogs.Add(hash)) {
 				return;
 			}
-			Messageobject msg = logRecord.MessageObject;
+			ReaderLogRecord.Messageobject msg = logRecord.MessageObject;
 			if (msg == null)return;
-			var query = msg.Sql.ExtractLogSqlText();
+			string query = msg.Sql.ExtractLogSqlText();
 			Guid textId = _queryTextStoringService.GetOrCreate(query, "ReaderLog");
-			Guid stackId = _stackStoringService.GetOrCreate(msg.StackTrace, "ReaderLog");
+			string stackTrace = msg.StackTrace.NormalizeReaderStack();
+			Guid stackId = _stackStoringService.GetOrCreate(stackTrace, "ReaderLog");
 			var item = _dateRepository.CreateInfoRecord<ReaderLog>(logRecord.Date);
 			item.QueryId = textId;
 			item.StackId = stackId;
 			item.Rows = msg.RowsAffected?.Sum() ?? 0;
 			_pendingReaderLogs.Add(item);
+		}
+
+		public void RegisterExecutorLogRecord(ExecutorLogRecord logRecord) {
+			var hash = logRecord.GetSourceLogHash();
+			if (!_importedExecutorLogs.Add(hash)) {
+				return;
+			}
+			ExecutorLogRecord.Messageobject msg = logRecord.MessageObject;
+			if (msg == null) return;
+			string query = msg.Sql.ExtractLogSqlText();
+			Guid textId = _queryTextStoringService.GetOrCreate(query, "ExecutorLog");
+			string stackTrace = msg.StackTrace.NormalizeExecutorStack();
+			Guid stackId = _stackStoringService.GetOrCreate(stackTrace, "ExecutorLog");
+			var item = _dateRepository.CreateInfoRecord<ExecutorLog>(logRecord.Date);
+			item.QueryId = textId;
+			item.StackId = stackId;
+			item.Duration = msg.Duration;
+			_pendingExecutorLogs.Add(item);
 		}
 
 	}

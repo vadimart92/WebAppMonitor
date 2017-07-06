@@ -27,6 +27,19 @@ namespace WebAppMonitor.DataProcessing.Tests {
 			data.Any(d => d.GetSourceLogHash() == null).Should().BeFalse();
 		}
 
+		[Test]
+		public void ReadFile_ExecutorLogRecord() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "Sql.0.json");
+			var parser = new Json.JsonLogParser();
+			var data = parser.ReadFile<ExecutorLogRecord>(file).ToList();
+			data.Count.Should().Be(18);
+			data.Any(d => string.IsNullOrWhiteSpace(d.MessageObject.Sql) || 
+				string.IsNullOrWhiteSpace(d.MessageObject.StackTrace))
+			.Should().BeFalse();
+			data.Any(d => d.Date == default(DateTime)).Should().BeFalse();
+			data.Any(d => d.GetSourceLogHash() == null).Should().BeFalse();
+		}
+
 		#endregion
 
 	}

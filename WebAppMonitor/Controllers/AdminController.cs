@@ -53,6 +53,11 @@ namespace WebAppMonitor.Controllers {
 			_dataLoader.ImportReaderLogs(file);
 			return Ok();
 		}
+		[HttpGet("importDbExecutorLogs")]
+		public IActionResult ImportDbExecutorLogs(string file) {
+			_dataLoader.ImportDbExecutorLogs(file);
+			return Ok();
+		}
 
 		[HttpGet("importAllByDates")]
 		public IActionResult ImportAllByDates(string dates) {

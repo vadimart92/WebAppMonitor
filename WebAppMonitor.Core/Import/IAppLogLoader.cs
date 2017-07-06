@@ -3,5 +3,7 @@
 
 		void LoadReaderLogs(string file);
 
+		void ImportDbExecutorLogs(string file);
+
 	}
 }

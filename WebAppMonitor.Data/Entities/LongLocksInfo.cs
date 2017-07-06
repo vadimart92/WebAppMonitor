@@ -1,17 +1,18 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using Dapper.Contrib.Extensions;
 
 namespace WebAppMonitor.Data.Entities
 {
 
 	public class BaseInfoRecord:IRecordWithDate
 	{
+		[ExplicitKey]
 		public Guid Id { get; set; }
 		public DateTime Date { get; set; }
 		public int DateId { get; set; }
 	}
 	
-	[Table("LongLocksInfo")]
+	[System.ComponentModel.DataAnnotations.Schema.Table("LongLocksInfo")]
 	public class LongInfoRecord : BaseInfoRecord
 	{
 		public Guid BlockedQueryId { get; set; }
@@ -20,7 +21,7 @@ namespace WebAppMonitor.Data.Entities
 		public long Duration { get; set; }
 	}
 
-	[Table("DeadLocksInfo")]
+	[System.ComponentModel.DataAnnotations.Schema.Table("DeadLocksInfo")]
 	public class DeadInfoRecord : BaseInfoRecord
 	{
 		public Guid QueryAId { get; set; }
