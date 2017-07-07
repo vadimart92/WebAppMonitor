@@ -12,13 +12,13 @@ namespace WebAppMonitor.Data {
 		private readonly HashStorage<Guid, Stack> _stackMap;
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly List<Stack> _pendingStacks = new List<Stack>();
-		private readonly SimpleLookupManager<StackSource> _stackSourceRepository;
+		private readonly SimpleLookupRepository<StackSource> _stackSourceRepository;
 
 		public StackStoringService(ILogger<StackStoringService> logger, IDbConnectionProvider connectionProvider) : base(logger) {
 			_connectionProvider = connectionProvider;
 			_stackMap = new HashStorage<Guid, Stack>(item => Tuple.Create(item.StackHash, item.Id),
 				@"SELECT Id, StackHash FROM Stack", _connectionProvider);
-			_stackSourceRepository = new SimpleLookupManager<StackSource>(connectionProvider);
+			_stackSourceRepository = new SimpleLookupRepository<StackSource>(connectionProvider);
 		}
 
 		protected override void SaveItems() {

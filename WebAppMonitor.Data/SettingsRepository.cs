@@ -29,22 +29,22 @@ namespace WebAppMonitor.Data {
 		}
 
 		public Setting Get(string code) {
-			var defValue = SettingItemAttribute.GetDefValue(code);
+			string defValue = SettingItemAttribute.GetDefValue(code);
 			return GetSettingFromDb(code, defValue);
 		}
 
 		public void Set(string code, string value) {
-			Setting settings = GetSettingFromDb(code, value);
-			settings.Value = value;
+			Setting settings = GetSettingFromDb(code?.Trim(), value);
+			settings.Value = value?.Trim();
 			_dbContext.SaveChanges();
 			_logger.LogInformation("Setting {0} changed to {1}", code, value);
 		}
 
 		public void Change(ISettings settings) {
 			var items = typeof(ISettings).GetProperties(BindingFlags.Public | BindingFlags.Instance).ToList();
-			foreach (var property in items) {
+			foreach (PropertyInfo property in items) {
 				var value = property.GetValue(settings) as string;
-				var defValue = SettingItemAttribute.GetDefValue(property.Name);
+				string defValue = SettingItemAttribute.GetDefValue(property.Name);
 				Set(property.Name, value ?? defValue);
 			}
 		}

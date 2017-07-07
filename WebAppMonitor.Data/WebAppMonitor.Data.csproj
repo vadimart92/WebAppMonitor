@@ -258,6 +258,7 @@
     <Compile Include="Entities\BaseLookup.cs" />
     <Compile Include="Entities\ExecutorLog.cs" />
     <Compile Include="Entities\ImportedExecutorLogRecord.cs" />
+    <Compile Include="Entities\ImportedPerfomanceLogRecord.cs" />
     <Compile Include="Entities\ImportedReaderLogRecord.cs" />
     <Compile Include="Entities\NormQueryTextSource.cs" />
     <Compile Include="Entities\LockingMode.cs" />
@@ -271,13 +272,14 @@
     <Compile Include="HashStorage.cs" />
     <Compile Include="JsonLogStoringService.cs" />
     <Compile Include="OrmUtils.cs" />
+    <Compile Include="PerfomanceItemCodeStoringService.cs" />
     <Compile Include="Properties\InternalVisible.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStatsContext.cs" />
     <Compile Include="QueryTextStoringService.cs" />
     <Compile Include="SettingsRepository.cs" />
     <Compile Include="SimpleDataProvider.cs" />
-    <Compile Include="SimpleLookupManager.cs" />
+    <Compile Include="SimpleLookupRepository.cs" />
     <Compile Include="StackStoringService.cs" />
   </ItemGroup>
   <ItemGroup>

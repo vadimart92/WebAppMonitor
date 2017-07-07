@@ -7,6 +7,7 @@ namespace WebAppMonitor.Core.Import {
 		public string ReaderLogFileName { get; set; }
 		public string ExecutorLogFileName { get; set; }
 		public string PerfomanceLogFileName { get; set; }
+		public string LoadJsonLogs { get; set; }
 		public string StatementsFileTemplate { get; set; }
 		public string LongLocksFileTemplate { get; set; }
 		public string DeadLocksFileTemplate { get; set; }

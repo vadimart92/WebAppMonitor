@@ -57,6 +57,7 @@ namespace WebAppMonitor {
 			services.AddSingleton<IStackStoringService, StackStoringService>();
 			services.AddSingleton<IDataFilePathProvider, DataFilePathProvider>();
 			services.AddSingleton<IDateTimeProvider, CurrentDateTimeProvider>();
+			services.AddSingleton<IPerfomanceItemCodeStoringService, PerfomanceItemCodeStoringService>();
 			services.AddAutoMapper();
 		}
 

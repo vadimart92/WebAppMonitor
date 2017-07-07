@@ -3,7 +3,9 @@
 
 		void LoadReaderLogs(string file);
 
-		void ImportDbExecutorLogs(string file);
+		void LoadDbExecutorLogs(string file);
+
+		void LoadPerfomanceLogs(string file);
 
 	}
 }

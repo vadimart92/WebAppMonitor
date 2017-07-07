@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using AutoMapper;
 using Dapper;
 using Microsoft.Extensions.Logging;
@@ -18,12 +17,14 @@ namespace WebAppMonitor.Core.Import {
 		private readonly ISettingsRepository _settingsRepository;
 		private readonly IMapper _mapper;
 		private readonly IDataFilePathProvider _dataFilePathProvider;
+		private readonly IServiceProvider _serviceProvider;
 
 		private static int _commandTimeout = 3600;
 
 		public DataLoader(IDbConnectionProvider connectionProvider, ISettings settings,
 				IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader,
-				IDataFilePathProvider dataFilePathProvider, IMapper mapper, ISettingsRepository settingsRepository) {
+				IDataFilePathProvider dataFilePathProvider, IMapper mapper, ISettingsRepository settingsRepository,
+				IServiceProvider serviceProvider) {
 			_connectionProvider = connectionProvider;
 			_settings = settings;
 			_extendedEventLoader = extendedEventLoader;
@@ -32,6 +33,7 @@ namespace WebAppMonitor.Core.Import {
 			_dataFilePathProvider = dataFilePathProvider;
 			_mapper = mapper;
 			_settingsRepository = settingsRepository;
+			_serviceProvider = serviceProvider;
 		}
 
 		private void BackupDb() {
@@ -101,14 +103,16 @@ namespace WebAppMonitor.Core.Import {
 				SafeExecute(() => ImportLongLocksData(directory));
 				SafeExecute(() => ImportDeadLocksData(directory));
 			}
-			foreach (var executorLog in pathProvider.GetReaderLogs()) {
-				SafeExecute(() => ImportReaderLogs(executorLog));
-			}
-			foreach (var executorLog in pathProvider.GetExecutorLogs()) {
-				SafeExecute(() => ImportDbExecutorLogs(executorLog));
-			}
-			foreach (var perfomanceLog in pathProvider.GetPerfomanceLogs()) {
-				SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
+			if (bool.Parse(_settings.LoadJsonLogs)) {
+				foreach (string executorLog in pathProvider.GetReaderLogs()) {
+					SafeExecute(() => ImportReaderLogs(executorLog));
+				}
+				foreach (string executorLog in pathProvider.GetExecutorLogs()) {
+					SafeExecute(() => ImportDbExecutorLogs(executorLog));
+				}
+				foreach (string perfomanceLog in pathProvider.GetPerfomanceLogs()) {
+					SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
+				}
 			}
 			_logger.LogInformation("Import daily data completed.");
 		}
@@ -132,26 +136,29 @@ namespace WebAppMonitor.Core.Import {
 		}
 
 		public void ImportDbExecutorLogs(string file) {
-			_logger.LogInformation("ImportDbExecutorLogs started");
-			_appLogLoader.ImportDbExecutorLogs(file);
+			_logger.LogInformation($"ImportDbExecutorLogs started: {file}");
+			_appLogLoader.LoadDbExecutorLogs(file);
 			_logger.LogInformation("ImportDbExecutorLogs completed");
 		}
 
 		public void ImportReaderLogs(string file) {
-			_logger.LogInformation("ImportReaderLogs started");
+			_logger.LogInformation($"ImportReaderLogs started {file}");
 			_appLogLoader.LoadReaderLogs(file);
 			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
 		public void ImportPerfomanceLoggerLogs(string file) {
-			throw new NotImplementedException();
+			_logger.LogInformation($"ImportReaderLogs started {file}");
+			_appLogLoader.LoadPerfomanceLogs(file);
+			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {
 			BackupDb();
 			foreach (DateTime dateTime in dates) {
 				ImportData(new DataFilePathProvider(_settings,
-					new StaticDateTimeProvider(dateTime), _logger));
+					new StaticDateTimeProvider(dateTime),
+					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>))));
 			}
 			ActualizeInfo();
 		}

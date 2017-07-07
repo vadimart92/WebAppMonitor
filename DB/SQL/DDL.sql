@@ -253,6 +253,12 @@ CREATE TABLE ImportedExecutorLogRecord (
 	,[Hash] VARBINARY(64)
 );
 GO
+IF (OBJECT_ID('ImportedPerfomanceLogRecord', 'U') IS NULL)
+CREATE TABLE ImportedPerfomanceLogRecord (
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()
+	,[Hash] VARBINARY(64)
+);
+GO
 
 IF (OBJECT_ID('ExecutorLog', 'U') IS NULL)
 CREATE TABLE ExecutorLog (
@@ -268,3 +274,21 @@ GO
 CREATE INDEX IDX_QueryHistory_end_time_utc
 ON QueryHistory (end_time_utc) 
 ON [PRIMARY]  
+GO
+
+IF (OBJECT_ID('PerfomanceItemCode', 'U') IS NULL)
+CREATE TABLE PerfomanceItemCode (
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()
+	, Code NVARCHAR(MAX)
+);
+GO
+IF (OBJECT_ID('PerfomanceLogInfo', 'U') IS NULL)
+CREATE TABLE PerfomanceLogInfo (
+	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()
+	, [Date] DATETIME2
+	, [DateId] INT FOREIGN KEY REFERENCES Dates (Id)
+	, [Duration] BIGINT
+	, [ParentId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerfomanceLogInfo(Id)
+	, [CodeId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerfomanceItemCode(Id)
+);
+GO

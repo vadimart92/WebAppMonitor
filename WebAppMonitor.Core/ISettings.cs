@@ -38,5 +38,7 @@ namespace WebAppMonitor.Core {
 		string ExecutorLogFileName { get; set; }
 		[SettingItem("PerformanceLogger.0.json")]
 		string PerfomanceLogFileName { get; set; }
+		[SettingItem("False")]
+		string LoadJsonLogs { get; set; }
 	}
 }

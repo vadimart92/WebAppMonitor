@@ -7,7 +7,7 @@ using WebAppMonitor.Data.Entities;
 
 namespace WebAppMonitor.Data
 {
-	internal class SimpleLookupManager<TLookup> where TLookup: BaseLookup, new()
+	internal class SimpleLookupRepository<TLookup> where TLookup: BaseLookup, new()
 	{
 
 		private Dictionary<string, Guid> _itemsMapDictionary ;
@@ -28,7 +28,7 @@ namespace WebAppMonitor.Data
 			return _itemsMapDictionary;
 		}
 
-		public SimpleLookupManager(IDbConnectionProvider connectionProvider) {
+		public SimpleLookupRepository(IDbConnectionProvider connectionProvider) {
 			_connectionProvider = connectionProvider;
 		}
 

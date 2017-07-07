@@ -20,36 +20,49 @@ namespace WebAppMonitor.Data {
 		private readonly List<ReaderLog> _pendingReaderLogs = new List<ReaderLog>();
 		private readonly List<ExecutorLog> _pendingExecutorLogs = new List<ExecutorLog>();
 		private readonly ILogger _logger;
+		private readonly IPerfomanceItemCodeStoringService _codeStoringService;
 		private readonly HashStorage<ImportedReaderLogRecord> _importedReaderLogs;
 		private readonly HashStorage<ImportedExecutorLogRecord> _importedExecutorLogs;
+		private readonly HashStorage<ImportedPerfomanceLogRecord> _importedPerfLogs;
 
 		public JsonLogStoringService(IQueryTextStoringService queryTextStoringService, IDbConnectionProvider connectionProvider,
-				IDateRepository dateRepository, IStackStoringService stackStoringService, ILogger<JsonLogStoringService> logger, ISimpleDataProvider dataProvider) {
+				IDateRepository dateRepository, IStackStoringService stackStoringService, ILogger<JsonLogStoringService> logger,
+				ISimpleDataProvider dataProvider, IPerfomanceItemCodeStoringService codeStoringService) {
 			_queryTextStoringService = queryTextStoringService;
 			_connectionProvider = connectionProvider;
 			_dateRepository = dateRepository;
 			_stackStoringService = stackStoringService;
 			_logger = logger;
+			_codeStoringService = codeStoringService;
 			_importedReaderLogs = new HashStorage<ImportedReaderLogRecord>(dataProvider, connectionProvider, logger);
 			_importedExecutorLogs = new HashStorage<ImportedExecutorLogRecord>(dataProvider, connectionProvider, logger);
+			_importedPerfLogs = new HashStorage<ImportedPerfomanceLogRecord>(dataProvider, connectionProvider, logger);
 		}
 
 		private void Start() {
 			_queryTextStoringService.BeginWork();
 			_stackStoringService.BeginWork();
+			_codeStoringService.BeginWork();
 		}
 
 		private void Flush() {
 			_queryTextStoringService.Flush();
 			_stackStoringService.Flush();
-			_pendingReaderLogs.BulkInsert(_connectionProvider);
-			_logger.LogInformation("{0} reader logs inserted", _pendingReaderLogs.Count);
-			_pendingReaderLogs.Clear();
+			_codeStoringService.Flush();
+			if (_pendingReaderLogs.Any()) {
+				_pendingReaderLogs.BulkInsert(_connectionProvider);
+				_logger.LogInformation("{0} reader logs inserted", _pendingReaderLogs.Count);
+				_pendingReaderLogs.Clear();
+			}
 			_importedReaderLogs.Flush();
-			_pendingExecutorLogs.BulkInsert(_connectionProvider);
-			_logger.LogInformation("{0} executor logs inserted", _pendingExecutorLogs.Count);
-			_pendingExecutorLogs.Clear();
+			if (_pendingExecutorLogs.Any()) {
+				_pendingExecutorLogs.BulkInsert(_connectionProvider);
+				_logger.LogInformation("{0} executor logs inserted", _pendingExecutorLogs.Count);
+				_pendingExecutorLogs.Clear();
+			}
 			_importedExecutorLogs.Flush();
+
+			_importedPerfLogs.Flush();
 		}
 
 		public ITransaction BeginWork() {
@@ -90,6 +103,20 @@ namespace WebAppMonitor.Data {
 			item.StackId = stackId;
 			item.Duration = msg.Duration;
 			_pendingExecutorLogs.Add(item);
+		}
+
+		public void RegisterPerfomanceLogItem(PerfomanceLogRecord logRecord) {
+			var hash = logRecord.GetSourceLogHash();
+			if (!_importedPerfLogs.Add(hash)) {
+				return;
+			}
+			PerfomanceLogRecord.Messageobject msg = logRecord.MessageObject;
+			if (msg == null) return;
+			var item = _dateRepository.CreateInfoRecord<PerfomanceLogInfoRecord>(logRecord.Date);
+			item.Id = msg.Id;
+			item.ParentId = msg.ParentId;
+			item.Duration = msg.Duration;
+			item.CodeId = _codeStoringService.AddCode(msg.Code);
 		}
 
 	}

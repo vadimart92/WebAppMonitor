@@ -13,8 +13,8 @@ namespace WebAppMonitor.Data {
 		private readonly IQueryTextStoringService _queryTextStoringService;
 		private readonly IDateRepository _dateRepository;
 		private readonly List<LongInfoRecord> _pendingLocksInfo = new List<LongInfoRecord>();
-		private readonly List<DeadInfoRecord> _pendingDeadLocksInfo = new List<DeadInfoRecord>();
-		private readonly SimpleLookupManager<LockingMode> _lockModeRepository;
+		private readonly List<DeadLockInfoRecord> _pendingDeadLocksInfo = new List<DeadLockInfoRecord>();
+		private readonly SimpleLookupRepository<LockingMode> _lockModeRepository;
 
 		private readonly ILogger _logger;
 		private readonly ResettableLazy<DateTime> _lastQueryDate;
@@ -27,9 +27,9 @@ namespace WebAppMonitor.Data {
 			_queryTextStoringService = queryTextStoringService;
 			_dateRepository = dateRepository;
 			_logger = logger;
-			_lockModeRepository = new SimpleLookupManager<LockingMode>(connectionProvider);
+			_lockModeRepository = new SimpleLookupRepository<LockingMode>(connectionProvider);
 			_lastQueryDate = new ResettableLazy<DateTime>(connectionProvider.GetLastQueryDate<LongInfoRecord>);
-			_lastDeadLockDate = new ResettableLazy<DateTime>(connectionProvider.GetLastQueryDate<DeadInfoRecord>);
+			_lastDeadLockDate = new ResettableLazy<DateTime>(connectionProvider.GetLastQueryDate<DeadLockInfoRecord>);
 		}
 
 		public void RegisterDeadLock(QueryDeadLockInfo lockInfo) {
@@ -38,7 +38,7 @@ namespace WebAppMonitor.Data {
 			}
 			Guid blockedTextId = _queryTextStoringService.GetOrCreate(lockInfo.QueryA, "DeadLocks");
 			Guid blockerTextId = _queryTextStoringService.GetOrCreate(lockInfo.QueryB, "DeadLocks");
-			var deadLocksInfo = _dateRepository.CreateInfoRecord<DeadInfoRecord>(lockInfo.TimeStamp);
+			var deadLocksInfo = _dateRepository.CreateInfoRecord<DeadLockInfoRecord>(lockInfo.TimeStamp);
 			deadLocksInfo.QueryAId = blockedTextId;
 			deadLocksInfo.QueryBId = blockerTextId;
 			_pendingDeadLocksInfo.Add(deadLocksInfo);

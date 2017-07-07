@@ -68,6 +68,11 @@ namespace WebAppMonitor.Core
 			get => Get();
 			set => Set(value);
 		}
-		
+
+		public string LoadJsonLogs {
+			get => Get();
+			set => Set(value);
+		}
+
 	}
 }

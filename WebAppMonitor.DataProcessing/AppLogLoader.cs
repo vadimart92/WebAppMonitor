@@ -22,10 +22,18 @@ namespace WebAppMonitor.DataProcessing
 			}
 		}
 
-		public void ImportDbExecutorLogs(string file) {
+		public void LoadDbExecutorLogs(string file) {
 			using (_jsonLogStoringService.BeginWork()) {
 				foreach (ExecutorLogRecord logRecord in _jsonLogParser.ReadFile<ExecutorLogRecord>(file)) {
 					_jsonLogStoringService.RegisterExecutorLogRecord(logRecord);
+				}
+			}
+		}
+
+		public void LoadPerfomanceLogs(string file) {
+			using (_jsonLogStoringService.BeginWork()) {
+				foreach (PerfomanceLogRecord logRecord in _jsonLogParser.ReadFile<PerfomanceLogRecord>(file)) {
+					_jsonLogStoringService.RegisterPerfomanceLogItem(logRecord);
 				}
 			}
 		}

@@ -12,7 +12,7 @@ namespace WebAppMonitor.Core.Import {
 		private readonly IDateTimeProvider _dateTimeProvider;
 
 		public DataFilePathProvider(ISettings settings,
-			IDateTimeProvider dateTimeProvider, ILogger logger) {
+			IDateTimeProvider dateTimeProvider, ILogger<DataFilePathProvider> logger) {
 			_settings = settings;
 			_dateTimeProvider = dateTimeProvider;
 			_logger = logger;
