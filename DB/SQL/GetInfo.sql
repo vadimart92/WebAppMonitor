@@ -162,23 +162,12 @@ CREATE PROCEDURE ActualizeQueryStatInfo AS BEGIN
 set QUOTED_IDENTIFIER ON;
 SET ANSI_NULLS ON;
 
-DECLARE @date DATETIME2 = DATEADD(DAY, -5, CAST(GETDATE() AS DATE));
-IF NOT EXISTS (SELECT * FROM Grouped_QueryStatInfo) BEGIN
-	SET @date = CAST('2000-01-01' AS DATE);
-END ELSE BEGIN
-	DELETE Grouped_QueryStatInfo
-	FROM  dbo.Dates d
-	WHERE d.[Date] >= @date
-	AND Id = d.Id
-END;
-
-PRINT 'Date: ' + CAST(@date AS NVARCHAR(MAX));
+TRUNCATE TABLE Grouped_QueryStatInfo;
 
 INSERT INTO Grouped_QueryStatInfo
 SELECT v.*
 FROM VwQueryStatInfo v
 INNER JOIN dbo.Dates d ON d.Id = v.DateId
-WHERE d.[Date] >= @date;
 
 DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
 DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
