@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using Breeze.AspNetCore;
 using Breeze.Persistence.EF6;
 using Microsoft.AspNetCore.Mvc;

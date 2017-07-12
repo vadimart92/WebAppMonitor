@@ -3,6 +3,7 @@ import { MdSnackBar } from '@angular/material';
 import { Http } from '@angular/http';
 import { Router, NavigationEnd } from '@angular/router';
 import * as moment from 'moment';
+import * as _ from 'underscore';
 import { AdminService } from '../admin.service';
 import { SettingsService } from "../settings.service"
 
@@ -26,6 +27,7 @@ export class OptionsComponent implements OnInit {
 	fileName: string;
 	importJobActive: boolean = false;
 	importSettings: any = null;
+	settings: string[] = null;
 	ngOnInit() {
 		var date = moment().format("YYYY-MM-DD");
 		this.fileName = "\\\\tscore-dev-13\\WorkAnalisys\\xevents\\Export_" + date + "\\" + date + "\\ts_sqlprofiler_05_sec*.xel";
@@ -49,24 +51,32 @@ export class OptionsComponent implements OnInit {
 		this.totalRecords = info.TotalRecords;
 		this.importJobActive = info.ImportJobActive;
 		this.importSettings = info.ImportSettings;
+		this.settings = Object.keys(info.ImportSettings);
 	}
 	importData(fileName: string) {
 		this.snackBar.dismiss();
 		this.importInProgress = true;
-		this._http.post("/api/Admin/importDailyData", { ImportSettings: null})
-			.subscribe(() => {
-				this.importInProgress = false;
-				this.snackBar.open("Done", null, {
-					duration: 100000
-				});
-				this.refreshStatsInfo();
-			}, (error) => {
-				this.importInProgress = false;
-				this.snackBar.open(error.text(), "Error", {
-					duration: 100000
-				});
-				this.refreshStatsInfo();
-			});
+		this._http.post("/api/Admin/importDailyData", null)
+			.subscribe(this.onServiceOk, this.onServiceError);
+	}
+	onServiceOk = () => {
+		this.importInProgress = false;
+		this.snackBar.open("Done", null, {
+			duration: 100000
+		});
+		this.refreshStatsInfo();
+	}
+	onServiceError = (error)=>{
+		this.importInProgress = false;
+		this.snackBar.open(error.text(), "Error", {
+			duration: 100000
+		});
+		this.refreshStatsInfo();
+	}
+	saveSettings(settings:Object) {
+		this.snackBar.dismiss();
+		this._http.post("/api/Admin/saveSettings", settings)
+			.subscribe(this.onServiceOk, this.onServiceError);
 	}
 	toggleImportJob() {
 		this._http.post("/api/Admin/toggleImportJob", null)

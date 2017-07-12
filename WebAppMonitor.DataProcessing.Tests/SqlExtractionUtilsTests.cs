@@ -47,8 +47,26 @@ SET
 	[RemoteState] = @P12
 WHERE
 	[Id] = @P1   ", @"UPDATE [dbo].[SysSyncMetaData] WITH(ROWLOCK) SET [ModifiedOn] = @P2, [ModifiedById] = @P3, [RemoteId] = @P4, [RemoteStoreId] = @P5, [ModifiedInStoreId] = @P6, [Version] = @P7, [RemoteItemName] = @P8, [SchemaOrder] = @P9, [ExtraParameters] = @P10, [LocalState] = @P11, [RemoteState] = @P12 WHERE [Id] = @P1");
+				yield return new TestCaseData(@"(@p1 int)
+SELECT
+	[SysSchema].[Name] [Name],
+	MAX([SysLocalizableValue].[ModifiedOn]) [MaxModifiedOn]
+FROM
+	[dbo].[SysLocalizableValue] WITH(NOLOCK)
+	INNER JOIN [dbo].[SysSchema] WITH(NOLOCK) ON ([SysSchema].[Id] = [SysLocalizableValue].[SysSchemaId])
+WHERE
+	[SysLocalizableValue].[SysPackageId] IN (
+SELECT
+	[SysPackage].[Id]
+FROM
+	[dbo].[SysPackage] WITH(NOLOCK)
+WHERE
+	[SysPackage].[SysWorkspaceId] = @P1)
+	AND [SysSchema].[ManagerName] = @P2
+GROUP BY
+	[SysSchema].[Name]", @"SELECT [SysSchema].[Name] [Name], MAX([SysLocalizableValue].[ModifiedOn]) [MaxModifiedOn] FROM [dbo].[SysLocalizableValue] WITH(NOLOCK) INNER JOIN [dbo].[SysSchema] WITH(NOLOCK) ON ([SysSchema].[Id] = [SysLocalizableValue].[SysSchemaId]) WHERE [SysLocalizableValue].[SysPackageId] IN ( SELECT [SysPackage].[Id] FROM [dbo].[SysPackage] WITH(NOLOCK) WHERE [SysPackage].[SysWorkspaceId] = @P1) AND [SysSchema].[ManagerName] = @P2 GROUP BY [SysSchema].[Name]");
 			}
-		}
+	}
 
 		[Test, Category("PreCommit")]
 		[TestCaseSource(nameof(TestCaseSources))]

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
-using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 
 namespace WebAppMonitor.XmlEventsParser.Tests {
 	[TestFixture]
@@ -36,18 +36,16 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 		}
 
 		[Test, AutoNSubstituteData]
-		public void ReadEvents(ISimpleDataProvider dataProvider, ILogger<ExtendedEventParser> logger) {
+		public void ReadLongLockEvents(ISimpleDataProvider dataProvider, ILogger<ExtendedEventParser> logger) {
 			dataProvider.Enumerate<XmlRow>(Arg.Any<string>(), Arg.Any<object>()).Returns(ReadXmlLines("data.json"));
 			var p = new ExtendedEventParser(dataProvider, logger);
 			var events = p.ReadLongLockEvents("someFile");
 			var result = events.ToList();
-			bool emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text));
-			bool emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text));
-			bool emptyDuration = result.Any(r => r.Duration == 0);
-			Assert.IsFalse(emptyBlockers);
-			Assert.IsFalse(emptyBlocked);
-			Assert.IsFalse(emptyDuration);
 			result.Should().NotBeEmpty();
+			result.Any(r => string.IsNullOrWhiteSpace(r.Blocker.Text)).Should().BeFalse();
+			result.Any(r => string.IsNullOrWhiteSpace(r.Blocked.Text)).Should().BeFalse();
+			result.Any(r => r.Duration == 0).Should().BeFalse();
+			result.Any(r => !string.IsNullOrWhiteSpace(r.DatabaseName)).Should().BeTrue();
 		}
 
 		[Test, AutoNSubstituteData]
@@ -56,13 +54,11 @@ namespace WebAppMonitor.XmlEventsParser.Tests {
 			var p = new ExtendedEventParser(dataProvider, logger);
 			var events = p.ReadDeadLockEvents("someFile");
 			var result = events.ToList();
-			bool emptyBlockers = result.Any(r => string.IsNullOrWhiteSpace(r.QueryA));
-			bool emptyBlocked = result.Any(r => string.IsNullOrWhiteSpace(r.QueryB));
-			bool emptyDuration = result.Any(r => r.TimeStamp == DateTime.MinValue);
-			Assert.IsFalse(emptyBlockers);
-			Assert.IsFalse(emptyBlocked);
-			Assert.IsFalse(emptyDuration);
 			result.Should().NotBeEmpty();
+			result.Any(r => string.IsNullOrWhiteSpace(r.QueryA)).Should().BeFalse();
+			result.Any(r => string.IsNullOrWhiteSpace(r.QueryB)).Should().BeFalse();
+			result.Any(r => r.TimeStamp == DateTime.MinValue).Should().BeFalse();
+			result.Any(r => !string.IsNullOrWhiteSpace(r.ObjectAName) && !string.IsNullOrWhiteSpace(r.ObjectBName)).Should().BeTrue();
 		}
 	}
 }

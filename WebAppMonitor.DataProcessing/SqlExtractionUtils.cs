@@ -1,13 +1,12 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace WebAppMonitor.DataProcessing
 {
 	public static class SqlExtractionUtils
 	{
-		private static readonly Regex _eolRegex = new Regex(@"\r\s*|\n\s*|\r\ns*|\n\r\s*",
+		private static readonly Regex EolRegex = new Regex(@"\r\s*|\n\s*|\r\ns*|\n\r\s*",
 			RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Compiled);
 	
 		public static string ExtractRpcText(this string input) {
@@ -19,7 +18,14 @@ namespace WebAppMonitor.DataProcessing
 			int lenght = last - first;
 			bool found = first > -1 && lenght > 0 && input.Length - first > lenght;
 			string subInput = found ? input.Substring(first, lenght) : input;
-			return _eolRegex.Replace(subInput, " ");
+			return EolRegex.Replace(subInput, " ").Trim();
+		}
+
+		public static string ExtractLogSqlText(this string input) {
+			if (input == null) {
+				return null;
+			}
+			return EolRegex.Replace(input, " ").Trim();
 		}
 
 		public static string ExtractLocksSqlText(this string input) {
@@ -56,7 +62,7 @@ namespace WebAppMonitor.DataProcessing
 					}
 				}
 			}
-			return _eolRegex.Replace(result, " ");
+			return EolRegex.Replace(result, " ").Trim();
 		}
 	}
 }

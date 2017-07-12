@@ -9,24 +9,29 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x86</PlatformTarget>
     <Prefer32Bit>False</Prefer32Bit>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="2.0.1" />
     <PackageReference Include="Breeze.Server.AspNetCore.NetFramework" Version="0.1.4" />
     <PackageReference Include="Breeze.Server.Persistence.EF6" Version="0.1.4" />
     <PackageReference Include="Dapper" Version="1.50.2" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.6.14" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.6.14" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
 	  <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />
+	  <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
 	  <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
+	  <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
   </ItemGroup>
 	<ItemGroup>
 		<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.1" />

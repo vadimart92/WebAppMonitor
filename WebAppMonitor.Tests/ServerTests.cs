@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +18,7 @@ namespace WebAppMonitor.Tests
 
 		public ServerTests() {
 			Environment.CurrentDirectory = TestContext.CurrentContext.TestDirectory;
-			var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string> {
+			IConfigurationRoot config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string> {
 				{"Environment", "Tests"}
 			}).Build();
 			_server = new TestServer(new WebHostBuilder().UseConfiguration(config).UseStartup<Startup>());
@@ -43,10 +42,10 @@ namespace WebAppMonitor.Tests
 
 		[Test]
 		public async Task ImportLongLocks() {
-			var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "collect_long_locks.xel");
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "collect_long_locks.xel");
 			file = ShareFile(file);
 			string requestUri = $"/api/Admin/importLongLocks?file={Uri.EscapeDataString(file)}";
-			var response = await _client.GetAsync(requestUri);
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
 			response.EnsureSuccessStatusCode();
 		}
 
@@ -55,29 +54,46 @@ namespace WebAppMonitor.Tests
 			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "collect_deadlock_data.xel");
 			file = ShareFile(file);
 			string requestUri = $"/api/Admin/importDeadLocks?file={Uri.EscapeDataString(file)}";
-			var response = await _client.GetAsync(requestUri);
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
+		[Test]
+		public async Task ImportReaderLogs() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "LoggingDataReader.json.0.json");
+			file = ShareFile(file);
+			string requestUri = $"/api/Admin/importReaderLogs?file={Uri.EscapeDataString(file)}";
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
+
+		[Test]
+		public async Task ImportDbExecutorLogs() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "Sql.0.json");
+			file = ShareFile(file);
+			string requestUri = $"/api/Admin/importDbExecutorLogs?file={Uri.EscapeDataString(file)}";
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
 			response.EnsureSuccessStatusCode();
 		}
 
 		[Test]
 		public async Task PrimaryImport() {
-			var files = Directory.EnumerateFiles(@"\\tscore-dev-13\WorkAnalisys\xevents", "collect_long_locks*.xel",
+			List<FileInfo> files = Directory.EnumerateFiles(@"\\tscore-dev-13\WorkAnalisys\xevents", "collect_long_locks*.xel",
 					SearchOption.AllDirectories)
 				.Select(f=>new FileInfo(f))
 				.OrderBy(f=>f.CreationTime)
 				.ToList();
 			foreach (FileInfo fileInfo in files) {
-				var file = fileInfo.FullName;
+				string file = fileInfo.FullName;
 				string requestUri = $"/api/Admin/importExtendedEvents?file={Uri.EscapeDataString(file)}";
-				var response = await _client.GetAsync(requestUri);
+				HttpResponseMessage response = await _client.GetAsync(requestUri);
 				response.EnsureSuccessStatusCode();
 			}
 		}
 
 		[Test]
 		public async Task DailyImport() {
-			var dates = new List<DateTime> {
-				new DateTime(2017,7, 4)
+			List<DateTime> dates = new List<DateTime> {
+				new DateTime(2017,7, 11)
 			};
 			string datesString = string.Join(",", dates.Select(d => d.ToString("yyyy-MM-dd")));
 			string requestUri = $"/api/Admin/importAllByDates?dates={Uri.EscapeDataString(datesString)}";

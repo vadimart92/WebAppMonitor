@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using WebAppMonitor.Core.Import;
+using WebAppMonitor.Data.Entities;
 
 namespace WebAppMonitor.Data
 {
@@ -39,6 +41,15 @@ namespace WebAppMonitor.Data
 			var attribute = propertyInfo.GetCustomAttribute(typeof(ColumnAttribute), false) as ColumnAttribute;
 			string columnName = attribute != null ? attribute.Name : propertyInfo.Name;
 			return columnName;
+		}
+
+		public static T CreateInfoRecord<T>(this IDateRepository dateRepository, DateTime timeStamp)
+				where T : BaseInfoRecord, new() {
+			return new T {
+				Id = Guid.NewGuid(),
+				Date = timeStamp,
+				DateId = dateRepository.GetDayId(timeStamp)
+			};
 		}
 
 	}

@@ -1,21 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools", "DevTools\DevTools.csproj", "{F209A3B9-A579-41E5-927E-0226454FED10}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data", "WebAppMonitor.Data\WebAppMonitor.Data.csproj", "{FB40853D-6433-4ED5-8319-C469EDF5ADEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Core", "WebAppMonitor.Core\WebAppMonitor.Core.csproj", "{4995CF07-BF93-4A1A-9059-3E281D4408F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Core", "WebAppMonitor.Core\WebAppMonitor.Core.csproj", "{4995CF07-BF93-4A1A-9059-3E281D4408F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Core.Tests", "WebAppMonitor.Core.Tests\WebAppMonitor.Core.Tests.csproj", "{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Core.Tests", "WebAppMonitor.Core.Tests\WebAppMonitor.Core.Tests.csproj", "{F787CA0D-7FE1-4C5F-AE44-487589F1BC66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.XmlEventsParser", "WebAppMonitor.XmlEventsParser\WebAppMonitor.XmlEventsParser.csproj", "{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.XmlEventsParser", "WebAppMonitor.XmlEventsParser\WebAppMonitor.XmlEventsParser.csproj", "{5FB5DBA7-F8C6-4E13-8973-E3075A9BE538}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.XmlEventsParser.Tests", "WebAppMonitor.XmlEventsParser.Tests\WebAppMonitor.XmlEventsParser.Tests.csproj", "{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.XmlEventsParser.Tests", "WebAppMonitor.XmlEventsParser.Tests\WebAppMonitor.XmlEventsParser.Tests.csproj", "{7CA3214B-4D13-4BAB-B71C-0B869A5BD9F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autofixture.NUnit3", "Autofixture.NUnit3\Autofixture.NUnit3.csproj", "{AD2CF50A-6ACF-48D3-BE1B-0B74F58D11B1}"
 EndProject
@@ -23,20 +23,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.DataProcessin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.DataProcessing.Tests", "WebAppMonitor.DataProcessing.Tests\WebAppMonitor.DataProcessing.Tests.csproj", "{1D420A80-7444-41CB-B866-F4A085C47689}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ExtendedEventsUtils", "ExtendedEventsUtils\ExtendedEventsUtils.sqlproj", "{76B44DC0-312C-41E3-9A01-50A64329FD25}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Data.Tests", "WebAppMonitor.Data.Tests\WebAppMonitor.Data.Tests.csproj", "{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAC2652A-E9BA-4858-9636-162F9502859B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{25DCAEA4-7A71-43DA-8E0F-91B299FDB6AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38D59148-FEB4-491C-9DD5-6BDC5459ED0F}"
 	ProjectSection(SolutionItems) = preProject
-		SQL\DDL.sql = SQL\DDL.sql
-		SQL\GetInfo.sql = SQL\GetInfo.sql
-		SQL\ImportDailyData.sql = SQL\ImportDailyData.sql
+		settings.StyleCop = settings.StyleCop
+		DB\WebAppMonitor.sln = DB\WebAppMonitor.sln
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppMonitor.Tests", "WebAppMonitor.Tests\WebAppMonitor.Tests.csproj", "{54A1797E-E039-4071-BC73-C2C3763A57E8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{7E5C0D21-6BDB-4EC1-B813-DB5E67BDC142}"
+	ProjectSection(SolutionItems) = preProject
+		DB\SQL\CreateEvents.sql = DB\SQL\CreateEvents.sql
+		DB\SQL\DDL.sql = DB\SQL\DDL.sql
+		DB\SQL\GetInfo.sql = DB\SQL\GetInfo.sql
+		DB\SQL\ImportDailyData.sql = DB\SQL\ImportDailyData.sql
+		DB\SQL\sp_ReplaceRecord.sql = DB\SQL\sp_ReplaceRecord.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,12 +90,6 @@ Global
 		{1D420A80-7444-41CB-B866-F4A085C47689}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D420A80-7444-41CB-B866-F4A085C47689}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D420A80-7444-41CB-B866-F4A085C47689}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76B44DC0-312C-41E3-9A01-50A64329FD25}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -109,5 +109,6 @@ Global
 		{1D420A80-7444-41CB-B866-F4A085C47689} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{54A1797E-E039-4071-BC73-C2C3763A57E8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
+		{7E5C0D21-6BDB-4EC1-B813-DB5E67BDC142} = {38D59148-FEB4-491C-9DD5-6BDC5459ED0F}
 	EndGlobalSection
 EndGlobal

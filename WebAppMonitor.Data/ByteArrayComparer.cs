@@ -20,9 +20,18 @@ namespace WebAppMonitor.Data
 		}
 		public int GetHashCode(byte[] key)
 		{
-			if (key == null)
-				throw new ArgumentNullException("key");
-			return key.Sum(b => b);
+			if (key == null) {
+				return 0;
+			}
+			unchecked {
+				int i = key.Length;
+				int hc = i + 1;
+				while (--i >= 0) {
+					hc *= 31;
+					hc ^= key[i];
+				}
+				return hc;
+			}
 		}
 	}
 }

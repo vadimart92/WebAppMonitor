@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AutoMapper;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,7 +11,10 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using WebAppMonitor.Common;
 using WebAppMonitor.Core;
+using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data;
+using WebAppMonitor.DataProcessing;
+using WebAppMonitor.DataProcessing.Json;
 using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor {
@@ -37,14 +41,24 @@ namespace WebAppMonitor {
 			services.AddSingleton<IDbConnectionProvider>(connectionProvider);
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(cs));
-			services.AddSingleton<IDataImporter, DataImporter>();
+			services.AddSingleton<IDataLoader, DataLoader>();
 			services.AddHangfire(x => x.UseSqlServerStorage(cs));
 			services.AddSingleton<ISettingsRepository, SettingsRepository>();
+			services.AddSingleton<ISettings, Settings>();
+			services.AddSingleton<IDateRepository, DateRepository>();
 			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
 			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
 			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
 			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
-			services.AddSingleton<IQueryTextSaver, QueryTextSaver>();
+			services.AddTransient<IAppLogLoader, AppLogLoader>();
+			services.AddSingleton<IQueryTextStoringService, QueryTextStoringService>();
+			services.AddSingleton<IJsonLogParser, JsonLogParser>();
+			services.AddSingleton<IJsonLogStoringService, JsonLogStoringService>();
+			services.AddSingleton<IStackStoringService, StackStoringService>();
+			services.AddSingleton<IDataFilePathProvider, DataFilePathProvider>();
+			services.AddSingleton<IDateTimeProvider, CurrentDateTimeProvider>();
+			services.AddSingleton<IPerfomanceItemCodeStoringService, PerfomanceItemCodeStoringService>();
+			services.AddAutoMapper(expression => { }, typeof(MappingProfile));
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

@@ -135,9 +135,6 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Pagination, Version=1.0.23.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\berkeleybross.Pagination.1.0.23\lib\netstandard1.3\Pagination.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
@@ -166,6 +163,7 @@
     <Reference Include="System.Data.SqlClient, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SqlClient.4.3.1\lib\net46\System.Data.SqlClient.dll</HintPath>
     </Reference>
+    <Reference Include="System.Design" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
@@ -254,22 +252,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteArrayComparer.cs" />
+    <Compile Include="DateRepository.cs" />
     <Compile Include="DbConnectionUtils.cs" />
+    <Compile Include="Entities\BaseHashStorage.cs" />
     <Compile Include="Entities\BaseLookup.cs" />
+    <Compile Include="Entities\ExecutorLog.cs" />
+    <Compile Include="Entities\ImportedExecutorLogRecord.cs" />
+    <Compile Include="Entities\ImportedPerfomanceLogRecord.cs" />
+    <Compile Include="Entities\ImportedReaderLogRecord.cs" />
     <Compile Include="Entities\NormQueryTextSource.cs" />
     <Compile Include="Entities\LockingMode.cs" />
     <Compile Include="Entities\LongLocksInfo.cs" />
     <Compile Include="Entities\NormQueryTextHistory.cs" />
     <Compile Include="Entities\QuerySource.cs" />
+    <Compile Include="Entities\ReaderLog.cs" />
+    <Compile Include="Entities\Stack.cs" />
+    <Compile Include="Entities\StackSource.cs" />
     <Compile Include="ExtendedEventDataSaver.cs" />
+    <Compile Include="HashStorage.cs" />
+    <Compile Include="JsonLogStoringService.cs" />
     <Compile Include="OrmUtils.cs" />
+    <Compile Include="PerfomanceItemCodeStoringService.cs" />
     <Compile Include="Properties\InternalVisible.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryStatsContext.cs" />
-    <Compile Include="QueryTextSaver.cs" />
+    <Compile Include="QueryTextStoringService.cs" />
     <Compile Include="SettingsRepository.cs" />
     <Compile Include="SimpleDataProvider.cs" />
-    <Compile Include="SimpleLookupManager.cs" />
+    <Compile Include="SimpleLookupRepository.cs" />
+    <Compile Include="StackStoringService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -285,6 +296,10 @@
     <ProjectReference Include="..\WebAppMonitor.Core\WebAppMonitor.Core.csproj">
       <Project>{4995cf07-bf93-4a1a-9059-3e281d4408f8}</Project>
       <Name>WebAppMonitor.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebAppMonitor.DataProcessing\WebAppMonitor.DataProcessing.csproj">
+      <Project>{0D954394-A107-463C-875D-3170BDABCB99}</Project>
+      <Name>WebAppMonitor.DataProcessing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
