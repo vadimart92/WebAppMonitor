@@ -93,7 +93,7 @@ namespace WebAppMonitor.Tests
 		[Test]
 		public async Task DailyImport() {
 			List<DateTime> dates = new List<DateTime> {
-				new DateTime(2017,7, 5)
+				new DateTime(2017,7, 11)
 			};
 			string datesString = string.Join(",", dates.Select(d => d.ToString("yyyy-MM-dd")));
 			string requestUri = $"/api/Admin/importAllByDates?dates={Uri.EscapeDataString(datesString)}";

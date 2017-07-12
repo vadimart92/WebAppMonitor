@@ -167,7 +167,6 @@ TRUNCATE TABLE Grouped_QueryStatInfo;
 INSERT INTO Grouped_QueryStatInfo
 SELECT v.*
 FROM VwQueryStatInfo v
-INNER JOIN dbo.Dates d ON d.Id = v.DateId
 
 DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
 DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)

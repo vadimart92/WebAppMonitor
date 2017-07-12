@@ -58,7 +58,7 @@ namespace WebAppMonitor {
 			services.AddSingleton<IDataFilePathProvider, DataFilePathProvider>();
 			services.AddSingleton<IDateTimeProvider, CurrentDateTimeProvider>();
 			services.AddSingleton<IPerfomanceItemCodeStoringService, PerfomanceItemCodeStoringService>();
-			services.AddAutoMapper();
+			services.AddAutoMapper(expression => { }, typeof(MappingProfile));
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {

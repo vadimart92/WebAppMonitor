@@ -66,7 +66,7 @@ namespace WebAppMonitor.Data {
 		private void Flush() {
 			_queryTextStoringService.Flush();
 			_pendingLocksInfo.BulkInsert(_connectionProvider);
-			_logger.LogInformation("{0} long locks inserted.", _pendingDeadLocksInfo.Count);
+			_logger.LogInformation("{0} long locks inserted.", _pendingLocksInfo.Count);
 			_pendingLocksInfo.Clear();
 			_pendingDeadLocksInfo.BulkInsert(_connectionProvider);
 			_logger.LogInformation("{0} deadloks inserted.", _pendingDeadLocksInfo.Count);
