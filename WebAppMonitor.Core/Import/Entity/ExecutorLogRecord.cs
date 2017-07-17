@@ -1,13 +1,22 @@
 ﻿using System;
 
 namespace WebAppMonitor.Core.Import.Entity {
-	public class ExecutorLogRecord:IJsonLogWithHash {
+	using System.IO;
+	using System.Runtime.Serialization;
+	using System.Text.RegularExpressions;
+	using Newtonsoft.Json;
+	using Newtonsoft.Json.Serialization;
+	using WebAppMonitor.Core.Common;
+
+	public class ExecutorLogRecord:IJsonLogWithHash
+	{
 		public DateTime Date { get; set; }
 		public string Level { get; set; }
 		public string Appname { get; set; }
 		public string Logger { get; set; }
 		public string Thread { get; set; }
 		public string Ndc { get; set; }
+		public string Exception { get; set; }
 		public Messageobject MessageObject { get; set; }
 
 		public class Messageobject {
@@ -30,6 +39,30 @@ namespace WebAppMonitor.Core.Import.Entity {
 
 		public byte[] GetSourceLogHash() {
 			return _sourceLogHash;
+		}
+
+		[OnError]
+		internal void OnError(StreamingContext context, ErrorContext errorContext) {
+			var sourceLine = context.Context as string;
+			if (sourceLine != null && sourceLine.Contain("exception")) {
+				var data = JsonConvert.DeserializeObject<ErrorLogItem>(sourceLine);
+				Exception = data.Exception;
+				MessageObject = new Messageobject {Sql = data.MessageObject};
+				errorContext.Handled = true;
+			}
+		}
+
+		private class ErrorLogItem
+		{
+			public string Exception { get; set; }
+			public string MessageObject { get; set; }
+		}
+
+		static readonly Regex _validLineRegex = new Regex("\"messageObject\"(\\s*):(\\s*){");
+
+		[JsonItemFilter]
+		public static bool CanRead(string value) {
+			return _validLineRegex.IsMatch(value);
 		}
 
 	}

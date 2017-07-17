@@ -25,7 +25,7 @@ namespace WebAppMonitor.DataProcessing {
 					string line = reader.ReadLine();
 					if (line == null)
 						continue;
-					if (firstLineLocator(line)) {
+					if (!readerStackEndFound && firstLineLocator(line)) {
 						readerStackEndFound = true;
 						continue;
 					}
@@ -48,7 +48,7 @@ namespace WebAppMonitor.DataProcessing {
 
 		private static bool ReaderFirstLineLocator(string line) {
 			return line.Contain("Terrasoft.Core.DB.LoggingDataReader") 
-			       && (line.Contain("Dispose") || line.Contain("Close"));
+			       && (line.Contain("OnDestroy") || line.Contain("Close"));
 		}
 		private static bool ExecutorFirstLineLocator(string line) {
 			return line.Contain("Terrasoft.Core.DB.DBExecutor.LoggingWrap");

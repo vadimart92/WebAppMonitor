@@ -2,9 +2,13 @@
 
 namespace WebAppMonitor.Core.Import
 {
+	using System;
+
 	public interface IJsonLogWithHash {
 		void SetSourceLogHash(byte[] hash);
 	}
+
+	public class JsonItemFilterAttribute: Attribute{ }
 
 	public interface IJsonLogParser
 	{

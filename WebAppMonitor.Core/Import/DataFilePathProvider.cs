@@ -46,7 +46,7 @@ namespace WebAppMonitor.Core.Import {
 				var innerFiles = Directory.EnumerateFiles(source, $"*{logFileName}",
 					SearchOption.AllDirectories).Where(p => p.Contain(dir));
 				foreach (string file in innerFiles) {
-					string tmpFile = Path.GetTempFileName();
+					string tmpFile = Path.Combine(Path.GetTempPath(), Path.GetFileName(file));
 					File.Copy(file, tmpFile, true);
 					yield return tmpFile;
 					File.Delete(tmpFile);

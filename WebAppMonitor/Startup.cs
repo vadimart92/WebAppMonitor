@@ -35,7 +35,6 @@ namespace WebAppMonitor {
 			services.AddMvc().AddJsonOptions(options => {
 				options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
 			});
-
 			string cs = Configuration.GetConnectionString("db");
 			var connectionProvider = new DbConnectionProviderImpl(cs);
 			services.AddSingleton<IDbConnectionProvider>(connectionProvider);

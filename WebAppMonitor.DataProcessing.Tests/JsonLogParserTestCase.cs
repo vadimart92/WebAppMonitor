@@ -33,9 +33,8 @@ namespace WebAppMonitor.DataProcessing.Tests {
 			var parser = new Json.JsonLogParser();
 			var data = parser.ReadFile<ExecutorLogRecord>(file).ToList();
 			data.Count.Should().Be(18);
-			data.Any(d => string.IsNullOrWhiteSpace(d.MessageObject.Sql) || 
-				string.IsNullOrWhiteSpace(d.MessageObject.StackTrace))
-			.Should().BeFalse();
+			data.Any(d => string.IsNullOrWhiteSpace(d.Exception) && (string.IsNullOrWhiteSpace(d.MessageObject.Sql) || 
+				string.IsNullOrWhiteSpace(d.MessageObject.StackTrace))).Should().BeFalse();
 			data.Any(d => d.Date == default(DateTime)).Should().BeFalse();
 			data.Any(d => d.GetSourceLogHash() == null).Should().BeFalse();
 		}

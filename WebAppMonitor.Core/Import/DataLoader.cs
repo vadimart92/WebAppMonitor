@@ -39,10 +39,8 @@ namespace WebAppMonitor.Core.Import {
 		private void BackupDb() {
 			_connectionProvider.GetConnection(connection => {
 				string db = connection.Database;
-				connection.Execute(
-					$@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{
-							db
-						}-Full Database backup', COMPRESSION, NOFORMAT, NOINIT, SKIP, NOREWIND, NOUNLOAD, STATS = 1",
+				connection.Execute($@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{db
+						}-Full Database backup', COMPRESSION, NOFORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 1",
 						commandTimeout: _commandTimeout);
 				_logger.LogInformation("Db backup created.");
 			});
@@ -98,18 +96,18 @@ namespace WebAppMonitor.Core.Import {
 
 		private void ImportData(IDataFilePathProvider pathProvider) {
 			_logger.LogInformation("Import daily data started.");
-			foreach (var directory in pathProvider.GetDailyExtEventsDirs()) {
+			foreach (string directory in pathProvider.GetDailyExtEventsDirs()) {
 				SafeExecute(()=>ImportLongQueriesData(directory));
 				SafeExecute(() => ImportLongLocksData(directory));
 				SafeExecute(() => ImportDeadLocksData(directory));
 			}
+			foreach (string readerLog in pathProvider.GetReaderLogs()) {
+				SafeExecute(() => ImportReaderLogs(readerLog));
+			}
+			foreach (string executorLog in pathProvider.GetExecutorLogs()) {
+				SafeExecute(() => ImportDbExecutorLogs(executorLog));
+			}
 			if (bool.Parse(_settings.LoadJsonLogs)) {
-				foreach (string executorLog in pathProvider.GetReaderLogs()) {
-					SafeExecute(() => ImportReaderLogs(executorLog));
-				}
-				foreach (string executorLog in pathProvider.GetExecutorLogs()) {
-					SafeExecute(() => ImportDbExecutorLogs(executorLog));
-				}
 				foreach (string perfomanceLog in pathProvider.GetPerfomanceLogs()) {
 					SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
 				}
