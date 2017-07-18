@@ -15,7 +15,7 @@ namespace WebAppMonitor.Core.Common {
 		}
 
 		public virtual void BeginWork() {
-			Logger.LogInformation("BeginWork");
+			Logger.LogDebug("BeginWork");
 			_autoResetEvent.WaitOne();
 			_isWorking = true;
 		}
@@ -27,7 +27,7 @@ namespace WebAppMonitor.Core.Common {
 			SaveItems();
 			_isWorking = false;
 			_autoResetEvent.Set();
-			Logger.LogInformation("Flush complete");
+			Logger.LogDebug("Flush complete");
 		}
 
 		protected abstract void SaveItems();

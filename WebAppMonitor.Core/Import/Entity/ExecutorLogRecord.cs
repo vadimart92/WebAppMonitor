@@ -22,6 +22,7 @@ namespace WebAppMonitor.Core.Import.Entity {
 		public class Messageobject {
 			public int Duration { get; set; }
 			public string Sql { get; set; }
+			[JsonIgnore]
 			public Parameter[] Parameters { get; set; }
 			public string StackTrace { get; set; }
 		}
@@ -39,23 +40,6 @@ namespace WebAppMonitor.Core.Import.Entity {
 
 		public byte[] GetSourceLogHash() {
 			return _sourceLogHash;
-		}
-
-		[OnError]
-		internal void OnError(StreamingContext context, ErrorContext errorContext) {
-			var sourceLine = context.Context as string;
-			if (sourceLine != null && sourceLine.Contain("exception")) {
-				var data = JsonConvert.DeserializeObject<ErrorLogItem>(sourceLine);
-				Exception = data.Exception;
-				MessageObject = new Messageobject {Sql = data.MessageObject};
-				errorContext.Handled = true;
-			}
-		}
-
-		private class ErrorLogItem
-		{
-			public string Exception { get; set; }
-			public string MessageObject { get; set; }
 		}
 
 		static readonly Regex _validLineRegex = new Regex("\"messageObject\"(\\s*):(\\s*){");

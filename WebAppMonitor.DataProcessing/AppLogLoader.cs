@@ -1,8 +1,9 @@
-﻿using WebAppMonitor.Core.Import;
-using WebAppMonitor.Core.Import.Entity;
-
-namespace WebAppMonitor.DataProcessing
+﻿namespace WebAppMonitor.DataProcessing
 {
+	using System;
+	using WebAppMonitor.Core.Import;
+	using WebAppMonitor.Core.Import.Entity;
+
 	public class AppLogLoader: IAppLogLoader
 	{
 
@@ -14,28 +15,30 @@ namespace WebAppMonitor.DataProcessing
 			_jsonLogStoringService = jsonLogStoringService;
 		}
 
-		public void LoadReaderLogs(string file) {
-			using (_jsonLogStoringService.BeginWork()) {
-				foreach (ReaderLogRecord logRecord in _jsonLogParser.ReadFile<ReaderLogRecord>(file)) {
-					_jsonLogStoringService.RegisterReaderLogItem(logRecord);
+		private void SafeExecute<TLogRecord>(string file, Func<IJsonLogStoringService, Action<TLogRecord>> action)
+				where TLogRecord : IJsonLogWithHash {
+			using(_jsonLogStoringService.BeginWork()) {
+				var addRecordAction = action(_jsonLogStoringService);
+				foreach(TLogRecord logRecord in _jsonLogParser.ReadFile<TLogRecord>(file)) {
+					try {
+						addRecordAction(logRecord);
+					} catch(Exception e) {
+						throw;
+					}
 				}
 			}
+		}
+
+		public void LoadReaderLogs(string file) {
+			SafeExecute<ReaderLogRecord>(file, store => store.RegisterReaderLogItem);
 		}
 
 		public void LoadDbExecutorLogs(string file) {
-			using (_jsonLogStoringService.BeginWork()) {
-				foreach (ExecutorLogRecord logRecord in _jsonLogParser.ReadFile<ExecutorLogRecord>(file)) {
-					_jsonLogStoringService.RegisterExecutorLogRecord(logRecord);
-				}
-			}
+			SafeExecute<ExecutorLogRecord>(file, store => store.RegisterExecutorLogRecord);
 		}
 
 		public void LoadPerfomanceLogs(string file) {
-			using (_jsonLogStoringService.BeginWork()) {
-				foreach (PerfomanceLogRecord logRecord in _jsonLogParser.ReadFile<PerfomanceLogRecord>(file)) {
-					_jsonLogStoringService.RegisterPerfomanceLogItem(logRecord);
-				}
-			}
+			SafeExecute<PerfomanceLogRecord>(file, store => store.RegisterPerfomanceLogItem);
 		}
 
 	}

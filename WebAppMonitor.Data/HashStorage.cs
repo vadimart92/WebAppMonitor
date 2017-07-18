@@ -50,6 +50,9 @@ namespace WebAppMonitor.Data {
 		}
 
 		public void Flush() {
+			if (_pendingHashes.Count == 0) {
+				return;
+			}
 			_pendingHashes.BulkInsert(_dbConnection);
 			_logger.LogInformation("Inserted {0} hashes for {1}", _pendingHashes.Count, _tableName);
 			_pendingHashes.Clear();

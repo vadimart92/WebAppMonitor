@@ -18,6 +18,10 @@ namespace WebAppMonitor.Core.Import {
 			_logger = logger;
 		}
 
+		public DateTime GetDate() {
+			return _dateTimeProvider.Today;
+		}
+
 		public IEnumerable<string> GetExecutorLogs() {
 			return EnumerateFiles(_settings.ExecutorLogFileName);
 		}
@@ -46,10 +50,21 @@ namespace WebAppMonitor.Core.Import {
 				var innerFiles = Directory.EnumerateFiles(source, $"*{logFileName}",
 					SearchOption.AllDirectories).Where(p => p.Contain(dir));
 				foreach (string file in innerFiles) {
-					string tmpFile = Path.Combine(Path.GetTempPath(), Path.GetFileName(file));
-					File.Copy(file, tmpFile, true);
-					yield return tmpFile;
-					File.Delete(tmpFile);
+					string tmpPrefix = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+					string tmpFile = Path.Combine(Path.GetTempPath(), tmpPrefix + Path.GetFileName(file));
+					try {
+						_logger.LogInformation("Copying file {0} to {1}", file, Path.GetFileNameWithoutExtension(tmpFile));
+						File.Copy(file, tmpFile, true);
+						yield return tmpFile;
+					} finally {
+						try {
+							if (File.Exists(tmpFile)) {
+								File.Delete(tmpFile);
+							}
+						} catch (Exception e) {
+							_logger.LogError(new EventId(0), e, "file processing error, source file: {0}", file);
+						}
+					}
 				}
 			}
 		}

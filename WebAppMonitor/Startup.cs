@@ -18,8 +18,14 @@ using WebAppMonitor.DataProcessing.Json;
 using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor {
+	using Autofac;
+	using Autofac.Core;
+	using Autofac.Core.Activators.Reflection;
+	using Autofac.Extensions.DependencyInjection;
+
 	public class Startup {
 		public static IConfigurationRoot Configuration { get; set; }
+		public IContainer ApplicationContainer { get; private set; }
 
 		public Startup(IHostingEnvironment env) {
 			IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory)
@@ -31,33 +37,27 @@ namespace WebAppMonitor {
 			env.ConfigureNLog("nlog.config");
 		}
 
-		public void ConfigureServices(IServiceCollection services) {
+		public IServiceProvider ConfigureServices(IServiceCollection services) {
 			services.AddMvc().AddJsonOptions(options => {
 				options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-			});
-			string cs = Configuration.GetConnectionString("db");
-			var connectionProvider = new DbConnectionProviderImpl(cs);
-			services.AddSingleton<IDbConnectionProvider>(connectionProvider);
-			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
-			services.AddScoped(provider => new QueryStatsContext(cs));
-			services.AddSingleton<IDataLoader, DataLoader>();
-			services.AddHangfire(x => x.UseSqlServerStorage(cs));
-			services.AddSingleton<ISettingsRepository, SettingsRepository>();
-			services.AddSingleton<ISettings, Settings>();
-			services.AddSingleton<IDateRepository, DateRepository>();
-			services.AddTransient<IExtendedEventParser, ExtendedEventParser>();
-			services.AddTransient<IExtendedEventDataSaver, ExtendedEventDataSaver>();
-			services.AddTransient<ISimpleDataProvider, SimpleDataProvider>();
-			services.AddTransient<IExtendedEventLoader, ExtendedEventLoader>();
-			services.AddTransient<IAppLogLoader, AppLogLoader>();
-			services.AddSingleton<IQueryTextStoringService, QueryTextStoringService>();
-			services.AddSingleton<IJsonLogParser, JsonLogParser>();
-			services.AddSingleton<IJsonLogStoringService, JsonLogStoringService>();
-			services.AddSingleton<IStackStoringService, StackStoringService>();
-			services.AddSingleton<IDataFilePathProvider, DataFilePathProvider>();
-			services.AddSingleton<IDateTimeProvider, CurrentDateTimeProvider>();
-			services.AddSingleton<IPerfomanceItemCodeStoringService, PerfomanceItemCodeStoringService>();
+			}).AddControllersAsServices();
+
+			string connectionString = Configuration.GetConnectionString("db");
 			services.AddAutoMapper(expression => { }, typeof(MappingProfile));
+			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
+			services.AddScoped(provider => new QueryStatsContext(connectionString));
+			services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+
+			var builder = new ContainerBuilder();
+			builder.Populate(services);
+
+			var connectionProvider = new DbConnectionProviderImpl(connectionString);
+			builder.RegisterInstance<IDbConnectionProvider>(connectionProvider).SingleInstance();
+
+			RegisterTypes(builder);
+
+			ApplicationContainer = builder.Build();
+			return new AutofacServiceProvider(ApplicationContainer);
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
@@ -76,13 +76,41 @@ namespace WebAppMonitor {
 					await next();
 				}
 			});
-			app.UseHangfireServer();
-			app.UseHangfireDashboard(options: new DashboardOptions() {
-				Authorization = new[] {new HangfireAuthFilter()}
-			});
+			if(Configuration.GetValue("UseJobs", true)) {
+				app.UseHangfireServer();
+				app.UseHangfireDashboard(options: new DashboardOptions() {
+					Authorization = new[] {new HangfireAuthFilter()}
+				});
+			}
 			app.UseMvcWithDefaultRoute();
 			app.UseDefaultFiles();
 			app.UseStaticFiles();
 		}
+
+
+		private static void RegisterTypes(ContainerBuilder builder) {
+			builder.RegisterType<DataLoader>().As<IDataLoader>().SingleInstance();
+			builder.RegisterType<SettingsRepository>().As<ISettingsRepository>().SingleInstance();
+			builder.RegisterType<Settings>().As<ISettings>().SingleInstance();
+			builder.RegisterType<DateRepository>().As<IDateRepository>().SingleInstance();
+			builder.RegisterType<QueryTextStoringService>().As<IQueryTextStoringService>().SingleInstance();
+			builder.RegisterType<JsonLogStoringService>().As<IJsonLogStoringService>().SingleInstance();
+			builder.RegisterType<StackStoringService>().As<IStackStoringService>().SingleInstance();
+			builder.RegisterType<DataFilePathProvider>().As<IDataFilePathProvider>().SingleInstance();
+			builder.RegisterType<CurrentDateTimeProvider>().As<IDateTimeProvider>().SingleInstance();
+			builder.RegisterType<PerfomanceItemCodeStoringService>().As<IPerfomanceItemCodeStoringService>()
+				.SingleInstance();
+
+			builder.RegisterType<ExtendedEventParser>().As<IExtendedEventParser>();
+			builder.RegisterType<ExtendedEventDataSaver>().As<IExtendedEventDataSaver>();
+			builder.RegisterType<SimpleDataProvider>().As<ISimpleDataProvider>();
+			builder.RegisterType<ExtendedEventLoader>().As<IExtendedEventLoader>();
+			builder.RegisterType<AppLogLoader>().As<IAppLogLoader>();
+			builder.RegisterType<JsonLogParser>().Named<IJsonLogParser>("logParser").SingleInstance();
+			builder.RegisterType<LoggingJsonLogParser>();
+			builder.RegisterDecorator<IJsonLogParser>(
+				(c, inner) => new LoggingJsonLogParser(c.Resolve<ILogger<LoggingJsonLogParser>>(), inner), "logParser");
+		}
+
 	}
 }

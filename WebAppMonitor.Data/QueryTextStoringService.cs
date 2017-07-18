@@ -46,9 +46,11 @@ namespace WebAppMonitor.Data {
 		}
 
 		protected override void SaveItems() {
-			_pendingQueries.BulkInsert(_connectionProvider);
-			Logger.LogInformation("{0} queries inserted", _pendingQueries.Count);
-			_pendingQueries.Clear();
+			if (_pendingQueries.Count > 0) {
+				_pendingQueries.BulkInsert(_connectionProvider);
+				Logger.LogInformation("{0} queries inserted", _pendingQueries.Count);
+				_pendingQueries.Clear();
+			}
 			_pendingQuerySources.BulkInsert(_connectionProvider);
 			_pendingQuerySources.Clear();
 		}

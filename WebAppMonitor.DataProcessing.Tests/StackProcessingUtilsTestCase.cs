@@ -15,8 +15,8 @@ namespace WebAppMonitor.DataProcessing.Tests {
    at System.Environment.get_StackTrace()
    at Terrasoft.Core.DB.LoggingDataReader.CreateDestroyedEventArgs() in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\DB\\LoggingDataReader.cs:line 145
    at Terrasoft.Core.DB.LoggingDataReader.OnDestroy() in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\DB\\LoggingDataReader.cs:line 159
-   at Terrasoft.Core.DB.LoggingDataReader.Dispose() in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\DB\\LoggingDataReader.cs:line 173
    at Terrasoft.Core.DB.Select.ExecuteReader(ExecuteReaderReadMethod readMethod) in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\DB\\Select.cs:line 1163
+   at System.DataTable.Load(Object target, Object[] arguments, Signature sig, Boolean constructor)
    at Terrasoft.Core.Packages.PackageDBStorage.LoadPackagesDependencies(IEnumerable`1 packages) in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\Packages\\PackageDBStorage.cs:line 2446
    at Terrasoft.Core.Packages.WorkspaceUtilities.GetTopologyPackagePositions(UserConnection userConnection, Guid workspaceId) in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\Packages\\WorkspaceUtilities.cs:line 2654
    at Terrasoft.Core.SchemaManager`1.GetTopologyPackagePositions(Guid workspaceId) in C:\\Projects\\TSBpm\\Src\\Lib\\Terrasoft.Core\\SchemaManager.cs:line 2805
@@ -45,6 +45,7 @@ namespace WebAppMonitor.DataProcessing.Tests {
    at System.Web.HttpApplication.InitSpecial(HttpApplicationState state, MethodInfo[] handlers, IntPtr appContext, HttpContext context)
    at System.Web.HttpApplicationFactory.GetSpecialApplicationInstance(IntPtr appContext, HttpContext context)
    at System.Web.Hosting.PipelineRuntime.InitializeApplication(IntPtr appContext)", @"at Terrasoft.Core.DB.Select.ExecuteReader(ExecuteReaderReadMethod readMethod)
+at System.DataTable.Load(Object target, Object[] arguments, Signature sig, Boolean constructor)
 at Terrasoft.Core.Packages.PackageDBStorage.LoadPackagesDependencies(IEnumerable`1 packages)
 at Terrasoft.Core.Packages.WorkspaceUtilities.GetTopologyPackagePositions(UserConnection userConnection, Guid workspaceId)
 at Terrasoft.Core.SchemaManager`1.GetTopologyPackagePositions(Guid workspaceId)

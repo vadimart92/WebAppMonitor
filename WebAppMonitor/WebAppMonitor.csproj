@@ -17,6 +17,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.1.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="2.0.1" />
     <PackageReference Include="Breeze.Server.AspNetCore.NetFramework" Version="0.1.4" />
     <PackageReference Include="Breeze.Server.Persistence.EF6" Version="0.1.4" />

@@ -4,6 +4,8 @@ using System.Text;
 using WebAppMonitor.Core.Common;
 
 namespace WebAppMonitor.DataProcessing {
+	using System.Collections.Generic;
+
 	public static class StackProcessingUtils {
 
 		public static string NormalizeExecutorStack(this string stackTrace) {
@@ -21,6 +23,7 @@ namespace WebAppMonitor.DataProcessing {
 			var result = new StringBuilder();
 			using (var reader = new StringReader(stackTrace)) {
 				var readerStackEndFound = false;
+				List<string> linesToAppend = new List<string>();
 				while (reader.Peek() > -1) {
 					string line = reader.ReadLine();
 					if (line == null)
@@ -34,9 +37,15 @@ namespace WebAppMonitor.DataProcessing {
 					int indexOfClosingBrace = line.IndexOf(")", StringComparison.OrdinalIgnoreCase);
 					line = line.Substring(0, indexOfClosingBrace + 1).Trim();
 					if (line.StartsWith("at Terrasoft", StringComparison.OrdinalIgnoreCase)) {
+						if (linesToAppend.Count > 0) {
+							foreach (string l in linesToAppend) {
+								result.AppendLine(l);
+							}
+							linesToAppend.Clear();
+						}
 						result.AppendLine(line);
 					} else {
-						break;
+						linesToAppend.Add(line);
 					}
 				}
 				if (!readerStackEndFound) {

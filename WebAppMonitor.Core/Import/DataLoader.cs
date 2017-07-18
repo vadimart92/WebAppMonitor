@@ -8,6 +8,15 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 
 namespace WebAppMonitor.Core.Import {
+	using System.Diagnostics;
+
+	class DataLoadSettings
+	{
+
+		public bool LoadExtendedEvents { get; set; }
+
+	}
+
 	public class DataLoader : IDataLoader {
 		private readonly IDbConnectionProvider _connectionProvider;
 		private readonly IExtendedEventLoader _extendedEventLoader;
@@ -37,6 +46,9 @@ namespace WebAppMonitor.Core.Import {
 		}
 
 		private void BackupDb() {
+#if DEBUG
+		return;
+#endif
 			_connectionProvider.GetConnection(connection => {
 				string db = connection.Database;
 				connection.Execute($@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{db
@@ -94,12 +106,15 @@ namespace WebAppMonitor.Core.Import {
 			}
 		}
 
-		private void ImportData(IDataFilePathProvider pathProvider) {
-			_logger.LogInformation("Import daily data started.");
-			foreach (string directory in pathProvider.GetDailyExtEventsDirs()) {
-				SafeExecute(()=>ImportLongQueriesData(directory));
-				SafeExecute(() => ImportLongLocksData(directory));
-				SafeExecute(() => ImportDeadLocksData(directory));
+		private void ImportData(IDataFilePathProvider pathProvider, DataLoadSettings settings = null) {
+			_logger.LogInformation("Import daily data started for: {0:dd-MM-yyyy}", pathProvider.GetDate());
+			var stopwatch = Stopwatch.StartNew();
+			if (settings == null || settings.LoadExtendedEvents) {
+				foreach(string directory in pathProvider.GetDailyExtEventsDirs()) {
+					SafeExecute(() => ImportLongQueriesData(directory));
+					SafeExecute(() => ImportLongLocksData(directory));
+					SafeExecute(() => ImportDeadLocksData(directory));
+				}
 			}
 			foreach (string readerLog in pathProvider.GetReaderLogs()) {
 				SafeExecute(() => ImportReaderLogs(readerLog));
@@ -112,7 +127,8 @@ namespace WebAppMonitor.Core.Import {
 					SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
 				}
 			}
-			_logger.LogInformation("Import daily data completed.");
+			stopwatch.Stop();
+			_logger.LogInformation("Import daily data completed in: {0}", stopwatch.Elapsed);
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {
@@ -134,31 +150,36 @@ namespace WebAppMonitor.Core.Import {
 		}
 
 		public void ImportDbExecutorLogs(string file) {
-			_logger.LogInformation($"ImportDbExecutorLogs started: {file}");
+			_logger.LogInformation($"ImportDbExecutorLogs started: {Path.GetFileName(file)}");
 			_appLogLoader.LoadDbExecutorLogs(file);
 			_logger.LogInformation("ImportDbExecutorLogs completed");
 		}
 
 		public void ImportReaderLogs(string file) {
-			_logger.LogInformation($"ImportReaderLogs started {file}");
+			_logger.LogInformation($"ImportReaderLogs started {Path.GetFileName(file)}");
 			_appLogLoader.LoadReaderLogs(file);
 			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
 		public void ImportPerfomanceLoggerLogs(string file) {
-			_logger.LogInformation($"ImportReaderLogs started {file}");
+			_logger.LogInformation($"ImportReaderLogs started {Path.GetFileName(file)}");
 			_appLogLoader.LoadPerfomanceLogs(file);
 			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {
 			BackupDb();
+			var settings = new DataLoadSettings {
+				LoadExtendedEvents = false
+			};
 			foreach (DateTime dateTime in dates) {
-				ImportData(new DataFilePathProvider(_settings,
-					new StaticDateTimeProvider(dateTime),
-					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>))));
+				var pathProvider = new DataFilePathProvider(_settings, new StaticDateTimeProvider(dateTime),
+					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>)));
+				ImportData(pathProvider, settings);
 			}
-			ActualizeInfo();
+			if (settings.LoadExtendedEvents) {
+				ActualizeInfo();
+			}
 		}
 
 	}
