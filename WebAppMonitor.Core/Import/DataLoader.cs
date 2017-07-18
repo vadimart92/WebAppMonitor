@@ -27,13 +27,15 @@ namespace WebAppMonitor.Core.Import {
 		private readonly IMapper _mapper;
 		private readonly IDataFilePathProvider _dataFilePathProvider;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly IDateRepository _dateRepository;
 
 		private static int _commandTimeout = 3600;
 
 		public DataLoader(IDbConnectionProvider connectionProvider, ISettings settings,
 				IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader,
 				IDataFilePathProvider dataFilePathProvider, IMapper mapper, ISettingsRepository settingsRepository,
-				IServiceProvider serviceProvider) {
+				IServiceProvider serviceProvider,
+			IDateRepository dateRepository) {
 			_connectionProvider = connectionProvider;
 			_settings = settings;
 			_extendedEventLoader = extendedEventLoader;
@@ -43,6 +45,7 @@ namespace WebAppMonitor.Core.Import {
 			_mapper = mapper;
 			_settingsRepository = settingsRepository;
 			_serviceProvider = serviceProvider;
+			_dateRepository = dateRepository;
 		}
 
 		private void BackupDb() {
@@ -108,6 +111,7 @@ namespace WebAppMonitor.Core.Import {
 
 		private void ImportData(IDataFilePathProvider pathProvider, DataLoadSettings settings = null) {
 			_logger.LogInformation("Import daily data started for: {0:dd-MM-yyyy}", pathProvider.GetDate());
+			_dateRepository.Refresh();
 			var stopwatch = Stopwatch.StartNew();
 			if (settings == null || settings.LoadExtendedEvents) {
 				foreach(string directory in pathProvider.GetDailyExtEventsDirs()) {
@@ -177,9 +181,7 @@ namespace WebAppMonitor.Core.Import {
 					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>)));
 				ImportData(pathProvider, settings);
 			}
-			if (settings.LoadExtendedEvents) {
-				ActualizeInfo();
-			}
+			ActualizeInfo();
 		}
 
 	}

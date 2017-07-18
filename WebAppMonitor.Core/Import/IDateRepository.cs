@@ -7,5 +7,7 @@ namespace WebAppMonitor.Core.Import
 
 	    int GetDayId(DateTime dateTime);
 
+	    void Refresh();
+
     }
 }

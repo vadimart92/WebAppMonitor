@@ -93,9 +93,9 @@ namespace WebAppMonitor.Tests
 		[Test]
 		public async Task DailyImport() {
 			List<DateTime> dates = new List<DateTime> {
-				//new DateTime(2017,7, 13),
-				//new DateTime(2017,7, 14),
-				//new DateTime(2017,7, 15),
+				new DateTime(2017,7, 13),
+				new DateTime(2017,7, 14),
+				new DateTime(2017,7, 15),
 				new DateTime(2017,7, 16),
 				new DateTime(2017,7, 17),
 				new DateTime(2017,7, 18)

@@ -14,6 +14,7 @@ DROP VIEW IF EXISTS VwLockedStats;
 DROP TABLE IF EXISTS Grouped_QueryStatInfo;
 DROP VIEW IF EXISTS VwQueryTextByDate;
 DROP VIEW IF EXISTS VwReaderLogStats;
+DROP VIEW IF EXISTS VwExecutorLogStats;
 GO
 SET QUOTED_IDENTIFIER, ANSI_NULLS ON
 GO
@@ -95,6 +96,19 @@ CREATE UNIQUE CLUSTERED INDEX IX_Cl ON VwReaderLogStats (DateId, NormalizedQuery
 CREATE COLUMNSTORE INDEX Ix_AllColumns ON VwReaderLogStats (DateId, NormalizedQueryTextId, [Count], TotalReads);
 GO
 
+CREATE VIEW VwExecutorLogStats WITH SCHEMABINDING
+AS 
+SELECT el.DateId
+	  ,el.QueryId NormalizedQueryTextId
+	  ,COUNT_BIG(*) [Count]
+    ,SUM(ISNULL(Duration/1000, 0)) TotalDuration
+FROM dbo.ExecutorLog el
+GROUP BY el.DateId, el.QueryId
+GO
+CREATE UNIQUE CLUSTERED INDEX IX_Cl ON VwExecutorLogStats (DateId, NormalizedQueryTextId);
+CREATE COLUMNSTORE INDEX Ix_AllColumns ON VwExecutorLogStats (DateId, NormalizedQueryTextId, [Count], TotalDuration);
+GO
+
 CREATE VIEW VwQueryTextByDate as 
 select nqth.Id TextId, 
 	d.id DateId
@@ -126,11 +140,16 @@ SELECT
    ,CAST(ROUND(rls.TotalReads, 2) AS DECIMAL(18, 2)) TotalReaderLogsReads
    ,CAST(ROUND(rls.TotalReads / NULLIF(rls.Count, 0), 2) AS DECIMAL(18, 2)) AvgReaderLogsReads
    ,(SELECT COUNT_BIG(DISTINCT rl.StackId) FROM ReaderLog rl WHERE rl.DateId = qd.DateId AND rl.QueryId = qd.TextId) DistinctReaderLogsStacks
+   ,CAST(ROUND(els.Count, 2) AS DECIMAL(18, 2)) ExecutorLogsCount
+   ,CAST(ROUND(els.TotalDuration, 2) AS DECIMAL(18, 2)) TotalExecutorDuration
+   ,CAST(ROUND(els.TotalDuration / NULLIF(els.Count, 0), 2) AS DECIMAL(18, 2)) AvgExecutorDuration
+   ,(SELECT COUNT_BIG(DISTINCT el.StackId) FROM ExecutorLog el WHERE el.DateId = qd.DateId AND el.QueryId = qd.TextId) DistinctExecutorLogsStacks
 FROM VwQueryTextByDate qd
 LEFT JOIN dbo.VwStatementStats s ON qd.TextId = s.NormalizedQueryTextId AND s.DateId = qd.DateId
 LEFT JOIN dbo.VwLockersStats lrs ON qd.TextId = lrs.NormalizedQueryTextId AND lrs.DateId = qd.DateId
 LEFT JOIN dbo.VwLockedStats lds ON qd.TextId = lds.NormalizedQueryTextId AND lds.DateId = qd.DateId
 LEFT JOIN dbo.VwReaderLogStats rls ON qd.TextId = rls.NormalizedQueryTextId AND rls.DateId = qd.DateId
+LEFT JOIN dbo.VwExecutorLogStats els ON qd.TextId = els.NormalizedQueryTextId AND els.DateId = qd.DateId
 
 GO
 

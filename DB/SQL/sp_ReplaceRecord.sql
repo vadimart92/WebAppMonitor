@@ -36,9 +36,9 @@ CREATE PROCEDURE sp_ReplaceRecord (@tableName NVARCHAR(MAX), @mapTableName NVARC
 	COMMIT TRANSACTION
 END;
 GO
---usage
----CREATE TABLE #map (OldId UNIQUEIDENTIFIER, NewId UNIQUEIDENTIFIER)ж
---insert
+----usage
+----CREATE TABLE #map (OldId UNIQUEIDENTIFIER, NewId UNIQUEIDENTIFIER)ж
+----insert
 --EXEC sp_ReplaceRecord @tableName='NormQueryTextHistory', @mapTableName='#map'
 --DROP TABLE #map
 

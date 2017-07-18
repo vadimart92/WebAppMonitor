@@ -26,6 +26,10 @@ namespace WebAppMonitor.Core.Entities {
 		public decimal? TotalReaderLogsReads { get; set; }
 		public decimal? AvgReaderLogsReads { get; set; }
 		public long? DistinctReaderLogsStacks { get; set; }
+		public decimal? ExecutorLogsCount { get; set; }
+		public decimal? TotalExecutorDuration { get; set; }
+		public decimal? AvgExecutorDuration { get; set; }
+		public long? DistinctExecutorLogsStacks { get; set; }
 
 		[Key]
 		public Guid NormalizedQueryTextId { get; set; }

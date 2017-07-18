@@ -27,6 +27,10 @@ export class QueryStatInfo  {
 		this.totalReaderLogsReads = json.totalReaderLogsReads;
 		this.avgReaderLogsReads = json.avgReaderLogsReads;
 		this.distinctReaderLogsStacks = json.distinctReaderLogsStacks;
+		this.executorLogsCount = json.executorLogsCount;
+		this.totalExecutorDuration = json.totalExecutorDuration;
+		this.avgExecutorDuration = json.avgExecutorDuration;
+		this.distinctExecutorLogsStacks = json.distinctExecutorLogsStacks;
 
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
@@ -34,6 +38,8 @@ export class QueryStatInfo  {
 		this.lockerAvgDurationStr = formatAsTime(this.lockerAvgDuration);
 		this.lockedTotalDurationStr = formatAsTime(this.lockedTotalDuration);
 		this.lockedAvgDurationStr = formatAsTime(this.lockedAvgDuration);
+		this.totalExecutorDurationStr = formatAsTime(this.totalExecutorDuration);
+		this.avgExecutorDurationStr = formatAsTime(this.avgExecutorDuration);
 	}
 	date:Date;
 	totalDuration: number;
@@ -57,6 +63,10 @@ export class QueryStatInfo  {
 	totalReaderLogsReads:number;
 	avgReaderLogsReads:number;
 	distinctReaderLogsStacks:number;
+	executorLogsCount: number;
+	totalExecutorDuration: number;
+	avgExecutorDuration: number;
+	distinctExecutorLogsStacks: number;
 
 	totalDurationStr: string;
 	avgDurationStr: string;
@@ -64,6 +74,8 @@ export class QueryStatInfo  {
 	lockerAvgDurationStr: string;
 	lockedTotalDurationStr: string;
 	lockedAvgDurationStr: string;
+	totalExecutorDurationStr: string;
+	avgExecutorDurationStr: string;
 
 	formatedText: string;
 }
@@ -85,7 +97,12 @@ export class QueryStatInfoDisplayConfig {
 					new NumberColumnConfig("readerLogsCount", "Reader logs").with.width(100).freeze().build(),
 					new NumberColumnConfig("totalReaderLogsReads", "Total ado reads").with.width(100).freeze().build(),
 					new NumberColumnConfig("avgReaderLogsReads", "AVG ado reads").with.width(100).freeze().build(),
-					new NumberColumnConfig("distinctReaderLogsStacks", "Ado stacks").with.headerDesc("Distinct ado stacks").width(100).freeze().build()
+					new NumberColumnConfig("distinctReaderLogsStacks", "Read stacks").with.headerDesc("Distinct read stacks").width(100).freeze().build()
+				]).next("executorLogs", [
+					new NumberColumnConfig("executorLogsCount", "Executor logs").with.width(100).freeze().build(),
+					new TimeColumnConfig("totalExecutorDuration", "Total ado duration").with.width(100).freeze().build(),
+					new TimeColumnConfig("avgExecutorDuration", "AVG ado duration").with.width(100).freeze().build(),
+					new NumberColumnConfig("distinctExecutorLogsStacks", "Execute stacks").with.headerDesc("Distinct execute stacks").width(100).freeze().build()
 				])
 				.next("locks", [
 					new NumberColumnConfig("deadlocksCount", "Deadlocks count").with.width(100).freeze().build(),
