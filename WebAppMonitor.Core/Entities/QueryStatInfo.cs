@@ -7,6 +7,7 @@ namespace WebAppMonitor.Core.Entities {
 	public class QueryStatInfo {
 		[Column(TypeName = "date"), Key]
 		public DateTime? Date { get; set; }
+		public int? DateId { get; set; }
 		public decimal? TotalDuration { get; set; }
 		public decimal? AvgDuration { get; set; }
 		public long? Count { get; set; }

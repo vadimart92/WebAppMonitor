@@ -9,6 +9,7 @@ import { QueryStatsService } from '../query-stats/query-stats.service'
 import { ApiDataService, StatsQueryOptions } from '../data.service'
 import { ChartData } from "../common/charting"
 import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
+import { SettingsService } from "../settings.service"
 
 export class QueryData {
 	info: QueryStatInfo = null;
@@ -34,7 +35,8 @@ export class QueryInfoComponent implements OnInit {
 	public chartData: any[];
 	private  chartsConfig: Object;
 	private displayConfigProvider = new QueryStatInfoDisplayConfig();
-	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService, private _dataService: ApiDataService) {
+	private columnsConfig: any[];
+	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService, private _dataService: ApiDataService,, private settingsService: SettingsService) {
 		var navRight = this._hotkeysService.add(new Hotkey('right', this.onArrowKey.bind(this, 1)));
 		var navLeft = this._hotkeysService.add(new Hotkey('left', this.onArrowKey.bind(this, -1)));
 		var closeHotKey = this._hotkeysService.add(new Hotkey('esc', (event: KeyboardEvent): boolean => {
@@ -45,6 +47,7 @@ export class QueryInfoComponent implements OnInit {
 			return false;
 		}));
 		this.chartsConfig = this.displayConfigProvider.getChartsConfig();
+		this.columnsConfig = this.displayConfigProvider.getColumnsConfig().columns;
 	}
 	onArrowKey(direction: number, event: KeyboardEvent): boolean {
 		this.tryChangeTab(direction);
@@ -64,24 +67,18 @@ export class QueryInfoComponent implements OnInit {
 			this.queryData = <QueryData>{
 				date: new Date(),
 				info: {
-					"normalizedQueryTextId": "a8c059cd-88f1-4a25-a6e5-5334c1fc79ef",
-					"count": 1,
-					"totalDuration": 584.00,
-					"avgDuration": 584.000000,
-					"avgRowCount": 31212,
-					"avgCPU": 554.000000,
-					"avgLogicalReads": 279581951,
-					"avgWrites": 10595,
-					"queryText": " sql",
-					"avgAdoReads": 10
+					"normalizedQueryTextId": "a73a0e9c-acb7-4921-a5a6-db0781eb605a"
 				}
 			}
+			let visibleColumnIds = this.settingsService.getSettingsProvider("queryStatsGrid").getVisibleColumnIds();
+			this.visibleColumns = this.visibleColumns.concat(visibleColumnIds);
 		}
 		var info = this.getCurrentInfo();
 		var rows = await this._dataService.getStats(<StatsQueryOptions>{
 			orderBy: ["date"],
 			queryTextId: info.normalizedQueryTextId
 		});
+		_.extend(this.queryData.info, rows[rows.length - 1]);
 		this.prepareChartData(rows);
 	}
 	chartsData: any[] = [];
@@ -132,4 +129,5 @@ export class QueryInfoComponent implements OnInit {
 		var text = await this._statsService.formatSql(this.getCurrentInfo());
 		this.queryData.info.formatedText = text;
 	}
+
 }

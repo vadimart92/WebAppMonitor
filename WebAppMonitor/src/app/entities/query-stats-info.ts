@@ -7,6 +7,7 @@ export class QueryStatInfo  {
 	constructor(json: any) {
 		this.count = json.count;
 		this.date = json.date;
+		this.dateId = json.dateId;
 		this.totalDuration = json.totalDuration;
 		this.avgDuration = json.avgDuration;
 		this.avgRowCount = json.avgRowCount;
@@ -42,6 +43,7 @@ export class QueryStatInfo  {
 		this.avgExecutorDurationStr = formatAsTime(this.avgExecutorDuration);
 	}
 	date:Date;
+	dateId:number;
 	totalDuration: number;
 	avgDuration: number;
 	count:number;
@@ -114,7 +116,7 @@ export class QueryStatInfoDisplayConfig {
 					new TimeColumnConfig("lockedAvgDuration", "AVG locked").with.headerDesc("AVG locked by other").width(120).freeze().build()
 				])
 				.next("text", [
-					new ColumnConfig("queryText", "Text").with.cellClass("query-stats-sql-cell").build()
+					new ColumnConfig("queryText", "Text").with.hideInfoItem().cellClass("query-stats-sql-cell").build()
 				]);
 			this.groupsMap = groupList.toGroups();
 			this.groupsMap["statements"].modifyItems(c => c.hide = false);
@@ -139,36 +141,40 @@ export class QueryStatInfoDisplayConfig {
 }
 
 class ColumnConfigModifier {
-	constructor(private columnsConfig: ColumnConfig) { }
+	constructor(private columnConfig: ColumnConfig) { }
 	build():ColumnConfig {
-		return this.columnsConfig;
+		return this.columnConfig;
 	}
 	width(windth: number): ColumnConfigModifier {
-		this.columnsConfig.width = windth;
+		this.columnConfig.width = windth;
 		return this;
 	}
 	cellClass(value: string): ColumnConfigModifier {
-		this.columnsConfig.cellClass = value;
+		this.columnConfig.cellClass = value;
+		return this;
+	}
+	hideInfoItem(): ColumnConfigModifier {
+		this.columnConfig.showInfoItem = false;
 		return this;
 	}
 	hide(val: boolean): ColumnConfigModifier {
-		this.columnsConfig.hide = val;
+		this.columnConfig.hide = val;
 		return this;
 	}
 	show(): ColumnConfigModifier {
 		return this.hide(false);
 	}
 	headerDesc(val: string): ColumnConfigModifier {
-		this.columnsConfig.headerDesc = val;
+		this.columnConfig.headerDesc = val;
 		return this;
 	}
 	sort(val: string): ColumnConfigModifier {
-		this.columnsConfig.sort = val;
+		this.columnConfig.sort = val;
 		return this;
 	}
 	freeze(): ColumnConfigModifier {
-		this.columnsConfig.suppressSizeToFit = true;
-		this.columnsConfig.suppressResize = true;
+		this.columnConfig.suppressSizeToFit = true;
+		this.columnConfig.suppressResize = true;
 		return this;
 	}
 }
@@ -216,6 +222,7 @@ class ColumnConfig {
 			label: this.headerName
 		};
 	}
+	showInfoItem: boolean = true;
 }
 
 class NumberColumnConfig extends ColumnConfig {

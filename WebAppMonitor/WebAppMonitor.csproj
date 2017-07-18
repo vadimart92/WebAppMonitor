@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
 	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-	 
+	 <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

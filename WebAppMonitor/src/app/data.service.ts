@@ -5,6 +5,8 @@ import * as moment from 'moment';
 import * as _ from "underscore"
 import {formatAsDate} from "./utils/utils"
 
+import { BaseEntity } from './entities/base-entity';
+
 export class StatsQueryOptions {
 	constructor() {
 		this.where = {};
@@ -35,7 +37,20 @@ export class ApiDataService {
 		var entity = this._em.metadataStore.getEntityType("QueryStatInfo") as EntityType;
 		entity.keyProperties.push(entity.dataProperties[1]);
 	}
-
+	async get<TEntity extends BaseEntity>(ctor: { new (): TEntity; }, filter: object): Promise<TEntity[]> {
+		let query = new EntityQuery({
+			from: ctor.name,
+			where: filter
+		});
+		return this._em.executeQuery(query)
+			.then(res => {
+				return _.map(res.results, r => new QueryStatInfo(r));
+			})
+			.catch((error) => {
+				console.log(error);
+				return Promise.reject(error);
+			});
+	}
 	async getStats(options: StatsQueryOptions): Promise<QueryStatInfo[]> {
 		var queryOptions = {
 			from: "QueryStatInfo",

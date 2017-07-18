@@ -24,8 +24,9 @@ import { OptionsComponent } from './options/options.component';
 import { QueryChartComponent } from './query-chart/query-chart.component';
 import { AdminService } from './admin.service';
 import { ApiDataService } from './data.service';
-import { IsChartVisible as PropertyValue } from './utils/ng-utils';
-import { SettingsService } from "./settings.service"
+import { IsChartVisible, IfProp } from './utils/ng-utils';
+import { SettingsService } from "./settings.service";
+import { StackListComponent } from './stack-list/stack-list.component'
 
 export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, routerInitializer: ɵg, apiDataService: ApiDataService) {
 	var entityManager = apiDataService.getEntityManager();
@@ -46,7 +47,9 @@ export function appInit(breezeBridgeAngularModule: BreezeBridgeAngularModule, ro
 		RowsLoadingDialogComponent,
 		OptionsComponent,
 		QueryChartComponent,
-		PropertyValue
+		IsChartVisible,
+		IfProp,
+		StackListComponent
 	],
 	imports: [
 		BrowserModule,
