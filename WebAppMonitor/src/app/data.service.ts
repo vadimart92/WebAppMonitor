@@ -3,19 +3,22 @@ import { QueryStatInfo } from "./entities/query-stats-info"
 import { EntityManager, EntityQuery, DataService, NamingConvention, EntityType } from 'breeze-client';
 import * as moment from 'moment';
 import * as _ from "underscore"
-import {formatAsDate} from "./utils/utils"
+import {formatAsDate, camelize} from "./utils/utils"
 
 import { BaseEntity } from './entities/base-entity';
 
-export class StatsQueryOptions {
+export class QueryOptions{
 	constructor() {
 		this.where = {};
 	}
-	date: Date;
-	queryTextId: string;
 	take: number;
 	orderBy: string[];
 	where: Object;
+}
+
+export class StatsQueryOptions extends QueryOptions{
+	date: Date;
+	queryTextId: string;
 	columns: string[];
 }
 
@@ -37,14 +40,29 @@ export class ApiDataService {
 		var entity = this._em.metadataStore.getEntityType("QueryStatInfo") as EntityType;
 		entity.keyProperties.push(entity.dataProperties[1]);
 	}
-	async get<TEntity extends BaseEntity>(ctor: { new (): TEntity; }, filter: object): Promise<TEntity[]> {
+	async get<TEntity extends BaseEntity>(ctor: { new (): TEntity; }, options: QueryOptions): Promise<TEntity[]> {
 		let query = new EntityQuery({
 			from: ctor.name,
-			where: filter
+			where: options.where || {},
+			take: options.take || 100,
+			orderBy: options.orderBy
 		});
 		return this._em.executeQuery(query)
 			.then(res => {
-				return _.map(res.results, r => new QueryStatInfo(r));
+				var keyMap = {};
+				var getKey = (key) => {
+					if (!keyMap[key]) {
+						keyMap[key] = camelize(key);
+					}
+					return keyMap[key];
+				}
+				return _.map(res.results, r => {
+					var item = new ctor();
+					_.each(r, (value, key) => {
+						item[getKey(key)] = value;
+					});
+					return item;
+				});
 			})
 			.catch((error) => {
 				console.log(error);
@@ -70,7 +88,9 @@ export class ApiDataService {
 		}
 		return this._em.executeQuery(query)
 			.then(res => {
-				return _.map(res.results, r => new QueryStatInfo(r));
+				return _.map(res.results, r => {
+					return new QueryStatInfo(r);
+				});
 			})
 			.catch((error) => {
 				console.log(error);

@@ -23,6 +23,16 @@ namespace WebAppMonitor.Controllers
 		}
 
 		[HttpGet]
+		public IQueryable<ExecutorQueryStack> ExecutorQueryStack() {
+			return _efPersistenceManager.Context.ExecutorQueryStack.AsNoTracking();
+		}
+
+		[HttpGet]
+		public IQueryable<ReaderQueryStack> ReaderQueryStack() {
+			return _efPersistenceManager.Context.ReaderQueryStack.AsNoTracking();
+		}
+
+		[HttpGet]
 		public string Metadata()
 		{
 			return _efPersistenceManager.Metadata();

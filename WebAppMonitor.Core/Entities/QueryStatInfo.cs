@@ -35,4 +35,36 @@ namespace WebAppMonitor.Core.Entities {
 		[Key]
 		public Guid NormalizedQueryTextId { get; set; }
 	}
+
+	public class Date {
+		public int Id { get; set; }
+
+		[Column("Date", TypeName = "date")]
+		public DateTime? DateValue { get; set; }
+	}
+
+	public class Setting {
+		[Key]
+		public int Id { get; set; }
+		public string Code { get; set; }
+		public string Value { get; set; }
+
+	}
+
+	public class QueryStack {
+		public string StackTrace { get; set; }
+		public int DateId { get; set; }
+		public Guid QueryId { get; set; }
+		public Guid StackId { get; set; }
+	}
+
+	[Table("VwReaderQueryStack")]
+	public class ReaderQueryStack : QueryStack {
+
+	}
+
+	[Table("VwExecutorQueryStack")]
+	public class ExecutorQueryStack : QueryStack {
+
+	}
 }

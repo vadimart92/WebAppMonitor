@@ -292,3 +292,30 @@ CREATE TABLE PerfomanceLogInfo (
 	, [CodeId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerfomanceItemCode(Id)
 );
 GO
+--
+IF (OBJECT_ID('VwReaderQueryStack', 'V') IS NOT NULL)
+	DROP VIEW VwReaderQueryStack;
+GO
+CREATE VIEW VwReaderQueryStack AS
+	WITH Report AS (
+		SELECT rl.DateId, rl.QueryId, rl.StackId
+		FROM ReaderLog rl
+		GROUP BY rl.DateId, rl.QueryId, rl.StackId
+	)
+	SELECT r.DateId, r.QueryId, r.StackId, s.StackTrace
+	fROM Report r
+	INNER JOIN Stack s ON s.Id = r.StackId
+GO
+IF (OBJECT_ID('VwExecutorQueryStack', 'V') IS NOT NULL)
+	DROP VIEW VwExecutorQueryStack;
+GO
+CREATE VIEW VwExecutorQueryStack AS
+	WITH Report AS (
+		SELECT rl.DateId, rl.QueryId, rl.StackId
+		FROM ExecutorLog rl
+		GROUP BY rl.DateId, rl.QueryId, rl.StackId
+	)
+	SELECT r.DateId, r.QueryId, r.StackId, s.StackTrace
+	fROM Report r
+	INNER JOIN Stack s ON s.Id = r.StackId
+GO
