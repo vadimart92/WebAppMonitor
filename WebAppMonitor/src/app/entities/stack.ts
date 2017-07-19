@@ -2,7 +2,7 @@
 
 export class Stack extends BaseEntity {
 	onLoad(): void {
-		
+
 	}
 	public stackTrace: string;
 	public queryId: string;
@@ -10,8 +10,7 @@ export class Stack extends BaseEntity {
 	public stackId: string;
 }
 export class ReaderQueryStack extends Stack {
-	
+
 }
 export class ExecutorQueryStack extends Stack {
-	
 }

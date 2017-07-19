@@ -4,8 +4,8 @@ import { EntityManager, EntityQuery, DataService, NamingConvention, EntityType }
 import * as moment from 'moment';
 import * as _ from "underscore"
 import {formatAsDate, camelize} from "./utils/utils"
-
 import { BaseEntity } from './entities/base-entity';
+import {ExecutorQueryStack, ReaderQueryStack} from "./entities/stack"
 
 export class QueryOptions{
 	constructor() {
@@ -37,8 +37,12 @@ export class ApiDataService {
 	}
 
 	onMetadataInitialized() {
-		var entity = this._em.metadataStore.getEntityType("QueryStatInfo") as EntityType;
+		let store = this._em.metadataStore;
+		var entity = store.getEntityType("QueryStatInfo") as EntityType;
 		entity.keyProperties.push(entity.dataProperties[1]);
+		store.registerEntityTypeCtor('QueryStatInfo', QueryStatInfo);
+		store.registerEntityTypeCtor('ExecutorQueryStack', ExecutorQueryStack);
+		store.registerEntityTypeCtor('ReaderQueryStack', ReaderQueryStack);
 	}
 	async get<TEntity extends BaseEntity>(ctor: { new (): TEntity; }, options: QueryOptions): Promise<TEntity[]> {
 		let query = new EntityQuery({
@@ -47,35 +51,30 @@ export class ApiDataService {
 			take: options.take || 100,
 			orderBy: options.orderBy
 		});
+		return this.executeQuery(query);
+	}
+	initQueryResults(res: any): any {
+		let list = res.results;
+		_.each(list, (item)=>{
+			(item as BaseEntity).onLoad();
+		});
+		return list;
+	}
+	executeQuery(query: EntityQuery) : Promise<any> {
 		return this._em.executeQuery(query)
-			.then(res => {
-				var keyMap = {};
-				var getKey = (key) => {
-					if (!keyMap[key]) {
-						keyMap[key] = camelize(key);
-					}
-					return keyMap[key];
-				}
-				return _.map(res.results, r => {
-					var item = new ctor();
-					_.each(r, (value, key) => {
-						item[getKey(key)] = value;
-					});
-					return item;
-				});
-			})
+			.then(this.initQueryResults)
 			.catch((error) => {
 				console.log(error);
 				return Promise.reject(error);
 			});
 	}
 	async getStats(options: StatsQueryOptions): Promise<QueryStatInfo[]> {
-		var queryOptions = {
+		let queryOptions = {
 			from: "QueryStatInfo",
 			where: options.where || {},
 			take: options.take,
 			orderBy: options.orderBy
-		}
+		};
 		if (options.date) {
 			queryOptions.where["date"] = { "eq": formatAsDate(options.date) };
 		}
@@ -86,15 +85,6 @@ export class ApiDataService {
 		if (options.columns && options.columns.length) {
 			query = query.select(options.columns);
 		}
-		return this._em.executeQuery(query)
-			.then(res => {
-				return _.map(res.results, r => {
-					return new QueryStatInfo(r);
-				});
-			})
-			.catch((error) => {
-				console.log(error);
-				return Promise.reject(error);
-			});
+		return this.executeQuery(query);
   }
 }

@@ -1,5 +1,5 @@
 ﻿import { Component, Output, Input, EventEmitter, OnInit} from '@angular/core';
-import { MdSnackBar } from '@angular/material';
+import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { HotkeysService, Hotkey } from 'angular2-hotkeys';
@@ -10,6 +10,7 @@ import { ApiDataService, StatsQueryOptions } from '../data.service'
 import { ChartData } from "../common/charting"
 import { QueryStatInfo, QueryStatInfoDisplayConfig } from "../entities/query-stats-info"
 import { SettingsService } from "../settings.service"
+import {PreferredStackSource, StackListComponentOptions} from "../stack-list/stack-list.component";
 
 export class QueryData {
 	info: QueryStatInfo = null;
@@ -31,12 +32,15 @@ export class QueryInfoComponent implements OnInit {
 	public avgDurationData: ChartData;
 	public countData: ChartData;
 	public totalDurationData: ChartData;
-	public selectedTabIndex: number = 0;
+	public selectedTabIndex: number = 1;
 	public chartData: any[];
+	public stackListOptions: StackListComponentOptions;
 	private  chartsConfig: Object;
 	private displayConfigProvider = new QueryStatInfoDisplayConfig();
 	private columnsConfig: any[];
-	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService, private _hotkeysService: HotkeysService, private _dataService: ApiDataService,, private settingsService: SettingsService) {
+	constructor(private _snackBar: MdSnackBar, private _statsService: QueryStatsService,
+				private _hotkeysService: HotkeysService, private _dataService: ApiDataService,
+				private settingsService: SettingsService) {
 		var navRight = this._hotkeysService.add(new Hotkey('right', this.onArrowKey.bind(this, 1)));
 		var navLeft = this._hotkeysService.add(new Hotkey('left', this.onArrowKey.bind(this, -1)));
 		var closeHotKey = this._hotkeysService.add(new Hotkey('esc', (event: KeyboardEvent): boolean => {
@@ -48,6 +52,7 @@ export class QueryInfoComponent implements OnInit {
 		}));
 		this.chartsConfig = this.displayConfigProvider.getChartsConfig();
 		this.columnsConfig = this.displayConfigProvider.getColumnsConfig().columns;
+		this.initQueryDataMock();
 	}
 	onArrowKey(direction: number, event: KeyboardEvent): boolean {
 		this.tryChangeTab(direction);
@@ -63,24 +68,30 @@ export class QueryInfoComponent implements OnInit {
 		return this.queryData.info;
 	}
 	async ngOnInit() {
-		if (!this.queryData) {
-			this.queryData = <QueryData>{
-				date: new Date(),
-				info: {
-					"normalizedQueryTextId": "a73a0e9c-acb7-4921-a5a6-db0781eb605a"
-				}
-			}
-			let visibleColumnIds = this.settingsService.getSettingsProvider("queryStatsGrid").getVisibleColumnIds();
-			this.visibleColumns = this.visibleColumns.concat(visibleColumnIds);
-		}
-		var info = this.getCurrentInfo();
-		var rows = await this._dataService.getStats(<StatsQueryOptions>{
+		let info = this.getCurrentInfo();
+		let rows = await this._dataService.getStats(<StatsQueryOptions>{
 			orderBy: ["date"],
 			queryTextId: info.normalizedQueryTextId
 		});
 		_.extend(this.queryData.info, rows[rows.length - 1]);
+		this.initStackListOptions();
 		this.prepareChartData(rows);
 	}
+
+	private initQueryDataMock() {
+		if (!this.queryData) {
+			this.queryData = <QueryData>{
+				date: new Date(),
+				info: {
+					"normalizedQueryTextId": "a73a0e9c-acb7-4921-a5a6-db0781eb605a",
+					"dateId": undefined
+				}
+			};
+			let visibleColumnIds = this.settingsService.getSettingsProvider("queryStatsGrid").getVisibleColumnIds();
+			this.visibleColumns = this.visibleColumns.concat(visibleColumnIds);
+		}
+	}
+
 	chartsData: any[] = [];
 	prepareChartData(rows) {
 		this.queryStatsInfo = rows;
@@ -114,20 +125,25 @@ export class QueryInfoComponent implements OnInit {
 	public hideMe(): void {
 		this.hide.emit(null);
 	}
-	public formatTime(seconds: number): string {
-		return this.timeUtils.formatAsTime(seconds);
-	}
-	public formatDate(date: Date): string {
-		return this.timeUtils.formatAsDate(date);
-	}
 	public onCopySql() {
-		this._snackBar.open("Done", null, {
+		this._snackBar.open("Done", null, <MdSnackBarConfig>{
 			duration: 1000
 		});
 	}
 	public async formatSql() {
 		var text = await this._statsService.formatSql(this.getCurrentInfo());
-		this.queryData.info.formatedText = text;
+		this.queryData.info.formattedText = text;
 	}
 
+	private initStackListOptions() {
+		this.stackListOptions = new StackListComponentOptions();
+		let info = this.getCurrentInfo();
+		this.stackListOptions.preferredStackSource = (info.distinctReaderLogsStacks > info.distinctExecutorLogsStacks)
+			? PreferredStackSource.Reader
+			: PreferredStackSource.Executor;
+	}
+	getIsStacksVisible():boolean {
+		let info = this.getCurrentInfo();
+		return Boolean(info.distinctReaderLogsStacks || info.distinctExecutorLogsStacks);
+	}
 }

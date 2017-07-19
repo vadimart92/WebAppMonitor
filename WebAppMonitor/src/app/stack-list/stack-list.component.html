@@ -1,3 +1,19 @@
-﻿<p>
-  Date: {{dateId}}, Text: {{queryTextId}}
-</p>
+﻿<md-radio-group [value]="stackSource" (change)="onStackSourceChanged($event.value)">
+	<md-radio-button value="executor">Executor stacks</md-radio-button>
+	<md-radio-button value="reader">Reader stacks</md-radio-button>
+</md-radio-group>
+<div class="stacks-wrap">
+	<div *ngIf="selectedItem" class="stacks-item">
+		<button class="sql-tool" md-raised-button ngxClipboard [cbContent]="selectedItem.stackTrace" (cbOnSuccess)="onStackCopySuccess()">Copy</button>
+		<p class="stack-trace-text">{{selectedItem.stackTrace}}</p>
+	</div>
+	<ag-grid-angular
+		class="ag-material stacks-grid stacks-item"
+		[ngClass]="{opened:selectedItem}"
+		[rowData]="stacks"
+		[gridOptions]="gridOptions"
+		(gridReady)="onGridReady($event)"
+		(cellClicked)="onCellClick($event)">
+	</ag-grid-angular>
+
+</div>

@@ -4,6 +4,7 @@
 		"outDir": "../out-tsc/app",
 		"module": "es2015",
 		"baseUrl": "",
+		"sourceMap": true,
 		"types": [
 			"ngx-clipboard"
 		]
@@ -14,5 +15,9 @@
 	"exclude": [
 		"test.ts",
 		"**/*.spec.ts"
+	],
+	"lib": [
+		"es2016",
+		"dom"
 	]
 }

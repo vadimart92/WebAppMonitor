@@ -1,8 +1,4 @@
 ﻿:host {
-	position: fixed;
-	display: block;
-	height: 100%;
-	width: 100%;
 	background-color: white;
 	z-index: 100;
 }
@@ -35,11 +31,16 @@
 	margin: 3px;
 }
 .sql-content {
-	width: 100%;
-	cursor: text;
-	white-space: pre;
+	font-family: 'Roboto Mono', monospace;
+	white-space: pre-wrap;
 	overflow: auto;
+	height: calc(100% - 62px);
 }
 .sql-tools .sql-tool{
 	margin-left: 10px;
+}
+.query-info-tab .query-info-tab-item {
+	padding: 10px;
+	height: calc(100vh - 208px);
+	width: calc(100% - 40px);
 }

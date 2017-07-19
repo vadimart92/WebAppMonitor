@@ -39,7 +39,7 @@ md-datepicker-content {
 .filter-wrap .filter-item-clear {
 	position: absolute;
 	top: 15px;
-	right: 0;
+	right: 30px;
 	background-color: transparent;
 	box-shadow: none;
 }

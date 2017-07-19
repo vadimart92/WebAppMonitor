@@ -1,23 +1,27 @@
 ﻿<button md-mini-fab color="primary" class="hide-button" (click)="hideMe()"><md-icon>close</md-icon></button>
 <div class="info-wrap">
-	<template ngFor let-column [ngForOf]="columnsConfig | ifProp:'showInfoItem'">
+	<ng-template ngFor let-column [ngForOf]="columnsConfig | ifProp:'showInfoItem'">
 		<h3 class="info-item" *ngIf="queryData.info[column.field]">{{column.headerName}}: <span>{{queryData.info[column.field]}}</span></h3>
-	</template>
+	</ng-template>
 </div>
-<md-tab-group dynamicHeight="true" [(selectedIndex)]="selectedTabIndex">
+<md-tab-group dynamicHeight="true" [(selectedIndex)]="selectedTabIndex" class="query-info-tab">
 	<md-tab label="Text">
-		<md-toolbar class="sql-tools">
-			<button class="sql-tool" md-raised-button ngxClipboard [cbContent]="queryData.info.formatedText || queryData.info.queryText" (cbOnSuccess)="onCopySql()">Copy</button>
-			<button class="sql-tool" md-raised-button (click)="formatSql()">Prettify</button>
-		</md-toolbar>
-		<div class="sql-content" >
-			{{queryData.info.formatedText || queryData.info.queryText}}
+		<div class="query-info-tab-item">
+			<md-toolbar class="sql-tools">
+				<button class="sql-tool" md-raised-button ngxClipboard [cbContent]="queryData.info.formatedText || queryData.info.queryText" (cbOnSuccess)="onCopySql()">Copy</button>
+				<button class="sql-tool" md-raised-button (click)="formatSql()">Prettify</button>
+			</md-toolbar>
+			<div class="sql-content" >{{queryData.info.formattedText || queryData.info.queryText}}</div>
 		</div>
 	</md-tab>
-	<md-tab label="Stacks">
-		<app-stack-list [queryTextId]="queryData.info.normalizedQueryTextId" [dateId]="queryData.info.dateId"></app-stack-list>
+	<md-tab label="Stacks" *ngIf="getIsStacksVisible()">
+		<div class="query-info-tab-item">
+			<app-stack-list [queryTextId]="queryData.info.normalizedQueryTextId" [dateId]="queryData.info.dateId" [options]="stackListOptions" ></app-stack-list>
+		</div>
 	</md-tab>
 	<md-tab [label]="chartData.chartCaption" *ngFor="let chartData of chartsData | isChartVisible:visibleColumns">
-		<app-query-chart [chartData]="chartData"></app-query-chart>
+		<div class="query-info-tab-item">
+			<app-query-chart [chartData]="chartData"></app-query-chart>
+		</div>
 	</md-tab>
 </md-tab-group>

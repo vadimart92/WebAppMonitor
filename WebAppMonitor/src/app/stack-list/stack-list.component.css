@@ -1,0 +1,23 @@
+.stacks-grid {
+	height: calc(100% - 16px);
+	width: 100%;
+}
+.stacks-grid.opened{
+	max-width: 30%;
+}
+:host /deep/ .stacks-grid .stack-row {
+	cursor: pointer;
+}
+.stacks-wrap {
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+}
+.stacks-wrap .stacks-item {
+	flex: 1 auto;
+	margin: 4px;
+	overflow: auto;
+}
+.stack-trace-text {
+	white-space: pre-wrap;
+}

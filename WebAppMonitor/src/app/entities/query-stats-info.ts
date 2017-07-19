@@ -2,37 +2,11 @@
 
 import { formatAsTime } from "../utils/utils"
 import { ChartAxisType } from "../common/charting"
+import {BaseEntity} from "./base-entity"
 
-export class QueryStatInfo  {
-	constructor(json: any) {
-		this.count = json.count;
-		this.date = json.date;
-		this.dateId = json.dateId;
-		this.totalDuration = json.totalDuration;
-		this.avgDuration = json.avgDuration;
-		this.avgRowCount = json.avgRowCount;
-		this.avgLogicalReads = json.avgLogicalReads;
-		this.avgCPU = json.avgCPU;
-		this.avgWrites = json.avgWrites;
-		this.avgAdoReads = json.avgAdoReads;
-		this.lockerCount = json.lockerCount;
-		this.lockerTotalDuration = json.lockerTotalDuration;
-		this.lockerAvgDuration = json.lockerAvgDuration;
-		this.lockedCount = json.lockedCount;
-		this.lockedTotalDuration = json.lockedTotalDuration;
-		this.lockedAvgDuration = json.lockedAvgDuration;
-		this.queryText = json.queryText;
-		this.normalizedQueryTextId = json.normalizedQueryTextId;
-		this.deadlocksCount = json.deadlocksCount;
-		this.readerLogsCount = json.readerLogsCount;
-		this.totalReaderLogsReads = json.totalReaderLogsReads;
-		this.avgReaderLogsReads = json.avgReaderLogsReads;
-		this.distinctReaderLogsStacks = json.distinctReaderLogsStacks;
-		this.executorLogsCount = json.executorLogsCount;
-		this.totalExecutorDuration = json.totalExecutorDuration;
-		this.avgExecutorDuration = json.avgExecutorDuration;
-		this.distinctExecutorLogsStacks = json.distinctExecutorLogsStacks;
-
+export class QueryStatInfo extends BaseEntity {
+	onLoad(){
+		super.onLoad();
 		this.totalDurationStr = formatAsTime(this.totalDuration);
 		this.avgDurationStr = formatAsTime(this.avgDuration);
 		this.lockerTotalDurationStr = formatAsTime(this.lockerTotalDuration);
@@ -51,7 +25,6 @@ export class QueryStatInfo  {
 	avgLogicalReads: number;
 	avgCPU:number;
 	avgWrites: number;
-	avgAdoReads: number;
 	lockerCount: number;
 	lockerTotalDuration: number;
 	lockerAvgDuration: number;
@@ -79,7 +52,7 @@ export class QueryStatInfo  {
 	totalExecutorDurationStr: string;
 	avgExecutorDurationStr: string;
 
-	formatedText: string;
+	formattedText: string;
 }
 
 export class QueryStatInfoDisplayConfig {
@@ -160,9 +133,6 @@ class ColumnConfigModifier {
 	hide(val: boolean): ColumnConfigModifier {
 		this.columnConfig.hide = val;
 		return this;
-	}
-	show(): ColumnConfigModifier {
-		return this.hide(false);
 	}
 	headerDesc(val: string): ColumnConfigModifier {
 		this.columnConfig.headerDesc = val;
@@ -270,7 +240,7 @@ class ColumnGroup {
 	}
 	toArray(): ColumnConfig[] {
 		var prevItems = this.previousGroup ? this.previousGroup.toArray() : [];
-		return prevItems.concat(this.columns);
+		return [].concat(prevItems).concat(this.columns);
 	}
 	toGroups(obj: Object = null): Object {
 		obj = obj || {};
