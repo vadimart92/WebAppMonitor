@@ -174,6 +174,9 @@ INNER JOIN	 dbo.NormQueryTextHistory t ON t.Id = gi.NormalizedQueryTextId
 INNER JOIN	dbo.Dates d ON d.Id = gi.DateId
 GO
 
+TRUNCATE TABLE Grouped_QueryStatInfo;
+go	
+
 DROP PROCEDURE  IF EXISTS ActualizeQueryStatInfo;
 GO
 
@@ -181,11 +184,21 @@ CREATE PROCEDURE ActualizeQueryStatInfo AS BEGIN
 set QUOTED_IDENTIFIER ON;
 SET ANSI_NULLS ON;
 
-TRUNCATE TABLE Grouped_QueryStatInfo;
+DECLARE @startDate INT = (select id 
+from dates 
+order by date desc
+OFFSET 2 ROWS fetch next 1  ROWS ONLY)
+
+IF NOT EXISTS (SELECT * FROM Grouped_QueryStatInfo)
+SET @startDate = (SELECT TOP 1 Id FROM Dates ORDER BY DATE ASC)
+
+DELETE Grouped_QueryStatInfo
+WHERE DateId >= @startDate;
 
 INSERT INTO Grouped_QueryStatInfo
 SELECT v.*
 FROM VwQueryStatInfo v
+WHERE DateId >= @startDate;
 
 DBCC SHRINKFILE (N'work_analisys', 0, TRUNCATEONLY)
 DBCC SHRINKFILE (N'work_analisys_log', 0, TRUNCATEONLY)
