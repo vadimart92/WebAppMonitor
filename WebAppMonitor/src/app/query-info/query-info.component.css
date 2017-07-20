@@ -1,6 +1,9 @@
 ﻿:host {
 	background-color: white;
 	z-index: 100;
+	position: absolute;
+	width: calc(100% - 30px);
+	height: calc(100% - 16px);
 }
 .hide-button {
 	position: absolute;

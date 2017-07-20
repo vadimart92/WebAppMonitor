@@ -71,7 +71,8 @@ export class QueryInfoComponent implements OnInit {
 		let info = this.getCurrentInfo();
 		let rows = await this._dataService.getStats(<StatsQueryOptions>{
 			orderBy: ["date"],
-			queryTextId: info.normalizedQueryTextId
+			queryTextId: info.normalizedQueryTextId,
+			dateId: info.dateId
 		});
 		_.extend(this.queryData.info, rows[rows.length - 1]);
 		this.initStackListOptions();
