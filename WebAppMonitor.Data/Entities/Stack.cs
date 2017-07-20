@@ -2,7 +2,7 @@
 using Dapper.Contrib.Extensions;
 
 namespace WebAppMonitor.Data.Entities {
-	[System.ComponentModel.DataAnnotations.Schema.Table("Stack")]	
+	[System.ComponentModel.DataAnnotations.Schema.Table("Stack")]
 	public class Stack {
 		[ExplicitKey]
 		public Guid Id { get; set; }

@@ -76,6 +76,15 @@ namespace WebAppMonitor.Tests
 		}
 
 		[Test]
+		public async Task ImportPerformanceLogs() {
+			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "PerformanceLogger.0.json");
+			file = ShareFile(file);
+			string requestUri = $"/api/Admin/importPerformanceLogs?file={Uri.EscapeDataString(file)}";
+			HttpResponseMessage response = await _client.GetAsync(requestUri);
+			response.EnsureSuccessStatusCode();
+		}
+
+		[Test]
 		public async Task PrimaryImport() {
 			List<FileInfo> files = Directory.EnumerateFiles(@"\\tscore-dev-13\WorkAnalisys\xevents", "collect_long_locks*.xel",
 					SearchOption.AllDirectories)

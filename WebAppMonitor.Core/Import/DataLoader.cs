@@ -52,6 +52,7 @@ namespace WebAppMonitor.Core.Import {
 #if DEBUG
 		return;
 #endif
+#pragma warning disable 162
 			_connectionProvider.GetConnection(connection => {
 				string db = connection.Database;
 				connection.Execute($@"BACKUP DATABASE [{db}] TO DISK = N'C:\BAK\{db}_compressed.bak' WITH NAME = N'{db
@@ -59,6 +60,7 @@ namespace WebAppMonitor.Core.Import {
 						commandTimeout: _commandTimeout);
 				_logger.LogInformation("Db backup created.");
 			});
+#pragma warning restore 162
 		}
 
 		private void ImportLongLocksData(string directory) {
@@ -119,8 +121,8 @@ namespace WebAppMonitor.Core.Import {
 					SafeExecute(() => ImportDeadLocksData(directory));
 				}
 			}
-		    _dateRepository.Refresh();
-            foreach (string readerLog in pathProvider.GetReaderLogs()) {
+			_dateRepository.Refresh();
+			foreach (string readerLog in pathProvider.GetReaderLogs()) {
 				SafeExecute(() => ImportReaderLogs(readerLog));
 			}
 			foreach (string executorLog in pathProvider.GetExecutorLogs()) {

@@ -55,6 +55,12 @@ namespace WebAppMonitor.Controllers {
 			return Ok();
 		}
 
+		[HttpGet("importPerformanceLogs")]
+		public IActionResult ImportPerformanceLogs(string file) {
+			_dataLoader.ImportPerfomanceLoggerLogs(file);
+			return Ok();
+		}
+
 		[HttpGet("importAllByDates")]
 		public IActionResult ImportAllByDates(string dates) {
 			var parsedDates = dates.Split(',').Select(DateTime.Parse).ToList();

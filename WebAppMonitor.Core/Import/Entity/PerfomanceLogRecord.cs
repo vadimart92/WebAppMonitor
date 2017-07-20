@@ -1,13 +1,18 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace WebAppMonitor.Core.Import.Entity {
+
+
+
 	public class PerfomanceLogRecord : IJsonLogWithHash {
+		[JsonProperty("d")]
 		public DateTime Date { get; set; }
-		public string Level { get; set; }
-		public string Appname { get; set; }
-		public string Logger { get; set; }
+		[JsonProperty("t")]
 		public string Thread { get; set; }
-		public string Ndc { get; set; }
+		[JsonProperty("u")]
+		public string UserName { get; set; }
+		[JsonProperty("m")]
 		public Messageobject MessageObject { get; set; }
 
 		private byte[] _bytes;

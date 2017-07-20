@@ -12,7 +12,10 @@ namespace WebAppMonitor.Data
 	public interface IRecordWithDate
 	{
 
-		DateTime Date { get; set; }
+		DateTime Date
+		{
+			get; set;
+		}
 
 	}
 
@@ -25,11 +28,25 @@ namespace WebAppMonitor.Data
 			Insert(connection, items);
 		}
 
-		private static void Insert<T>(DbConnection connection, IEnumerable<T> items) where T : class {
+		public static void BulkInsert<T>(this IEnumerable<T> items, IDbConnectionProvider connectionProvider,
+				bool checkConstraints = true)
+			where T : class {
+			if (IsItemsEmpty(items)) {
+				return;
+			}
+			connectionProvider.GetConnection(connection => {
+				Insert(connection, items, checkConstraints);
+			});
+		}
+
+		private static void Insert<T>(DbConnection connection, IEnumerable<T> items, bool checkConstraints = true)
+			where T : class {
 			string tableName = OrmUtils.GetTableName<T>();
-			using (var sqlBulkCopy = new SqlBulkCopy(connection.ConnectionString,
-				SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers 
-				| SqlBulkCopyOptions.UseInternalTransaction)) {
+			var options = SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction;
+			if (checkConstraints) {
+				options = options | SqlBulkCopyOptions.CheckConstraints;
+			}
+			using (var sqlBulkCopy = new SqlBulkCopy(connection.ConnectionString, options)) {
 				sqlBulkCopy.DestinationTableName = tableName;
 				sqlBulkCopy.EnableStreaming = true;
 				foreach (var columnName in OrmUtils.GetColumnNames<T>()) {
@@ -41,15 +58,6 @@ namespace WebAppMonitor.Data
 			}
 		}
 
-		public static void BulkInsert<T>(this IEnumerable<T> items, IDbConnectionProvider connectionProvider) 
-				where T : class {
-			if (IsItemsEmpty(items)) {
-				return;
-			}
-			connectionProvider.GetConnection(connection => {
-				Insert(connection, items);
-			});
-		}
 
 		public static DateTime GetLastQueryDate<T>(this IDbConnectionProvider connectionProvider) where T : class, IRecordWithDate {
 			string tableName = OrmUtils.GetTableName<T>();

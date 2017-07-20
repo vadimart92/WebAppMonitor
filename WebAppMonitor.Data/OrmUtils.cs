@@ -9,6 +9,12 @@ using WebAppMonitor.Data.Entities;
 
 namespace WebAppMonitor.Data
 {
+
+	public class IdColumnAttribute: ColumnAttribute
+	{
+
+	}
+
 	public static class OrmUtils
 	{
 		private static readonly ConcurrentDictionary<Type, string> TableNameCahe = new ConcurrentDictionary<Type, string>();

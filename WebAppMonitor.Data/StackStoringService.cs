@@ -5,7 +5,6 @@ using WebAppMonitor.Core;
 using WebAppMonitor.Core.Common;
 using WebAppMonitor.Core.Import;
 using WebAppMonitor.Data.Entities;
-using WebAppMonitor.DataProcessing;
 
 namespace WebAppMonitor.Data {
 	public class StackStoringService : BaseSynchronizedWorker, IStackStoringService{
@@ -22,9 +21,11 @@ namespace WebAppMonitor.Data {
 		}
 
 		protected override void SaveItems() {
-			_pendingStacks.BulkInsert(_connectionProvider);
-			Logger.LogInformation("{0} stasks inserted", _pendingStacks.Count);
-			_pendingStacks.Clear();
+			if (_pendingStacks.Count > 0) {
+				_pendingStacks.BulkInsert(_connectionProvider);
+				Logger.LogInformation("{0} stasks inserted", _pendingStacks.Count);
+				_pendingStacks.Clear();
+			}
 		}
 
 		public Guid GetOrCreate(string stackTrace, string source) {
