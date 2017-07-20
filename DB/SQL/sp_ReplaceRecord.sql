@@ -37,9 +37,10 @@ CREATE PROCEDURE sp_ReplaceRecord (@tableName NVARCHAR(MAX), @mapTableName NVARC
 END;
 GO
 ----usage
-----CREATE TABLE #map (OldId UNIQUEIDENTIFIER, NewId UNIQUEIDENTIFIER)ж
+--CREATE TABLE #map (OldId int, NewId int);
 ----insert
---EXEC sp_ReplaceRecord @tableName='NormQueryTextHistory', @mapTableName='#map'
+--insert into #map values (49, 48)
+--EXEC sp_ReplaceRecord @tableName='dates', @mapTableName='#map'
 --DROP TABLE #map
 
 

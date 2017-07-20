@@ -1,4 +1,6 @@
-﻿namespace WebAppMonitor.DataProcessing
+﻿using System.Diagnostics;
+
+namespace WebAppMonitor.DataProcessing
 {
 	using System;
 	using WebAppMonitor.Core.Import;
@@ -17,12 +19,15 @@
 
 		private void SafeExecute<TLogRecord>(string file, Func<IJsonLogStoringService, Action<TLogRecord>> action)
 				where TLogRecord : IJsonLogWithHash {
-			using(_jsonLogStoringService.BeginWork()) {
+			using (_jsonLogStoringService.BeginWork()){
 				var addRecordAction = action(_jsonLogStoringService);
 				foreach(TLogRecord logRecord in _jsonLogParser.ReadFile<TLogRecord>(file)) {
 					try {
 						addRecordAction(logRecord);
-					} catch(Exception e) {
+					} catch(Exception) {
+					    if (Debugger.IsAttached) {
+					        Debugger.Break();
+					    }
 						throw;
 					}
 				}

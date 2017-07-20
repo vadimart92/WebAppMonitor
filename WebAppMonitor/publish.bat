@@ -1,1 +1,4 @@
-dotnet msbuild /t:Publish /p:Configuration=Release /p:OutputPath=\\tscore-dev-13\WorkAnalisys\WebApp
+ng build -prod --aot=false
+rem Angular build finished
+dotnet msbuild WebAppMonitor.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=%~dp0Properties\PublishProfiles\FolderProfile.pubxml
+pause

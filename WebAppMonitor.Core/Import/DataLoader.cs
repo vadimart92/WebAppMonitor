@@ -111,7 +111,6 @@ namespace WebAppMonitor.Core.Import {
 
 		private void ImportData(IDataFilePathProvider pathProvider, DataLoadSettings settings = null) {
 			_logger.LogInformation("Import daily data started for: {0:dd-MM-yyyy}", pathProvider.GetDate());
-			_dateRepository.Refresh();
 			var stopwatch = Stopwatch.StartNew();
 			if (settings == null || settings.LoadExtendedEvents) {
 				foreach(string directory in pathProvider.GetDailyExtEventsDirs()) {
@@ -120,7 +119,8 @@ namespace WebAppMonitor.Core.Import {
 					SafeExecute(() => ImportDeadLocksData(directory));
 				}
 			}
-			foreach (string readerLog in pathProvider.GetReaderLogs()) {
+		    _dateRepository.Refresh();
+            foreach (string readerLog in pathProvider.GetReaderLogs()) {
 				SafeExecute(() => ImportReaderLogs(readerLog));
 			}
 			foreach (string executorLog in pathProvider.GetExecutorLogs()) {

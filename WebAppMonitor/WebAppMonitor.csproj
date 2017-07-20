@@ -72,11 +72,7 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-	<Target Name="Build Angular" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
-		<Message Text="* * * * * * Building Angular App * * * * * *" Importance="high" />
-		<Exec Command="ng build -prod --aot=false" />
-	</Target>
-	<Target Name="StartNg" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Debug'">
+	<Target Name="StartNg" AfterTargets="PreBuildEvent" Condition="$(Configuration) == 'Debug'">
 		<Message Text="*** Starting NG dev" Importance="high" />
 		<Exec Command="startNgDev.bat" />
 	</Target>

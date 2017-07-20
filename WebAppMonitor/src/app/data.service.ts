@@ -1,7 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { QueryStatInfo } from "./entities/query-stats-info"
 import { EntityManager, EntityQuery, DataService, NamingConvention, EntityType } from 'breeze-client';
-import * as moment from 'moment';
 import * as _ from "underscore"
 import {formatAsDate, camelize} from "./utils/utils"
 import { BaseEntity } from './entities/base-entity';
@@ -38,15 +37,21 @@ export class ApiDataService {
 
 	onMetadataInitialized() {
 		let store = this._em.metadataStore;
-		var entity = store.getEntityType("QueryStatInfo") as EntityType;
+		let entity = store.getEntityType("QueryStatInfo") as EntityType;
 		entity.keyProperties.push(entity.dataProperties[1]);
 		store.registerEntityTypeCtor('QueryStatInfo', QueryStatInfo);
 		store.registerEntityTypeCtor('ExecutorQueryStack', ExecutorQueryStack);
 		store.registerEntityTypeCtor('ReaderQueryStack', ReaderQueryStack);
 	}
 	async get<TEntity extends BaseEntity>(ctor: { new (): TEntity; }, options: QueryOptions): Promise<TEntity[]> {
+		let prototype = ctor.prototype;
+		let entityType = prototype ? prototype.entityType : null;
+		let from = entityType ? entityType.defaultResourceName : null;
+		if (!from){
+			return Promise.reject("cant find entity name")
+		}
 		let query = new EntityQuery({
-			from: ctor.name,
+			from: from,
 			where: options.where || {},
 			take: options.take || 100,
 			orderBy: options.orderBy
