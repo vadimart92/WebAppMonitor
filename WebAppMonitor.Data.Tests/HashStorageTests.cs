@@ -21,7 +21,7 @@ namespace WebAppMonitor.Data.Tests {
 		[Test, Category("PreCommit")]
 		[AutoNSubstituteData]
 		public void GetHash(IDbConnectionProvider connectionProvider) {
-			var sut = new HashStorage<Guid, object>(o => Tuple.Create(new byte[0], Guid.Empty), "", connectionProvider);
+			var sut = new MemoryHashStorage<Guid, object>(connectionProvider);
 			var query =
 				@"UPDATE [dbo].[SysProcessData] SET [ModifiedOn] = @Now, [PropertiesData] = @P1 WHERE [Id] = @Id";
 			var expectedvalue = StringToByteArray("BD54F39D47CAE9B82133084321748F00C6827C3FE68AC8CFCCEBA7C9A25149" +

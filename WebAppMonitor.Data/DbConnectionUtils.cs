@@ -40,7 +40,7 @@ namespace WebAppMonitor.Data
 		}
 
 		private static void Insert<T>(DbConnection connection, IEnumerable<T> items, bool checkConstraints = true)
-			where T : class {
+				where T : class {
 			string tableName = OrmUtils.GetTableName<T>();
 			var options = SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction;
 			if (checkConstraints) {
@@ -50,7 +50,7 @@ namespace WebAppMonitor.Data
 				sqlBulkCopy.DestinationTableName = tableName;
 				sqlBulkCopy.EnableStreaming = true;
 				foreach (var columnName in OrmUtils.GetColumnNames<T>()) {
-					sqlBulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping(columnName, columnName));
+					sqlBulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping(columnName.Item1, columnName.Item2));
 				}
 				using (var reader = ObjectReader.Create(items)) {
 					sqlBulkCopy.WriteToServer(reader);

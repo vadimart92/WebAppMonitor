@@ -59,16 +59,15 @@ namespace WebAppMonitor.Data {
 		}
 	}
 
-	public class HashStorage<TData, TStorage> {
+	public class MemoryHashStorage<TData, TStorage> where TStorage : class {
 		private readonly IDbConnectionProvider _dbConnection;
 		private readonly SHA512 _hasher = SHA512.Create();
 		private readonly ResettableLazy<Dictionary<byte[], TData>> _map;
 		private Dictionary<byte[], TData> NormQueryMap => _map.Value;
 
-		public HashStorage(Func<TStorage, Tuple<byte[], TData>> mapFunc, string query, 
-				IDbConnectionProvider dbConnection) {
+		public MemoryHashStorage(IDbConnectionProvider dbConnection) {
 			_dbConnection = dbConnection;
-			_map = new ResettableLazy<Dictionary<byte[], TData>>(()=> InitMap(mapFunc, query));
+			_map = new ResettableLazy<Dictionary<byte[], TData>>(InitMap);
 		}
 
 		public void Reset() {
@@ -90,16 +89,21 @@ namespace WebAppMonitor.Data {
 			return _hasher.ComputeHash(bytes);
 		}
 
-		private Dictionary<byte[], TData> InitMap(Func<TStorage, Tuple<byte[], TData>> mapFunc, string query) {
+		private Dictionary<byte[], TData> InitMap() {
 			var result = new Dictionary<byte[], TData>(ByteArrayComparer.Instance);
 			_dbConnection.GetConnection(connection => {
-				var items = connection.Query<TStorage>(query);
-				foreach (TStorage storageItem in items) {
-					var map = mapFunc(storageItem);
-					result[map.Item1] = map.Item2;
+				var query = OrmUtils.GetHashQueryText<TStorage>();
+				var items = connection.Query<BaseHashEntity<TData>>(query);
+				foreach (var storageItem in items) {
+					result[storageItem.Hash] = storageItem.Id;
 				}
 			});
 			return result;
+		}
+
+		public class BaseHashEntity<TKey> {
+			public TKey Id { get; set; }
+			public byte[] Hash { get; set; }
 		}
 	}
 }

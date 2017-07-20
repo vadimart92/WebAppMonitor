@@ -257,6 +257,7 @@
     <Compile Include="Entities\BaseHashStorage.cs" />
     <Compile Include="Entities\BaseLookup.cs" />
     <Compile Include="Entities\ExecutorLog.cs" />
+    <Compile Include="IEntityWithHash.cs" />
     <Compile Include="Entities\ImportedExecutorLogRecord.cs" />
     <Compile Include="Entities\ImportedPerfomanceLogRecord.cs" />
     <Compile Include="Entities\ImportedReaderLogRecord.cs" />
@@ -270,7 +271,7 @@
     <Compile Include="Entities\Stack.cs" />
     <Compile Include="Entities\StackSource.cs" />
     <Compile Include="ExtendedEventDataSaver.cs" />
-    <Compile Include="HashStorage.cs" />
+    <Compile Include="MemoryHashStorage.cs" />
     <Compile Include="JsonLogStoringService.cs" />
     <Compile Include="OrmUtils.cs" />
     <Compile Include="PerfomanceItemCodeStoringService.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="SimpleDataProvider.cs" />
     <Compile Include="SimpleLookupRepository.cs" />
     <Compile Include="StackStoringService.cs" />
+    <Compile Include="StringItemsStoringService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

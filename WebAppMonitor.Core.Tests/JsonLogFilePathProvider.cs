@@ -14,8 +14,8 @@ namespace WebAppMonitor.Core.Tests
     public class JsonLogFilePathProviderTestCase
     {
 		[Test, AutoNSubstituteData]
-	    public void GetExecutorLogs(ISettings settings, ILogger logger) {
-			DataFilePathProvider sut = SetupProvider(settings, logger);
+	    public void GetExecutorLogs(ISettings settings) {
+			DataFilePathProvider sut = SetupProvider(settings);
 			settings.ExecutorLogFileName.Returns("LoggingDataReader.json.0.json");
 			var counter = 0;
 			foreach (string executorLog in sut.GetExecutorLogs()) {
@@ -30,8 +30,8 @@ namespace WebAppMonitor.Core.Tests
 	    }
 
 	    [Test, AutoNSubstituteData]
-	    public void GetReaderLogs(ISettings settings, ILogger logger) {
-			DataFilePathProvider sut = SetupProvider(settings, logger);
+	    public void GetReaderLogs(ISettings settings) {
+			DataFilePathProvider sut = SetupProvider(settings);
 		    settings.ReaderLogFileName.Returns("LoggingDataReader.json.0.json");
 			var counter = 0;
 			foreach (string executorLog in sut.GetReaderLogs()) {
@@ -42,8 +42,8 @@ namespace WebAppMonitor.Core.Tests
 		}
 
 		[Test, AutoNSubstituteData]
-	    public void GetPerfomanceLogs(ISettings settings, ILogger logger) {
-			DataFilePathProvider sut = SetupProvider(settings, logger);
+	    public void GetPerfomanceLogs(ISettings settings) {
+			DataFilePathProvider sut = SetupProvider(settings);
 			settings.PerfomanceLogFileName.Returns("LoggingDataReader.json.0.json");
 			var counter = 0;
 			foreach (string executorLog in sut.GetPerfomanceLogs()) {
@@ -53,12 +53,12 @@ namespace WebAppMonitor.Core.Tests
 			counter.Should().Be(4);
 		}
 
-	    private static DataFilePathProvider SetupProvider(ISettings settings, ILogger logger) {
+	    private static DataFilePathProvider SetupProvider(ISettings settings) {
 		    settings.DailyLogsDirectoryTemplate.Returns("yyyy_MM_dd");
 		    string dirPrefix = TestContext.CurrentContext.TestDirectory;
 		    settings.DirectoriesWithJsonLog.Returns(
 			    $"{dirPrefix}\\TestDir\\LogDir3;{dirPrefix}\\TestDir\\LogDir2;{dirPrefix}\\TestDir\\LogDir1");
-		    var sut = new DataFilePathProvider(settings, new StaticDateTimeProvider(new DateTime(2017, 07, 13)), logger);
+		    var sut = new DataFilePathProvider(settings, new StaticDateTimeProvider(new DateTime(2017, 07, 13)), Substitute.For<ILogger<DataFilePathProvider>>());
 		    return sut;
 	    }
 

@@ -14,7 +14,7 @@ namespace WebAppMonitor.Data.Tests
 		[AutoNSubstituteData]
 		public void BinaryBulkInsert(IDbConnectionProvider connectionProvider) {
 			var sut = new List<NormQueryTextHistory> {
-				new NormQueryTextHistory{Id = Guid.NewGuid(), QueryHash = new byte[]{1,2,3}, NormalizedQuery = "asd"}
+				new NormQueryTextHistory{Id = Guid.NewGuid(), HashValue = new byte[]{1,2,3}, NormalizedQuery = "asd"}
 			};
 			sut.BulkInsert(connectionProvider);
 		}

@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="ByteArrayComparerTestCase.cs" />
     <Compile Include="DbConnectionUtilsTests.cs" />
+    <Compile Include="Entities.cs" />
     <Compile Include="ExtendedEventDataSaverTests.cs" />
     <Compile Include="HashStorageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

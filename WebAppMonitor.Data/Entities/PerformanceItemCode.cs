@@ -4,18 +4,20 @@ using Dapper.Contrib.Extensions;
 namespace WebAppMonitor.Data.Entities
 {
 	[System.ComponentModel.DataAnnotations.Schema.Table("PerformanceItemCode")]
-	public class PerformanceItemCode
+	public class PerformanceItemCode : IEntityWithHash<Guid>
 	{
-		[ExplicitKey]
-		public Guid Id
-		{
+		[ExplicitKey, IdColumn("Id")]
+		public Guid Id {
 			get; set;
 		}
+		
 		public string Code
 		{
 			get; set;
 		}
-		public byte[] CodeHash
+
+		[HashColumn("CodeHash")]
+		public byte[] HashValue
 		{
 			get; set;
 		}
