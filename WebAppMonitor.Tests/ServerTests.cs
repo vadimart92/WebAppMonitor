@@ -102,7 +102,10 @@ namespace WebAppMonitor.Tests
 		[Test]
 		public async Task DailyImport() {
 			List<DateTime> dates = new List<DateTime> {
-				new DateTime(2017,7, 20)
+				new DateTime(2017,7, 18),
+				new DateTime(2017,7, 19),
+				new DateTime(2017,7, 20),
+				new DateTime(2017,7, 21)
 			};
 			string datesString = string.Join(",", dates.Select(d => d.ToString("yyyy-MM-dd")));
 			string requestUri = $"/api/Admin/importAllByDates?dates={Uri.EscapeDataString(datesString)}";

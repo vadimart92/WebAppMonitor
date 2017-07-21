@@ -20,7 +20,7 @@ namespace WebAppMonitor.Data {
 		protected override void SaveItems() {
 			if (PendingItems.Count > 0) {
 				PendingItems.BulkInsert(_connectionProvider, false);
-				Logger.LogInformation($"{0} {typeof(TItemContainer).Name} inserted", PendingItems.Count);
+				Logger.LogInformation($"{PendingItems.Count} {typeof(TItemContainer).Name} inserted");
 				PendingItems.Clear();
 			}
 		}

@@ -44,7 +44,7 @@ namespace WebAppMonitor.DataProcessing.Tests {
 		public void ReadFile_PerfomanceLogRecord() {
 			string file = Path.Combine(TestContext.CurrentContext.TestDirectory, "PerformanceLogger.0.json");
 			var parser = new Json.JsonLogParser();
-			var data = parser.ReadFile<PerfomanceLogRecord>(file).ToList();
+			var data = parser.ReadFile<PerformanceLogRecord>(file).ToList();
 			data.Count.Should().Be(3935);
 			data.Any(d => string.IsNullOrEmpty(d.UserName)).Should().BeFalse();
 			data.Any(d => string.IsNullOrEmpty(d.Thread)).Should().BeFalse();

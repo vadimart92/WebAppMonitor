@@ -114,13 +114,13 @@ namespace WebAppMonitor.Core.Import {
 		private void ImportData(IDataFilePathProvider pathProvider, DataLoadSettings settings = null) {
 			_logger.LogInformation("Import daily data started for: {0:dd-MM-yyyy}", pathProvider.GetDate());
 			var stopwatch = Stopwatch.StartNew();
-			if (settings == null || settings.LoadExtendedEvents) {
-				foreach(string directory in pathProvider.GetDailyExtEventsDirs()) {
-					SafeExecute(() => ImportLongQueriesData(directory));
-					SafeExecute(() => ImportLongLocksData(directory));
-					SafeExecute(() => ImportDeadLocksData(directory));
-				}
-			}
+			//if (settings == null || settings.LoadExtendedEvents) {
+			//	foreach(string directory in pathProvider.GetDailyExtEventsDirs()) {
+			//		SafeExecute(() => ImportLongQueriesData(directory));
+			//		SafeExecute(() => ImportLongLocksData(directory));
+			//		SafeExecute(() => ImportDeadLocksData(directory));
+			//	}
+			//}
 			_dateRepository.Refresh();
 			foreach (string readerLog in pathProvider.GetReaderLogs()) {
 				SafeExecute(() => ImportReaderLogs(readerLog));
@@ -128,10 +128,8 @@ namespace WebAppMonitor.Core.Import {
 			foreach (string executorLog in pathProvider.GetExecutorLogs()) {
 				SafeExecute(() => ImportDbExecutorLogs(executorLog));
 			}
-			if (bool.Parse(_settings.LoadJsonLogs)) {
-				foreach (string perfomanceLog in pathProvider.GetPerfomanceLogs()) {
-					SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
-				}
+			foreach (string perfomanceLog in pathProvider.GetPerfomanceLogs()) {
+				SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
 			}
 			stopwatch.Stop();
 			_logger.LogInformation("Import daily data completed in: {0}", stopwatch.Elapsed);

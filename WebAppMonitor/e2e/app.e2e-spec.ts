@@ -1,4 +1,4 @@
-import { WebAppMonitorPage } from './app.po';
+﻿import { WebAppMonitorPage } from './app.po';
 
 describe('web-app-monitor App', () => {
   let page: WebAppMonitorPage;
@@ -7,8 +7,8 @@ describe('web-app-monitor App', () => {
     page = new WebAppMonitorPage();
   });
 
-  it('should display welcome message', () => {
+  it('should display welcome message', async () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!!');
+    expect(await page.getParagraphText()).toEqual('Welcome to app!!');
   });
 });

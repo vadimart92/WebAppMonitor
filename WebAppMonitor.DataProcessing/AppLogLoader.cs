@@ -43,7 +43,7 @@ namespace WebAppMonitor.DataProcessing
 		}
 
 		public void LoadPerfomanceLogs(string file) {
-			SafeExecute<PerfomanceLogRecord>(file, store => store.RegisterPerfomanceLogItem);
+			SafeExecute<PerformanceLogRecord>(file, store => store.RegisterPerfomanceLogItem);
 		}
 
 	}

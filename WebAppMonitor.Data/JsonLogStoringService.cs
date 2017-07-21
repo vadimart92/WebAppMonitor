@@ -19,6 +19,7 @@ namespace WebAppMonitor.Data {
 		private readonly IDateRepository _dateRepository;
 		private readonly List<ReaderLog> _pendingReaderLogs = new List<ReaderLog>();
 		private readonly List<ExecutorLog> _pendingExecutorLogs = new List<ExecutorLog>();
+		private readonly List<PerformanceLogInfoRecord> _pendingPerfLogs = new List<PerformanceLogInfoRecord>();
 		private readonly ILogger _logger;
 		private readonly IPerfomanceItemCodeStoringService _codeStoringService;
 		private readonly HashStorage<ImportedReaderLogRecord> _importedReaderLogs;
@@ -49,20 +50,22 @@ namespace WebAppMonitor.Data {
 			_queryTextStoringService.Flush();
 			_stackStoringService.Flush();
 			_codeStoringService.Flush();
-			if (_pendingReaderLogs.Any()) {
-				_pendingReaderLogs.BulkInsert(_connectionProvider);
-				_logger.LogInformation("{0} reader logs inserted", _pendingReaderLogs.Count);
-				_pendingReaderLogs.Clear();
-			}
+			InsertItems(_pendingReaderLogs);
 			_importedReaderLogs.Flush();
-			if (_pendingExecutorLogs.Any()) {
-				_pendingExecutorLogs.BulkInsert(_connectionProvider);
-				_logger.LogInformation("{0} executor logs inserted", _pendingExecutorLogs.Count);
-				_pendingExecutorLogs.Clear();
-			}
+			InsertItems(_pendingExecutorLogs);
 			_importedExecutorLogs.Flush();
-
+			InsertItems(_pendingPerfLogs, false);
 			_importedPerfLogs.Flush();
+		}
+
+		void InsertItems<TItem>(IList<TItem> collection, bool checkConstraints = true)
+			where TItem : class {
+			if (collection.Count == 0) {
+				return;
+			}
+			collection.BulkInsert(_connectionProvider, checkConstraints);
+			_logger.LogInformation($"{collection.Count} {typeof(TItem).Name} inserted");
+			collection.Clear();
 		}
 
 		public ITransaction BeginWork() {
@@ -105,18 +108,19 @@ namespace WebAppMonitor.Data {
 			_pendingExecutorLogs.Add(item);
 		}
 
-		public void RegisterPerfomanceLogItem(PerfomanceLogRecord logRecord) {
+		public void RegisterPerfomanceLogItem(PerformanceLogRecord logRecord) {
 			var hash = logRecord.GetSourceLogHash();
 			if (!_importedPerfLogs.Add(hash)) {
 				return;
 			}
-			PerfomanceLogRecord.Messageobject msg = logRecord.MessageObject;
+			PerformanceLogRecord.Messageobject msg = logRecord.MessageObject;
 			if (msg == null) return;
-			var item = _dateRepository.CreateInfoRecord<PerfomanceLogInfoRecord>(logRecord.Date);
+			var item = _dateRepository.CreateInfoRecord<PerformanceLogInfoRecord>(logRecord.Date);
 			item.Id = msg.Id;
 			item.ParentId = msg.ParentId;
 			item.Duration = msg.Duration;
 			item.CodeId = _codeStoringService.AddCode(msg.Code);
+			_pendingPerfLogs.Add(item);
 		}
 
 	}

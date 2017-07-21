@@ -3,9 +3,7 @@ using Newtonsoft.Json;
 
 namespace WebAppMonitor.Core.Import.Entity {
 
-
-
-	public class PerfomanceLogRecord : IJsonLogWithHash {
+	public class PerformanceLogRecord : IJsonLogWithHash {
 		[JsonProperty("d")]
 		public DateTime Date { get; set; }
 		[JsonProperty("t")]

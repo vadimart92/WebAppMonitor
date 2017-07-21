@@ -275,21 +275,22 @@ CREATE INDEX IDX_QueryHistory_end_time_utc
 ON QueryHistory (end_time_utc) 
 ON [PRIMARY]  
 GO
-
-IF (OBJECT_ID('PerfomanceItemCode', 'U') IS NULL)
-CREATE TABLE PerfomanceItemCode (
+go
+IF (OBJECT_ID('PerformanceItemCode', 'U') IS NULL)
+CREATE TABLE PerformanceItemCode (
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()
 	, Code NVARCHAR(MAX)
+	,[Hash] VARBINARY(64)
 );
 GO
-IF (OBJECT_ID('PerfomanceLogInfo', 'U') IS NULL)
-CREATE TABLE PerfomanceLogInfo (
+IF (OBJECT_ID('PerformanceLogInfo', 'U') IS NULL)
+CREATE TABLE PerformanceLogInfo (
 	Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID()
 	, [Date] DATETIME2
 	, [DateId] INT FOREIGN KEY REFERENCES Dates (Id)
 	, [Duration] BIGINT
-	, [ParentId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerfomanceLogInfo(Id)
-	, [CodeId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerfomanceItemCode(Id)
+	, [ParentId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerformanceLogInfo(Id)
+	, [CodeId] UNIQUEIDENTIFIER FOREIGN KEY REFERENCES PerformanceItemCode(Id)
 );
 GO
 --

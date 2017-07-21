@@ -16,7 +16,7 @@ namespace WebAppMonitor.Data.Entities
 			get; set;
 		}
 
-		[HashColumn("CodeHash")]
+		[HashColumn("Hash")]
 		public byte[] HashValue
 		{
 			get; set;

@@ -28,8 +28,8 @@ namespace WebAppMonitor.Data.Entities
 		public Guid QueryBId { get; set; }
 	}
 
-	[System.ComponentModel.DataAnnotations.Schema.Table("PerfomanceLogInfo")]
-	public class PerfomanceLogInfoRecord : BaseInfoRecord
+	[System.ComponentModel.DataAnnotations.Schema.Table("PerformanceLogInfo")]
+	public class PerformanceLogInfoRecord : BaseInfoRecord
 	{
 		public Guid ParentId { get; set; }
 		public Guid CodeId { get; set; }

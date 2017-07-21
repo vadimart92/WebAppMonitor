@@ -7,7 +7,7 @@ namespace WebAppMonitor.Core.Import
 	    ITransaction BeginWork();
 	    void RegisterReaderLogItem(ReaderLogRecord logRecord);
 	    void RegisterExecutorLogRecord(ExecutorLogRecord logRecord);
-	    void RegisterPerfomanceLogItem(PerfomanceLogRecord logRecord);
+	    void RegisterPerfomanceLogItem(PerformanceLogRecord logRecord);
 
     }
 }
