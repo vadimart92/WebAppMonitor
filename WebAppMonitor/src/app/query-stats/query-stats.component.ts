@@ -58,7 +58,7 @@ export class QueryStatsComponent implements OnInit {
 	}
 	initColumns() {
 		let columnsConfig = this._queryStatInfoDisplayConfigProvider.getColumnsConfig();
-		var savedVisibleColumns = this.settingsProvider.getVisibleColumnIds();
+		let savedVisibleColumns = this.settingsProvider.getVisibleColumnIds();
 		if (savedVisibleColumns) {
 			_.each(columnsConfig.columns, column => {
 				column.hide = savedVisibleColumns.indexOf(column.colId) === -1;
@@ -68,7 +68,7 @@ export class QueryStatsComponent implements OnInit {
 		this.actualizeVisibleColumns();
 	}
 	initHotKeys() {
-		var closeHotKey = this._hotkeysService.add(new Hotkey('alt+n', (event: KeyboardEvent): boolean => {
+		let closeHotKey = this._hotkeysService.add(new Hotkey('alt+n', (event: KeyboardEvent): boolean => {
 			this._hotkeysService.remove(closeHotKey);
 			this.sideNavOpened = !this.sideNavOpened;
 			return false;

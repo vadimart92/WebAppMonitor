@@ -84,9 +84,6 @@ export class ApiDataService {
 		if (options.date) {
 			queryOptions.where["date"] = { "eq": formatAsDate(options.date) };
 		}
-		if (options.dateId) {
-			queryOptions.where["dateId"] = { "eq": options.dateId };
-		}
 		if (options.queryTextId) {
 			queryOptions.where["normalizedQueryTextId"] = { "eq": options.queryTextId };
 		}

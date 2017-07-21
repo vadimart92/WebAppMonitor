@@ -71,10 +71,10 @@ export class QueryInfoComponent implements OnInit {
 		let info = this.getCurrentInfo();
 		let rows = await this._dataService.getStats(<StatsQueryOptions>{
 			orderBy: ["date"],
-			queryTextId: info.normalizedQueryTextId,
-			dateId: info.dateId
+			queryTextId: info.normalizedQueryTextId
 		});
-		_.extend(this.queryData.info, rows[rows.length - 1]);
+		var currentData = rows.filter((row)=>row.dateId === info.dateId)[0];
+		_.extend(this.queryData.info, currentData);
 		this.initStackListOptions();
 		this.prepareChartData(rows);
 	}

@@ -49,8 +49,27 @@ export class StackListComponent implements OnInit {
 			"dateId": { "eq": this.dateId}
 		};
 		let stackSource = this.stackSource === "executor" ? ExecutorQueryStack : ReaderQueryStack;
-		let stacks = await this._dataService.get(stackSource, options);
-		this.stacks = stacks;
+		this.stacks = await this._dataService.get(stackSource, options);
+		if (this.selectedItem) {
+			setTimeout(() => this.fixSelection(), 200);
+		}
+	}
+
+	private fixSelection() {
+		let api = this.gridOptions.api;
+		let selected = false;
+		if (this.stacks.length){
+			api.forEachNodeAfterFilter((node) => {
+				if (node.data === this.stacks[0]) {
+					node.setSelected(true);
+					this.selectedItem = node.data;
+					selected = true;
+				}
+			});
+		}
+		if (!selected){
+			this.selectedItem = null;
+		}
 	}
 
 	private initOptions() {
