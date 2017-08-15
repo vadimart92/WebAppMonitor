@@ -73,7 +73,8 @@ namespace WebAppMonitor.Core.Import {
 			string dataDirectory = _settings.EventsDataDirectoryTemplate?.Replace("{date}",
 				_dateTimeProvider.Today.ToString("yyyy-MM-dd"));
 			if (!Directory.Exists(dataDirectory)) {
-				throw new Exception($"directory {dataDirectory} not found.");
+				_logger.LogError($"directory {dataDirectory} not found.");
+				return Enumerable.Empty<string>();
 			}
 			return Directory.EnumerateDirectories(dataDirectory).Select(p => new DirectoryInfo(p))
 				.OrderBy(d => d.CreationTime).Select(d => d.FullName);
