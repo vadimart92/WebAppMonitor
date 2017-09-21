@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
 	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-	 <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
+	 <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -66,6 +66,9 @@
 	  <Content Update="appsettings.Tests.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+	  <Content Update="nlog.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="nlog.config">
@@ -76,4 +79,5 @@
 		<Message Text="*** Starting NG dev" Importance="high" />
 		<Exec Command="startNgDev.bat" />
 	</Target>
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1Development_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

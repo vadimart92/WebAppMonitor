@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{7E5C0D21-6BD
 		DB\SQL\ImportDailyData.sql = DB\SQL\ImportDailyData.sql
 		DB\SQL\sp_ReplaceRecord.sql = DB\SQL\sp_ReplaceRecord.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terrasoft.LogReader", "Terrasoft.LogReader\Terrasoft.LogReader.csproj", "{7FB1498F-8C3D-461C-BC31-B8450D10A390}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,10 @@ Global
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54A1797E-E039-4071-BC73-C2C3763A57E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FB1498F-8C3D-461C-BC31-B8450D10A390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FB1498F-8C3D-461C-BC31-B8450D10A390}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FB1498F-8C3D-461C-BC31-B8450D10A390}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FB1498F-8C3D-461C-BC31-B8450D10A390}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -179,7 +179,8 @@ namespace WebAppMonitor.Core.Import {
 			foreach (DateTime dateTime in dates) {
 				var pathProvider = new DataFilePathProvider(_settings, new StaticDateTimeProvider(dateTime),
 					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>)));
-				ImportData(pathProvider, settings);
+				var provider = new CompositePathProvider(pathProvider);
+				ImportData(provider, settings);
 			}
 			ActualizeInfo();
 		}
