@@ -24,7 +24,7 @@ namespace WebAppMonitor.Core {
 		string LongLocksFileTemplate { get; set; }
 		[SettingItem("ts_sqlprofiler_05_sec*.xel")]
 		string StatementsFileTemplate { get; set; }
-		[SettingItem(@"\\tscore-dev-13\WorkAnalisys\xevents\Export_{date}\")]
+		[SettingItem(@"\\TSDB01\xEvent\BPMonlineWorkRUS")]
 		string EventsDataDirectoryTemplate { get; set; }
 		[SettingItem("BPMonlineWorkRUS")]
 		string DatabaseName { get; set; }
@@ -38,7 +38,7 @@ namespace WebAppMonitor.Core {
 		string ExecutorLogFileName { get; set; }
 		[SettingItem("PerformanceLogger.0.json")]
 		string PerfomanceLogFileName { get; set; }
-		[SettingItem("False")]
-		string LoadJsonLogs { get; set; }
+		[SettingItem(@"\\tscore-dev-13\WorkAnalisys\xEventsTemp")]
+		string SharedDirectoryPath { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-﻿<form class="import-data-form" onsubmit="return false">
+<form class="import-data-form" onsubmit="return false">
 	<button md-raised-button (click)="clearCache()" class="action-btn" >Clear cache</button>
 	<button md-raised-button (click)="clearAllSettings()" class="action-btn" >Clear settings</button>
 	<button md-raised-button (click)="openHangfire()" class="action-btn" >Open hangfire</button>
@@ -12,16 +12,18 @@
 	                 color="primary"
 	                 mode="indeterminate">
 	</md-progress-bar>
-	<button md-raised-button (click)="importData(importSettings)" class="action-btn">Import</button>
+	<button md-raised-button (click)="importData(importSettings)" class="action-btn">Import all</button>
+	<button md-raised-button (click)="importXEvents()" class="action-btn">Import xEvents</button>
+	<button md-raised-button (click)="importJsonLogs()" class="action-btn">Import json logs</button>
+	<br>
 	<md-button-toggle (change)="toggleImportJob()" [checked]="!importJobActive" class="action-btn">
 		{{importJobActive? "Deactivate" : "Activate"}} import job
 	</md-button-toggle>
+	<button md-raised-button (click)="saveSettings(importSettings)"  class="action-btn" [disabled]="!settingsChanged">SaveSettings</button>
 	<hr class="clear-cache-divider" />
 	<div *ngFor="let settingName of settings">
 		<md-input-container class="import-data-full-width">
-			<input #input mdInput placeholder="{{settingName}}" [(value)]="importSettings[settingName]" (change)="importSettings[settingName]= input.value">
+			<input #input mdInput placeholder="{{settingName}}" [(value)]="importSettings[settingName]" (change)="setSetting(settingName, input.value)">
 		</md-input-container>
 	</div>
-	<button md-raised-button (click)="saveSettings(importSettings)">SaveSettings</button>
-
 </form>

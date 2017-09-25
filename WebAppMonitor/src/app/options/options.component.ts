@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MdSnackBar } from '@angular/material';
 import { Http } from '@angular/http';
 import { Router, NavigationEnd } from '@angular/router';
@@ -28,6 +28,7 @@ export class OptionsComponent implements OnInit {
 	importJobActive: boolean = false;
 	importSettings: any = null;
 	settings: string[] = null;
+	settingsChanged: boolean = false;
 	ngOnInit() {
 		var date = moment().format("YYYY-MM-DD");
 		this.fileName = "\\\\tscore-dev-13\\WorkAnalisys\\xevents\\Export_" + date + "\\" + date + "\\ts_sqlprofiler_05_sec*.xel";
@@ -59,6 +60,18 @@ export class OptionsComponent implements OnInit {
 		this._http.post("/api/Admin/importDailyData", null)
 			.subscribe(this.onServiceOk, this.onServiceError);
 	}
+	importXEvents() {
+		this.snackBar.dismiss();
+		this.importInProgress = true;
+		this._http.get("/api/Admin/importExtendedEvents", null)
+			.subscribe(this.onServiceOk, this.onServiceError);
+	}
+	importJsonLogs() {
+		this.snackBar.dismiss();
+		this.importInProgress = true;
+		this._http.get("/api/Admin/importJsonLogs", null)
+			.subscribe(this.onServiceOk, this.onServiceError);
+	}
 	onServiceOk = () => {
 		this.importInProgress = false;
 		this.snackBar.open("Done", null, {
@@ -76,7 +89,14 @@ export class OptionsComponent implements OnInit {
 	saveSettings(settings:Object) {
 		this.snackBar.dismiss();
 		this._http.post("/api/Admin/saveSettings", settings)
-			.subscribe(this.onServiceOk, this.onServiceError);
+			.subscribe(() => {
+				this.settingsChanged = false;
+				this.onServiceOk();
+			}, this.onServiceError);
+	}
+	setSetting(key: string, value: any) {
+		this.importSettings[key] = value;
+		this.settingsChanged = true;
 	}
 	toggleImportJob() {
 		this._http.post("/api/Admin/toggleImportJob", null)

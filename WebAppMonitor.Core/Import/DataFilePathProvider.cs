@@ -6,16 +6,20 @@ using Microsoft.Extensions.Logging;
 using WebAppMonitor.Core.Common;
 
 namespace WebAppMonitor.Core.Import {
+	using System.Text.RegularExpressions;
+
 	public class DataFilePathProvider : IDataFilePathProvider {
 		private readonly ILogger _logger;
 		private readonly ISettings _settings;
+		private readonly IFileSystem _fileSystem;
 		private readonly IDateTimeProvider _dateTimeProvider;
 
-		public DataFilePathProvider(ISettings settings,
-			IDateTimeProvider dateTimeProvider, ILogger<DataFilePathProvider> logger) {
+		public DataFilePathProvider(ISettings settings, IDateTimeProvider dateTimeProvider,
+				ILogger<DataFilePathProvider> logger, IFileSystem fileSystem) {
 			_settings = settings;
 			_dateTimeProvider = dateTimeProvider;
 			_logger = logger;
+			_fileSystem = fileSystem;
 		}
 
 		public DateTime GetDate() {
@@ -51,7 +55,7 @@ namespace WebAppMonitor.Core.Import {
 					SearchOption.AllDirectories).Where(p => p.Contain(dir));
 				foreach (string file in innerFiles) {
 					string tmpPrefix = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-					string tmpFile = Path.Combine(Path.GetTempPath(), tmpPrefix + Path.GetFileName(file));
+					string tmpFile = Path.Combine(_fileSystem.GetTempDirectoryPath(), tmpPrefix + Path.GetFileName(file));
 					try {
 						_logger.LogInformation("Copying file {0} to {1}", file, Path.GetFileNameWithoutExtension(tmpFile));
 						File.Copy(file, tmpFile, true);
@@ -70,14 +74,44 @@ namespace WebAppMonitor.Core.Import {
 		}
 
 		public IEnumerable<string> GetDailyExtEventsDirs() {
-			string dataDirectory = _settings.EventsDataDirectoryTemplate?.Replace("{date}",
-				_dateTimeProvider.Today.ToString("yyyy-MM-dd"));
+			string dataDirectory = _settings.EventsDataDirectoryTemplate;
 			if (!Directory.Exists(dataDirectory)) {
 				_logger.LogError($"directory {dataDirectory} not found.");
-				return Enumerable.Empty<string>();
+				yield break;
 			}
-			return Directory.EnumerateDirectories(dataDirectory).Select(p => new DirectoryInfo(p))
-				.OrderBy(d => d.CreationTime).Select(d => d.FullName);
+			DateTime now = _dateTimeProvider.UtcNow;
+			DateTime startTime = now - TimeSpan.FromHours(25);
+			var nameTpls = new[] {
+				_settings.LongLocksFileTemplate,
+				_settings.DeadLocksFileTemplate,
+				_settings.StatementsFileTemplate
+			}.Select(re => new Regex(Regex.Escape(re).Replace(Regex.Escape("*"), "(.*)") + "$")).ToList();
+			var xevents = Directory.EnumerateFiles(dataDirectory)
+				.Select(p => new FileInfo(p))
+				.Where(f => CheckIsMatchDate(f, startTime, now))
+				.Where(f => CheckIsMatchName(f, nameTpls))
+				.Select(f=>f.FullName).ToList();
+			var dir = Path.Combine(_fileSystem.GetTempDirectoryPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(dir);
+			_logger.LogInformation("Copying xEvents from {0} to {1}", dataDirectory, dir);
+			foreach (var file in xevents) {
+				string fileName = Path.GetFileName(file);
+				string destFileName = Path.Combine(dir, fileName);
+				_logger.LogDebug("Copying file: {0}", fileName);
+				File.Copy(file, destFileName);
+			}
+			yield return dir;
+			_logger.LogInformation("Deleting: {0}", dir);
+			Directory.Delete(dir, true);
 		}
+
+		private bool CheckIsMatchName(FileInfo fileInfo, IEnumerable<Regex> templates) {
+			return templates.Any(regex => regex.IsMatch(fileInfo.FullName));
+		}
+
+		private static bool CheckIsMatchDate(FileInfo f, DateTime beginTime, DateTime today) {
+			return f.CreationTimeUtc >= beginTime && f.CreationTimeUtc <= today;
+		}
+
 	}
 }

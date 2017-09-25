@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using AutoMapper;
 using Hangfire;
@@ -19,9 +19,8 @@ using WebAppMonitor.XmlEventsParser;
 
 namespace WebAppMonitor {
 	using Autofac;
-	using Autofac.Core;
-	using Autofac.Core.Activators.Reflection;
 	using Autofac.Extensions.DependencyInjection;
+	using Microsoft.AspNetCore.Http;
 
 	public class Startup {
 		public static IConfigurationRoot Configuration { get; set; }
@@ -47,6 +46,7 @@ namespace WebAppMonitor {
 			services.AddMemoryCache(options => options.CompactOnMemoryPressure = true);
 			services.AddScoped(provider => new QueryStatsContext(connectionString));
 			services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 			var builder = new ContainerBuilder();
 			builder.Populate(services);
@@ -62,6 +62,7 @@ namespace WebAppMonitor {
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
 			loggerFactory.AddNLog();
+
 			app.AddNLogWeb();
 
 			if (env.IsDevelopment()) {
@@ -100,7 +101,7 @@ namespace WebAppMonitor {
 			builder.RegisterType<CurrentDateTimeProvider>().As<IDateTimeProvider>().SingleInstance();
 			builder.RegisterType<PerfomanceItemCodeStoringService>().As<IPerfomanceItemCodeStoringService>()
 				.SingleInstance();
-
+			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 			builder.RegisterType<ExtendedEventParser>().As<IExtendedEventParser>();
 			builder.RegisterType<ExtendedEventDataSaver>().As<IExtendedEventDataSaver>();
 			builder.RegisterType<SimpleDataProvider>().As<ISimpleDataProvider>();

@@ -28,14 +28,14 @@ namespace WebAppMonitor.Core.Import {
 		private readonly IDataFilePathProvider _dataFilePathProvider;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IDateRepository _dateRepository;
+		private readonly IFileSystem _fileSystem;
 
 		private static int _commandTimeout = 3600;
 
 		public DataLoader(IDbConnectionProvider connectionProvider, ISettings settings,
 				IExtendedEventLoader extendedEventLoader, ILogger<DataLoader> logger, IAppLogLoader appLogLoader,
 				IDataFilePathProvider dataFilePathProvider, IMapper mapper, ISettingsRepository settingsRepository,
-				IServiceProvider serviceProvider,
-			IDateRepository dateRepository) {
+				IServiceProvider serviceProvider, IDateRepository dateRepository, IFileSystem fileSystem) {
 			_connectionProvider = connectionProvider;
 			_settings = settings;
 			_extendedEventLoader = extendedEventLoader;
@@ -46,6 +46,7 @@ namespace WebAppMonitor.Core.Import {
 			_settingsRepository = settingsRepository;
 			_serviceProvider = serviceProvider;
 			_dateRepository = dateRepository;
+			_fileSystem = fileSystem;
 		}
 
 		private void BackupDb() {
@@ -80,9 +81,9 @@ namespace WebAppMonitor.Core.Import {
 		private void ImportLongQueriesData(string directory) {
 			_logger.LogInformation("Executing ImportDailyData for {0}.", directory);
 			_connectionProvider.GetConnection(connection => {
-				connection.Execute("ImportDailyData", new {
-					fileName = Path.Combine(directory, _settings.StatementsFileTemplate)
-				}, commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
+				string dir = Path.Combine(directory, _settings.StatementsFileTemplate);
+				connection.Execute("ImportDailyData", new {fileName = dir},
+					commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
 				_logger.LogInformation("Executing SaveDailyData.");
 				connection.Execute("SaveDailyData", commandType: CommandType.StoredProcedure, commandTimeout: _commandTimeout);
 			});
@@ -105,23 +106,28 @@ namespace WebAppMonitor.Core.Import {
 
 		private void SafeExecute(Expression<Action> action) {
 			try {
-				action.Compile()();
-			} catch (Exception e) {
-				_logger.LogError(action.Body.ToString(), e);
+				Action compiled = action.Compile();
+				compiled();
+			} catch (Exception exception) {
+				_logger.LogError(new EventId(), exception,
+					(action.Body as MethodCallExpression)?.Method.Name ?? action.Body.ToString());
 			}
 		}
-
+		
 		private void ImportData(IDataFilePathProvider pathProvider, DataLoadSettings settings = null) {
 			_logger.LogInformation("Import daily data started for: {0:dd-MM-yyyy}", pathProvider.GetDate());
 			var stopwatch = Stopwatch.StartNew();
 			if (settings == null || settings.LoadExtendedEvents) {
-				foreach (string directory in pathProvider.GetDailyExtEventsDirs()) {
-					SafeExecute(() => ImportLongQueriesData(directory));
-					SafeExecute(() => ImportLongLocksData(directory));
-					SafeExecute(() => ImportDeadLocksData(directory));
-				}
+				LoadExtendedEvents(pathProvider);
 			}
 			_dateRepository.Refresh();
+			ImportJsonLogs(pathProvider);
+			stopwatch.Stop();
+			_logger.LogInformation("Import daily data completed in: {0}", stopwatch.Elapsed);
+		}
+
+		private void ImportJsonLogs(IDataFilePathProvider pathProvider) {
+			ClearTmpDir();
 			foreach (string readerLog in pathProvider.GetReaderLogs()) {
 				SafeExecute(() => ImportReaderLogs(readerLog));
 			}
@@ -131,8 +137,16 @@ namespace WebAppMonitor.Core.Import {
 			foreach (string perfomanceLog in pathProvider.GetPerfomanceLogs()) {
 				SafeExecute(() => ImportPerfomanceLoggerLogs(perfomanceLog));
 			}
-			stopwatch.Stop();
-			_logger.LogInformation("Import daily data completed in: {0}", stopwatch.Elapsed);
+		}
+
+		private void LoadExtendedEvents(IDataFilePathProvider pathProvider) {
+			ClearTmpDir();
+			foreach (string directory in pathProvider.GetDailyExtEventsDirs()) {
+				_logger.LogInformation("LoadExtendedEvents from: {0}", directory);
+				SafeExecute(() => ImportLongQueriesData(directory));
+				SafeExecute(() => ImportLongLocksData(directory));
+				SafeExecute(() => ImportDeadLocksData(directory));
+			}
 		}
 
 		public void ChangeSettings(DataImportSettings newSettings) {
@@ -171,6 +185,19 @@ namespace WebAppMonitor.Core.Import {
 			_logger.LogInformation("ImportReaderLogs completed");
 		}
 
+		public void ImportExtendedEvents() {
+			_logger.LogInformation("ImportExtendedEvents started");
+			LoadExtendedEvents(_dataFilePathProvider);
+			ActualizeInfo();
+			_logger.LogInformation("ImportExtendedEvents completed");
+		}
+
+		public void ImportJsonLogs() {
+			_logger.LogInformation("ImportJsonLogs started");
+			ImportJsonLogs(_dataFilePathProvider);
+			_logger.LogInformation("ImportJsonLogs completed");
+		}
+
 		public void ImportAllByDates(IEnumerable<DateTime> dates) {
 			BackupDb();
 			var settings = new DataLoadSettings {
@@ -178,12 +205,20 @@ namespace WebAppMonitor.Core.Import {
 			};
 			foreach (DateTime dateTime in dates) {
 				var pathProvider = new DataFilePathProvider(_settings, new StaticDateTimeProvider(dateTime),
-					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>)));
+					(ILogger<DataFilePathProvider>)_serviceProvider.GetService(typeof(ILogger<DataFilePathProvider>)), 
+					(IFileSystem)_serviceProvider.GetService(typeof(IFileSystem)));
 				var provider = new CompositePathProvider(pathProvider);
 				ImportData(provider, settings);
 			}
 			ActualizeInfo();
 		}
 
+		private void ClearTmpDir() {
+			var tmpDir = _fileSystem.GetTempDirectoryPath();
+			if (Directory.Exists(tmpDir)) {
+				Directory.Delete(tmpDir, true);
+			}
+			Directory.CreateDirectory(tmpDir);
+		}
 	}
 }

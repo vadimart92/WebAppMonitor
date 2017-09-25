@@ -69,7 +69,7 @@ namespace WebAppMonitor.Core
 			set => Set(value);
 		}
 
-		public string LoadJsonLogs {
+		public string SharedDirectoryPath {
 			get => Get();
 			set => Set(value);
 		}

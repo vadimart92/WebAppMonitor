@@ -58,7 +58,7 @@ namespace WebAppMonitor.Core.Tests
 		    string dirPrefix = TestContext.CurrentContext.TestDirectory;
 		    settings.DirectoriesWithJsonLog.Returns(
 			    $"{dirPrefix}\\TestDir\\LogDir3;{dirPrefix}\\TestDir\\LogDir2;{dirPrefix}\\TestDir\\LogDir1");
-		    var sut = new DataFilePathProvider(settings, new StaticDateTimeProvider(new DateTime(2017, 07, 13)), Substitute.For<ILogger<DataFilePathProvider>>());
+		    var sut = new DataFilePathProvider(settings, new StaticDateTimeProvider(new DateTime(2017, 07, 13)), Substitute.For<ILogger<DataFilePathProvider>>(), Substitute.For<IFileSystem>());
 		    return sut;
 	    }
 

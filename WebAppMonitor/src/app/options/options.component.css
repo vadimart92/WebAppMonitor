@@ -1,7 +1,6 @@
-﻿:host {
+:host {
 	position: absolute;
 	margin-top: 64px;
-	position: absolute;
 	padding: 20px;
 	width: 90%;
 }
@@ -21,4 +20,5 @@
 }
 .action-btn {
 	margin-left: 10px;
+	margin-top: 10px;
 }

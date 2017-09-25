@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Dapper;
 using Hangfire;
@@ -34,10 +34,23 @@ namespace WebAppMonitor.Controllers {
 		}
 
 		[HttpGet("importLongLocks")]
-		public IActionResult ImportExtendedEvents(string file) {
+		public IActionResult ImportLongLocks(string file) {
 			_dataLoader.ImportLongLocks(file);
 			return Ok();
 		}
+
+		[HttpGet("importExtendedEvents")]
+		public IActionResult ImportExtendedEvents(string file) {
+			_dataLoader.ImportExtendedEvents();
+			return Ok();
+		}
+
+		[HttpGet("importJsonLogs")]
+		public IActionResult ImportJsonLogs(string file) {
+			_dataLoader.ImportJsonLogs();
+			return Ok();
+		}
+
 		[HttpGet("importDeadLocks")]
 		public IActionResult ImportDeadLocks(string file) {
 			_dataLoader.ImportDeadlocks(file);

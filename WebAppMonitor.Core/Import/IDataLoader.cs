@@ -13,5 +13,8 @@ namespace WebAppMonitor.Core.Import
 		void ImportDbExecutorLogs(string file);
 		void ImportReaderLogs(string file);
 		void ImportPerfomanceLoggerLogs(string file);
+		void ImportExtendedEvents();
+		void ImportJsonLogs();
+
 	}
 }
