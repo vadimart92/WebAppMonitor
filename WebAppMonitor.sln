@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMonitor", "WebAppMonitor\WebAppMonitor.csproj", "{B6A19D13-5CC1-43B3-9FE0-7DF212DBA36A}"
 EndProject
@@ -39,6 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{7E5C0D21-6BD
 	ProjectSection(SolutionItems) = preProject
 		DB\SQL\CreateEvents.sql = DB\SQL\CreateEvents.sql
 		DB\SQL\DDL.sql = DB\SQL\DDL.sql
+		DB\SQL\delete_old_data.sql = DB\SQL\delete_old_data.sql
 		DB\SQL\GetInfo.sql = DB\SQL\GetInfo.sql
 		DB\SQL\ImportDailyData.sql = DB\SQL\ImportDailyData.sql
 		DB\SQL\sp_ReplaceRecord.sql = DB\SQL\sp_ReplaceRecord.sql
@@ -116,5 +117,8 @@ Global
 		{94740ACE-C55C-4D8D-8AEF-492ECAC506B5} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{54A1797E-E039-4071-BC73-C2C3763A57E8} = {CAC2652A-E9BA-4858-9636-162F9502859B}
 		{7E5C0D21-6BDB-4EC1-B813-DB5E67BDC142} = {38D59148-FEB4-491C-9DD5-6BDC5459ED0F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C41AA06E-4E71-4996-8D7B-4F9F17813DFD}
 	EndGlobalSection
 EndGlobal

@@ -47,6 +47,7 @@ namespace WebAppMonitor.Data
 				options = options | SqlBulkCopyOptions.CheckConstraints;
 			}
 			using (var sqlBulkCopy = new SqlBulkCopy(connection.ConnectionString, options)) {
+				sqlBulkCopy.BulkCopyTimeout = 0;
 				sqlBulkCopy.DestinationTableName = tableName;
 				sqlBulkCopy.EnableStreaming = true;
 				foreach (var columnName in OrmUtils.GetColumnNames<T>()) {

@@ -6,5 +6,6 @@ namespace WebAppMonitor.Data.Entities {
 		[ExplicitKey]
 		public Guid Id { get; set; }
 		public byte[] Hash { get; set; }
+		public DateTime Date { get; set; }
 	}
 }

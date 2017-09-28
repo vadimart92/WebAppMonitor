@@ -41,7 +41,8 @@ namespace WebAppMonitor.Data {
 			if (_hashStorage.Value.Add(value)) {
 				var item = new TData {
 					Id = Guid.NewGuid(),
-					Hash = value
+					Hash = value,
+					Date = DateTime.Now
 				};
 				_pendingHashes.Add(item);
 				return true;
