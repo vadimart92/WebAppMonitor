@@ -108,5 +108,8 @@ WHERE t.TodayQueryId = TodayQueryText.TodayQueryId
 
 --if EXISTS( SELECT * FROM TodayQueryText WHERE TodayNormQueryTextId IS NULL ) PRINT 'TodayQueryText contains bad TodayNormQueryTextId';
 
+TRUNCATE TABLE ts_sqlprofiler;
+TRUNCATE TABLE ts_sqlprofiler_data;
+
 
 END
